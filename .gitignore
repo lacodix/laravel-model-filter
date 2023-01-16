@@ -1,0 +1,13 @@
+# IDE & System
+/.idea
+/*.iml
+/.vscode
+.phpstorm.meta.php
+.phpunit.result.cache
+.DS_Store
+Thumbs.db
+
+# Project
+/node_modules
+/vendor
+/build
