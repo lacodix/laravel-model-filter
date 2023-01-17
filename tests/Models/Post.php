@@ -10,6 +10,7 @@ use Lacodix\LaravelModelFilter\Filters\BooleanFilter;
 use Lacodix\LaravelModelFilter\Filters\DateFilter;
 use Lacodix\LaravelModelFilter\Filters\StringFilter;
 use Lacodix\LaravelModelFilter\Traits\HasFilters;
+use Lacodix\LaravelModelFilter\Traits\IsSearchable;
 use Tests\Filters\IndividualFilter;
 use Tests\Filters\TypeFilter;
 
@@ -17,8 +18,14 @@ class Post extends Model
 {
     use HasFactory;
     use HasFilters;
+    use IsSearchable;
 
     protected $guarded = [];
+
+    protected array $searchable = [
+        'title',
+        'content',
+    ];
 
     public function filters(): Collection
     {
