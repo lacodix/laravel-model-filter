@@ -1,6 +1,5 @@
 <?php
 
-use Carbon\Carbon;
 use Lacodix\LaravelModelFilter\Enums\SearchMode;
 use function Pest\Faker\faker;
 use Tests\Models\Post;

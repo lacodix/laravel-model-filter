@@ -13,7 +13,7 @@ trait IsSearchable
 {
     public function scopeSearch(Builder $query, string $value, ?array $searchable = null): Builder
     {
-        return $query->where(function (Builder $searchQuery) use ($value, $searchable) {
+        return $query->where(function (Builder $searchQuery) use ($value, $searchable): void {
             $this->searchable($searchable)
                 ->each(
                     fn (SearchMode $mode, string $field) => $this->applySearchQuery($searchQuery, $field, $mode, $value)
@@ -34,7 +34,7 @@ trait IsSearchable
 
     public function searchable(?array $searchable = null): Collection
     {
-        $searchable = $searchable ?? $this->searchable ?? [];
+        $searchable ??= $this->searchable ?? [];
 
         return collect(
             Arr::isAssoc($searchable) ? $searchable : array_fill_keys($searchable, SearchMode::LIKE)

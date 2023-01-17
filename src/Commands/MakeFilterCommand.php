@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Lacodix\LaravelModelFilter\Commands;
 
 use Illuminate\Console\GeneratorCommand;
 
@@ -17,20 +17,20 @@ class MakeFilterCommand extends GeneratorCommand
     {
         return str_replace(
             '{{ field }}',
-            $this->option('field', ''),
+            $this->option('field'),
             parent::buildClass($name)
         );
     }
 
     protected function getStub(): string
     {
-        return __DIR__ . '/stubs/' . match(strtolower($this->option('type'))) {
-                'boolean' => 'boolean_filter',
-                'string' => 'string_filter',
-                'select' => 'select_filter',
-                'date' => 'date_filter',
-                default => 'filter',
-            } . '.stub';
+        return __DIR__ . '/stubs/' . match (strtolower($this->option('type'))) {
+            'boolean' => 'boolean_filter',
+            'string' => 'string_filter',
+            'select' => 'select_filter',
+            'date' => 'date_filter',
+            default => 'filter',
+        } . '.stub';
     }
 
     protected function getDefaultNamespace($rootNamespace)
