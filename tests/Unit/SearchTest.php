@@ -45,12 +45,14 @@ beforeEach(function () {
     Post::factory()
         ->state([
             'content' => 'test '.faker()->words(4, true).' no',
+            'type' => 'page',
         ])
         ->create();
 
     Post::factory()
         ->state([
             'content' => 'test',
+            'type' => 'post',
         ])
         ->create();
 });
@@ -78,4 +80,11 @@ it('can be found by search for overwritten modes', function () {
             'title' => SearchMode::STARTS_WITH,
             'content' => SearchMode::ENDS_WITH
         ])->count())->toEqual(4);
+});
+
+it('cannot search for unknown overwritten values', function () {
+    expect(Post::search('page', [
+        'type' => SearchMode::EQUAL,
+    ])
+        ->count())->toEqual(8);
 });

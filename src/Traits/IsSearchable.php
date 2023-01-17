@@ -38,7 +38,7 @@ trait IsSearchable
 
         return collect(
             Arr::isAssoc($searchable) ? $searchable : array_fill_keys($searchable, SearchMode::LIKE)
-        );
+        )->only($this->searchable ?? []);
     }
 
     protected function applySearchQuery(Builder $query, string $field, SearchMode $mode, string $value): Builder
