@@ -1,4 +1,4 @@
-name: Code style analysis
+name: Code Style Analysis
 
 on:
   pull_request: ~
