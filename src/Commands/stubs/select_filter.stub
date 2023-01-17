@@ -1,0 +1,15 @@
+<?php
+
+namespace {{ namespace }};
+
+use Lacodix\LaravelModelFilter\Filters\SelectFilter;
+
+class {{ class }} extends SelectFilter
+{
+    protected string $field = '{{ field }}';
+
+    public function options(): array
+    {
+        //
+    }
+}

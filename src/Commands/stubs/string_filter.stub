@@ -1,0 +1,10 @@
+<?php
+
+namespace {{ namespace }};
+
+use Lacodix\LaravelModelFilter\Filters\StringFilter;
+
+class {{ class }} extends StringFilter
+{
+    protected string $field = '{{ field }}';
+}

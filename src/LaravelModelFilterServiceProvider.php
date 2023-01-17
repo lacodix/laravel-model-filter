@@ -17,7 +17,7 @@ class LaravelModelFilterServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('laravel-model-filter')
-            //->hasConfigFile()
+            ->hasConfigFile()
             //->hasViews()
             ->hasCommand(MakeFilterCommand::class);
     }

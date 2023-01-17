@@ -5,48 +5,49 @@ namespace Lacodix\LaravelModelFilter\Traits;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Lacodix\LaravelModelFilter\Filters\Filter;
+use Lacodix\LaravelModelFilter\Enums\SearchMode;
 
 trait IsSearchable
 {
-    protected Collection $filterInstances;
-
-    public function scopeFilter(Builder $query, array $values): Builder
+    public function scopeSearch(Builder $query, string $value, ?array $searchable = null): Builder
     {
-        $values = collect($values)
-            ->only($this->filterQueryNames())
-            ->filter();
-
-        $this->filters()
-            ->filter(
-                static fn (Filter $filter, string|int $key) => $values->has($filter->queryName($key))
-            )
-            ->each(
-                static fn (Filter $filter, string|int $key) => $filter
-                    ->apply($query, $values->get($filter->queryName($key)))
-            );
-
-        return $query;
+        return $query->where(function (Builder $searchQuery) use ($value, $searchable): void {
+            $this->searchable($searchable)
+                ->each(
+                    fn (SearchMode $mode, string $field) => $this->applySearchQuery($searchQuery, $field, $mode, $value)
+                );
+        });
     }
 
-    public function scopeFilterByQueryString(Builder $query): Builder
+    public function scopeSearchByQueryString(Builder $query): Builder
     {
         $request = Container::getInstance()->make(Request::class);
 
-        return $this->scopeFilter($query, $request->all());
+        return $this->scopeSearch(
+            $query,
+            $request->only(config('model-filter.search_query_value_name')),
+            $request->only(config('model-filter.search_query_fields_name'))
+        );
     }
 
-    public function filters(): Collection
+    public function searchable(?array $searchable = null): Collection
     {
-        return $this->filterInstances ??= collect($this->filters ?? [])
-            ->map(static fn ($filterName) => $filterName instanceof Filter ? $filterName : new $filterName());
+        $searchable ??= $this->searchable ?? [];
+
+        return collect(
+            Arr::isAssoc($searchable) ? $searchable : array_fill_keys($searchable, SearchMode::LIKE)
+        )->only($this->searchable ?? []);
     }
 
-    protected function filterQueryNames()
+    protected function applySearchQuery(Builder $query, string $field, SearchMode $mode, string $value): Builder
     {
-        return $this
-            ->filters()
-            ->map(static fn (Filter $filter, string|int $key) => $filter->queryName($key))->values()->all();
+        return match ($mode) {
+            SearchMode::EQUAL => $query->orWhere($field, $value),
+            SearchMode::STARTS_WITH => $query->orWhere($field, 'LIKE', $value . '%'),
+            SearchMode::ENDS_WITH => $query->orWhere($field, 'LIKE', '%' . $value),
+            default => $query->orWhere($field, 'LIKE', '%' . $value . '%'),
+        };
     }
 }

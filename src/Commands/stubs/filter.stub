@@ -1,0 +1,15 @@
+<?php
+
+namespace {{ namespace }};
+
+use Lacodix\LaravelModelFilter\Filters\Filter;
+
+class {{ class }} extends Filter
+{
+    public function apply(Builder $query, array|string $values): Builder
+    {
+        $value = is_array($values) ? current($values) : $values;
+
+        return $query->where('field', $value);
+    }
+}

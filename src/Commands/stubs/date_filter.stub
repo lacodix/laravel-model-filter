@@ -1,0 +1,10 @@
+<?php
+
+namespace {{ namespace }};
+
+use Lacodix\LaravelModelFilter\Filters\DateFilter;
+
+class {{ class }} extends DateFilter
+{
+    protected string $field = '{{ field }}';
+}

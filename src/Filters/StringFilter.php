@@ -18,9 +18,9 @@ class StringFilter extends SingleFieldFilter
     {
         return match ($this->mode) {
             FilterMode::EQUAL => $query->where($this->field, $value),
-            FilterMode::STARTS_WITH => $query->where($this->field, 'LIKE', $value.'%'),
-            FilterMode::ENDS_WITH => $query->where($this->field, 'LIKE', '%'.$value),
-            default => $query->where($this->field, 'LIKE', '%'.$value.'%'),
+            FilterMode::STARTS_WITH => $query->where($this->field, 'LIKE', $value . '%'),
+            FilterMode::ENDS_WITH => $query->where($this->field, 'LIKE', '%' . $value),
+            default => $query->where($this->field, 'LIKE', '%' . $value . '%'),
         };
     }
 }
