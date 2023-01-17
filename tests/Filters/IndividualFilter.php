@@ -3,7 +3,7 @@
 namespace Tests\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
-use Lacodix\LaravelFilter\Filters\Filter;
+use Lacodix\LaravelModelFilter\Filters\Filter;
 
 class IndividualFilter extends Filter
 {

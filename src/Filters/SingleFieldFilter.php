@@ -1,8 +1,8 @@
 <?php
 
-namespace Lacodix\LaravelFilter\Filters;
+namespace Lacodix\LaravelModelFilter\Filters;
 
-use Lacodix\LaravelFilter\Enums\FilterMode;
+use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
 abstract class SingleFieldFilter extends Filter
 {

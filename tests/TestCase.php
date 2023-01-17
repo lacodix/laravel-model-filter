@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Str;
-use Lacodix\LaravelFilter\LaravelFilterServiceProvider;
+use Lacodix\LaravelModelFilter\LaravelModelFilterServiceProvider;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -60,7 +60,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     protected function getPackageProviders($app)
     {
         return [
-            LaravelFilterServiceProvider::class,
+            LaravelModelFilterServiceProvider::class,
         ];
     }
 

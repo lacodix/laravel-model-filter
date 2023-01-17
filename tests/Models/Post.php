@@ -5,11 +5,11 @@ namespace Tests\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Lacodix\LaravelFilter\Enums\FilterMode;
-use Lacodix\LaravelFilter\Filters\BooleanFilter;
-use Lacodix\LaravelFilter\Filters\DateFilter;
-use Lacodix\LaravelFilter\Filters\StringFilter;
-use Lacodix\LaravelFilter\Traits\HasFilters;
+use Lacodix\LaravelModelFilter\Enums\FilterMode;
+use Lacodix\LaravelModelFilter\Filters\BooleanFilter;
+use Lacodix\LaravelModelFilter\Filters\DateFilter;
+use Lacodix\LaravelModelFilter\Filters\StringFilter;
+use Lacodix\LaravelModelFilter\Traits\HasFilters;
 use Tests\Filters\IndividualFilter;
 use Tests\Filters\TypeFilter;
 

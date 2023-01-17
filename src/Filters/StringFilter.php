@@ -1,9 +1,9 @@
 <?php
 
-namespace Lacodix\LaravelFilter\Filters;
+namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
-use Lacodix\LaravelFilter\Enums\FilterMode;
+use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
 class StringFilter extends SingleFieldFilter
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Lacodix\LaravelFilter\Filters;
+namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
-use Lacodix\LaravelFilter\Enums\FilterMode;
+use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
 class DateFilter extends SingleFieldFilter
 {

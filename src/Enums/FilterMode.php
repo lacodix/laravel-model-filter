@@ -1,6 +1,6 @@
 <?php
 
-namespace Lacodix\LaravelFilter\Enums;
+namespace Lacodix\LaravelModelFilter\Enums;
 
 enum FilterMode
 {

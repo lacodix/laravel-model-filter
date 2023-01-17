@@ -2,7 +2,7 @@
 
 namespace Tests\Filters;
 
-use Lacodix\LaravelFilter\Filters\SelectFilter;
+use Lacodix\LaravelModelFilter\Filters\SelectFilter;
 
 class TypeFilter extends SelectFilter
 {

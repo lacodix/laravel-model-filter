@@ -1,6 +1,6 @@
 <?php
 
-namespace Lacodix\LaravelFilter\Filters;
+namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;

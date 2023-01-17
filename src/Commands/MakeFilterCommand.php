@@ -1,6 +1,6 @@
 <?php
 
-namespace Lacodix\LaravelFilter\Commands;
+namespace Lacodix\LaravelModelFilter\Commands;
 
 use Illuminate\Console\Command;
 

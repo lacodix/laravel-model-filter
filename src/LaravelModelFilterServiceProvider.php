@@ -1,12 +1,12 @@
 <?php
 
-namespace Lacodix\LaravelFilter;
+namespace Lacodix\LaravelModelFilter;
 
-use Lacodix\LaravelFilter\Commands\MakeFilterCommand;
+use Lacodix\LaravelModelFilter\Commands\MakeFilterCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class LaravelFilterServiceProvider extends PackageServiceProvider
+class LaravelModelFilterServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
@@ -16,7 +16,7 @@ class LaravelFilterServiceProvider extends PackageServiceProvider
          * More info: https://github.com/spatie/laravel-package-tools
          */
         $package
-            ->name('laravel-filter')
+            ->name('laravel-model-filter')
             //->hasConfigFile()
             //->hasViews()
             ->hasCommand(MakeFilterCommand::class);

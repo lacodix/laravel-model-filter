@@ -1,12 +1,17 @@
 {
-    "name": "lacodix/laravel-filter",
-    "description": "This is my package laravel-filter",
+    "name": "lacodix/laravel-model-filter",
+    "description": "A Laravel package for filtering and searching models from database with ease.",
     "keywords": [
         "lacodix",
         "laravel",
-        "laravel-filter"
+        "laravel-filter",
+        "laravel-search",
+        "laravel-model-filter",
+        "laravel-eloquent-search",
+        "laravel-model-filter",
+        "laravel-eloquent-search"
     ],
-    "homepage": "https://github.com/lacodix/laravel-filter",
+    "homepage": "https://github.com/lacodix/laravel-model-filter",
     "license": "MIT",
     "authors": [
         {
@@ -41,8 +46,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Lacodix\\LaravelFilter\\": "src",
-            "Lacodix\\LaravelFilter\\Database\\Factories\\": "database/factories"
+            "Lacodix\\LaravelModelFilter\\": "src",
+            "Lacodix\\LaravelModelFilter\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
@@ -72,11 +77,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Lacodix\\LaravelFilter\\LaravelFilterServiceProvider"
-            ],
-            "aliases": {
-                "LaravelFilter": "Lacodix\\LaravelFilter\\Facades\\LaravelFilter"
-            }
+                "Lacodix\\LaravelModelFilter\\LaravelModelFilterServiceProvider"
+            ]
         }
     },
     "minimum-stability": "dev",

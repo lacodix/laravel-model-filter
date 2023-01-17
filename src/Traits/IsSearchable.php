@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Lacodix\LaravelModelFilter\Filters\Filter;
 
-trait HasFilters
+trait IsSearchable
 {
     protected Collection $filterInstances;
 
