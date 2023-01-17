@@ -38,15 +38,17 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             $table->timestamps();
         });
 
-        Factory::guessFactoryNamesUsing(function (string $modelName) {
-            return 'Tests\\Database\\Factories\\'.Str::afterLast($modelName, '\\').'Factory';
-        });
+        Factory::guessFactoryNamesUsing(
+            fn (string $modelName) => 'Tests\\Database\\Factories\\'.Str::afterLast($modelName, '\\').'Factory'
+        );
 
-        Factory::guessModelNamesUsing(function (Factory $factory) {
-            return 'Tests\\Models\\'.Str::replaceLast(
-                'Factory', '', Str::afterLast(get_class($factory), '\\')
-            );
-        });
+        Factory::guessModelNamesUsing(
+            fn (Factory $factory) => 'Tests\\Models\\'.Str::replaceLast(
+                'Factory',
+                '',
+                Str::afterLast($factory::class, '\\')
+            )
+        );
     }
 
     /**

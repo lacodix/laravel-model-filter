@@ -19,8 +19,13 @@ trait HasFilters
             ->filter();
 
         $this->filters()
-            ->filter(fn (Filter $filter, string|int $key) => $values->has($filter->queryName($key)))
-            ->each(fn (Filter $filter, string|int $key) => $filter->apply($query, $values->get($filter->queryName($key))));
+            ->filter(
+                static fn (Filter $filter, string|int $key) => $values->has($filter->queryName($key))
+            )
+            ->each(
+                static fn (Filter $filter, string|int $key) => $filter
+                    ->apply($query, $values->get($filter->queryName($key)))
+            );
 
         return $query;
     }
@@ -35,11 +40,13 @@ trait HasFilters
     public function filters(): Collection
     {
         return $this->filterInstances ??= collect($this->filters ?? [])
-            ->map(fn ($filterName) => $filterName instanceof Filter ? $filterName : new $filterName());
+            ->map(static fn ($filterName) => $filterName instanceof Filter ? $filterName : new $filterName());
     }
 
     protected function filterQueryNames()
     {
-        return $this->filters()->map(fn (Filter $filter, string|int $key) => $filter->queryName($key))->values()->all();
+        return $this
+            ->filters()
+            ->map(static fn (Filter $filter, string|int $key) => $filter->queryName($key))->values()->all();
     }
 }

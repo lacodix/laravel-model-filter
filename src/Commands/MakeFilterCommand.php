@@ -6,9 +6,9 @@ use Illuminate\Console\Command;
 
 class MakeFilterCommand extends Command
 {
-    public $signature = 'make:filter';
+    protected $signature = 'make:filter';
 
-    public $description = 'My command';
+    protected $description = 'My command';
 
     public function handle(): int
     {

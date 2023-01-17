@@ -14,7 +14,7 @@ abstract class SingleFieldFilter extends Filter
             $this->field = $field;
         }
 
-        if ($mode) {
+        if ($mode !== null) {
             $this->mode = $mode;
         }
     }

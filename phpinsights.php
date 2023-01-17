@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+use NunoMaduro\PhpInsights\Domain\Insights\ForbiddenNormalClasses;
+use NunoMaduro\PhpInsights\Domain\Insights\ForbiddenTraits;
+use PHP_CodeSniffer\Standards\Generic\Sniffs\Files\LineLengthSniff;
+use SlevomatCodingStandard\Sniffs\TypeHints\DeclareStrictTypesSniff;
+use SlevomatCodingStandard\Sniffs\TypeHints\ParameterTypeHintSniff;
+use SlevomatCodingStandard\Sniffs\TypeHints\PropertyTypeHintSniff;
+use SlevomatCodingStandard\Sniffs\TypeHints\ReturnTypeHintSniff;
+
 return [
 
     /*
@@ -51,7 +59,7 @@ return [
     */
 
     'exclude' => [
-        'build'
+        'build',
     ],
 
     'add' => [
@@ -61,13 +69,19 @@ return [
     ],
 
     'remove' => [
-        //  ExampleInsight::class,
+        DeclareStrictTypesSniff::class,
+        ParameterTypeHintSniff::class,
+        PropertyTypeHintSniff::class,
+        ReturnTypeHintSniff::class,
+        ForbiddenNormalClasses::class,
+        ForbiddenTraits::class,
+        LineLengthSniff::class,
     ],
 
     'config' => [
-        //  ExampleInsight::class => [
-        //      'key' => 'value',
-        //  ],
+        SlevomatCodingStandard\Sniffs\Functions\FunctionLengthSniff::class => [
+            'maxLinesLength' => 120,
+        ],
     ],
 
     /*
@@ -101,5 +115,4 @@ return [
     */
 
     'threads' => null,
-
 ];

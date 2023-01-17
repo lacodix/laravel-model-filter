@@ -11,8 +11,6 @@ class SelectFilter extends SingleFieldFilter
         $value = is_array($values) ? current($values) : $values;
 
         return $query
-            ->when(in_array($value, $this->options()), function ($query) use ($value) {
-                $query->where($this->field, $value);
-            });
+            ->when(in_array($value, $this->options()), fn ($query) => $query->where($this->field, $value));
     }
 }
