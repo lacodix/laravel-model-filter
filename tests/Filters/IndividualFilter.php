@@ -4,7 +4,6 @@ namespace Tests\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use Lacodix\LaravelFilter\Filters\Filter;
-use Lacodix\LaravelFilter\Filters\SelectFilter;
 
 class IndividualFilter extends Filter
 {

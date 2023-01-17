@@ -39,11 +39,11 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         });
 
         Factory::guessFactoryNamesUsing(function (string $modelName) {
-            return 'Tests\\Database\\Factories\\' . Str::afterLast($modelName, '\\') . 'Factory';
+            return 'Tests\\Database\\Factories\\'.Str::afterLast($modelName, '\\').'Factory';
         });
 
         Factory::guessModelNamesUsing(function (Factory $factory) {
-            return 'Tests\\Models\\' . Str::replaceLast(
+            return 'Tests\\Models\\'.Str::replaceLast(
                 'Factory', '', Str::afterLast(get_class($factory), '\\')
             );
         });
@@ -53,7 +53,6 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
      * Get package providers.
      *
      * @param  \Illuminate\Foundation\Application  $app
-     *
      * @return array<int, class-string<\Illuminate\Support\ServiceProvider>>
      */
     protected function getPackageProviders($app)
@@ -74,9 +73,9 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         // Setup default database to use sqlite :memory:
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
     }
 }

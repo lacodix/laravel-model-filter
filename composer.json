@@ -17,15 +17,18 @@
     ],
     "require": {
         "php": "^8.1",
+        "ext-intl": "*",
         "illuminate/contracts": "^9.0",
         "spatie/laravel-package-tools": "^1.13.0"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.13",
         "illuminate/database": "^9.47",
         "illuminate/support": "^9.47",
         "laravel/pint": "^1.0",
         "nunomaduro/collision": "^6.0",
         "nunomaduro/larastan": "^2.0.1",
+        "nunomaduro/phpinsights": "^2.6",
         "orchestra/testbench": "^7.19",
         "pestphp/pest": "^1.21",
         "pestphp/pest-plugin-faker": "^1.0",
@@ -33,7 +36,9 @@
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpstan/phpstan-phpunit": "^1.0",
-        "phpunit/phpunit": "^9.5"
+        "phpstan/phpstan-strict-rules": "^1.4",
+        "phpunit/phpunit": "^9.5",
+        "rector/rector": "^0.15.7"
     },
     "autoload": {
         "psr-4": {
@@ -51,13 +56,18 @@
         "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",
-        "format": "vendor/bin/pint"
+        "format": "vendor/bin/pint",
+        "csfixer:test": "php-cs-fixer fix -v",
+        "phpstan:test": "phpstan analyse --ansi",
+        "rector:test": "rector process --ansi",
+        "insights": "phpinsights analyse --ansi -v --no-interaction"
     },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "phpstan/extension-installer": true
+            "phpstan/extension-installer": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
     "extra": {

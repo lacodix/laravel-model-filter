@@ -4,7 +4,6 @@ namespace Lacodix\LaravelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
-use Lacodix\LaravelFilter\Enums\FilterMode;
 
 class BooleanFilter extends Filter
 {

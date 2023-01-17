@@ -17,7 +17,7 @@ class DateFilter extends SingleFieldFilter
     {
         $value = $this->getValueForFilter($value);
 
-        return match($this->mode) {
+        return match ($this->mode) {
             FilterMode::LOWER => $query->whereDate($this->field, '<', $value),
             FilterMode::LOWER_OR_EQUAL => $query->whereDate($this->field, '<=', $value),
             FilterMode::GREATER => $query->whereDate($this->field, '>', $value),

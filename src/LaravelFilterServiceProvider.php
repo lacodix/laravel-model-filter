@@ -2,9 +2,9 @@
 
 namespace Lacodix\LaravelFilter;
 
+use Lacodix\LaravelFilter\Commands\MakeFilterCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Lacodix\LaravelFilter\Commands\MakeFilterCommand;
 
 class LaravelFilterServiceProvider extends PackageServiceProvider
 {
