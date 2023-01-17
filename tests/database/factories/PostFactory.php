@@ -15,7 +15,7 @@ class PostFactory extends Factory
     public function definition()
     {
         return [
-            'title' => $this->faker->words(rand(5, 15), true),
+            'title' => $this->faker->words(random_int(5, 15), true),
             'type' => $this->faker->boolean ? 'post' : 'page',
             'created_at' => $this->faker->dateTimeBetween('-1 week', '+1 week'),
             'published' => $this->faker->boolean,
