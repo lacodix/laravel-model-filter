@@ -1,8 +1,8 @@
 # laravel-model-filter
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/lacodix/laravel-model-filter.svg?style=flat-square)](https://packagist.org/packages/lacodix/laravel-model-filter)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/lacodix/laravel-model-filter/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/lacodix/laravel-model-filter/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/lacodix/laravel-model-filter/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/lacodix/laravel-model-filter/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/lacodix/laravel-model-filter/test.yml?branch=master&label=tests&style=flat-square)](https://github.com/lacodix/laravel-model-filter/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/lacodix/laravel-model-filter/style.yml?branch=master&label=code%20style&style=flat-square)](https://github.com/lacodix/laravel-model-filter/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/lacodix/laravel-model-filter.svg?style=flat-square)](https://packagist.org/packages/lacodix/laravel-model-filter)
 
 A lightweight laravel package to filter and search models on database with ease. The creation and usage of filters
