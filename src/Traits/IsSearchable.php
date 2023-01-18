@@ -11,14 +11,9 @@ use Lacodix\LaravelModelFilter\Enums\SearchMode;
 
 trait IsSearchable
 {
-    public function scopeSearch(Builder $query, string $value, ?array $searchable = null): Builder
+    public function scopeSearch(Builder $query, ?string $search, ?array $searchable = null): Builder
     {
-        return $query->where(function (Builder $searchQuery) use ($value, $searchable): void {
-            $this->searchable($searchable)
-                ->each(
-                    fn (SearchMode $mode, string $field) => $this->applySearchQuery($searchQuery, $field, $mode, $value)
-                );
-        });
+        return $query->when($search, fn (Builder $query) => $this->applySearchQuery($query, $search, $searchable));
     }
 
     public function scopeSearchByQueryString(Builder $query): Builder
@@ -27,27 +22,27 @@ trait IsSearchable
 
         return $this->scopeSearch(
             $query,
-            $request->only(config('model-filter.search_query_value_name')),
-            $request->only(config('model-filter.search_query_fields_name'))
+            $request->get(config('model-filter.search_query_value_name')),
+            $request->get(config('model-filter.search_query_fields_name')),
         );
     }
 
-    public function searchable(?array $searchable = null): Collection
+    protected function applySearchQuery(Builder $query, string $search, ?array $searchable = null)
+    {
+        return $query->where(
+            fn (Builder $searchQuery) => $this->searchable($searchable)
+                ->each(fn (SearchMode $mode, string $field) => $mode->applyQuery($searchQuery, $field, $search))
+        );
+    }
+
+    protected function searchable(?array $searchable = null): Collection
     {
         $searchable ??= $this->searchable ?? [];
 
         return collect(
             Arr::isAssoc($searchable) ? $searchable : array_fill_keys($searchable, SearchMode::LIKE)
-        )->only($this->searchable ?? []);
-    }
-
-    protected function applySearchQuery(Builder $query, string $field, SearchMode $mode, string $value): Builder
-    {
-        return match ($mode) {
-            SearchMode::EQUAL => $query->orWhere($field, $value),
-            SearchMode::STARTS_WITH => $query->orWhere($field, 'LIKE', $value . '%'),
-            SearchMode::ENDS_WITH => $query->orWhere($field, 'LIKE', '%' . $value),
-            default => $query->orWhere($field, 'LIKE', '%' . $value . '%'),
-        };
+        )
+            ->only($this->searchable ?? [])
+            ->map(fn ($mode) => is_string($mode) ? SearchMode::fromString($mode) : $mode);
     }
 }
