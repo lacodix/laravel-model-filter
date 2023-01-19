@@ -2,7 +2,10 @@
 
 namespace Lacodix\LaravelModelFilter\Filters;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
+use Lacodix\LaravelModelFilter\Exceptions\FilterValueException;
 
 abstract class SingleFieldFilter extends Filter
 {
@@ -17,5 +20,25 @@ abstract class SingleFieldFilter extends Filter
         if ($mode !== null) {
             $this->mode = $mode;
         }
+    }
+
+    public function apply(Builder $query, string|array $values): Builder
+    {
+        return $this->query($query, $this->prepareValues($values));
+    }
+
+    abstract protected function query(Builder $query, array $values): Builder;
+
+    protected function prepareValues(array|string $values): array
+    {
+        if (! is_array($values) || ! Arr::isAssoc($values) || ! Arr::has($values, $this->field)) {
+            $values = [
+                $this->field => $values,
+            ];
+        }
+
+        $this->validate($values);
+
+        return $values;
     }
 }

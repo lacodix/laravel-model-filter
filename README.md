@@ -39,10 +39,10 @@ Create your first filter
 php artisan make:filter CreatedAtFilter -t date -f created_at
 ```
 
-This filter will be created in the folder app/Models/Filters/CreatedAtFilter. It can be used in multiple Models, that 
-have the created_at field.
+This filter will be created as a Class CreatedAtFilter.php in the folder app/Models/Filters. It can be used in 
+all Models, that have a created_at datetime field.
 
-To apply this filter to any model just add a "filters"-property to the model and use the HasFilters Trait
+To apply this filter to any model just add a $filters property to the model and use the HasFilters Trait
 
 ```php
 <?php
@@ -65,7 +65,7 @@ class Post extends Model
 
 ### Filter by query string
 
-The HasFilters trait can automatically read the values to filter from the query string.
+After the model now has filters, it can be automatically be filtered by query string.
 
 ```php
 <?php
@@ -85,9 +85,11 @@ class PostController extends Controller
 
 To make use of this filter just call the corresponding route with query parameter
 
-https://myapp.tld/posts?created_at_filter=2023-01-01
+```
+https://.../posts?created_at_filter=2023-01-01
+```
 
-the name of the query parameter equals the filter class name in snake case.
+The name of the query parameter equals the filter class name in snake case.
 
 This filter can be applied to multiple models.
 
@@ -171,7 +173,9 @@ Post::searchByQueryString()->get();
 
 and open url
 
-https://myapp.tld/posts?search=test
+```
+https://.../posts?search=test
+```
 
 you can change the name of query parameter with the config file value model-filter.search
 
@@ -215,7 +219,9 @@ Post::search('test', [
 With this solution you can change the mode for the given searchable fields on calling the search.
 This flexibility is also possible via query-string
 
-https://myapp.tld/posts?search=test&search_for[title]=equal&search_for[content]=like
+```
+https://.../posts?search=test&search_for[title]=equal&search_for[content]=like
+```
 
 ### Security
 
@@ -378,6 +384,7 @@ Select filters only have the EQUAL mode.
 ### Boolean Filter
 
 Create the filter
+
 ```bash
 php artisan make:filter TestBooleanFilter -t boolean
 ```
@@ -428,7 +435,9 @@ This will filter all Posts that are published, but inactive, and have boolvalue 
 
 Using a boolean filter with querystring you can call an url like this:
 
-https://myapp.tld/posts?test_boolean_filter[published]=1&test_boolean_filter[active]=0
+```
+https://.../posts?test_boolean_filter[published]=1&test_boolean_filter[active]=0
+```
 
 The given value must be castable to boolean - add the string "false" would result in true!!
 
@@ -465,9 +474,12 @@ You have just to implement the apply function that can be created absolutely fre
 All given values will be added to the values parameter. To get a single value it can 
 be used like in select, string and date-filter
 
-https://myapp.tld/posts?test_individual_filter=myvalue
+```
+https://.../posts?test_individual_filter=myvalue
+```
 
 or 
+
 ```php
 Post::filter(['test_individual_filter' => 'myvalue'])->get()
 ```
@@ -538,8 +550,12 @@ Post::filter([
     ],
 ])->get();
 ```
+
 or open the url
-https://myapp.tld/posts?created_at_lower_filter=2023-01-01&starts_with=test&boolfilter[published]=1
+
+```
+https://.../posts?created_at_lower_filter=2023-01-01&starts_with=test&boolfilter[published]=1
+```
 
 ## Testing
 

@@ -35,6 +35,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             $table->string('type');
             $table->boolean('published');
             $table->text('content');
+            $table->integer('counter');
             $table->timestamps();
         });
 
