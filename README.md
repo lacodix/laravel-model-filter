@@ -26,6 +26,7 @@ This is the contents of the published config file:
 
 ```php
 return [
+    'date_format' => 'Y-m-d',
     'search_query_value_name' => 'search',
     'search_query_fields_name' => 'search_for',
 ];
@@ -286,11 +287,35 @@ class TestDateFilter extends DateFilter
 ```
 
 Allowed modes are
-- FilterMode::LOWER;
-- FilterMode::GREATER;
-- FilterMode::LOWER_OR_EQUAL;
-- FilterMode::GREATER_OR_EQUAL;
-- FilterMode::EQUAL (default);
+- FilterMode::LOWER
+- FilterMode::GREATER
+- FilterMode::LOWER_OR_EQUAL
+- FilterMode::GREATER_OR_EQUAL
+- FilterMode::EQUAL (default)
+- FilterMode::BETWEEN
+- FilterMode::BETWEEN_EXCLUSIVE
+- FilterMode::NOT_BETWEEN
+- FilterMode::NOT_BETWEEN_INCLUSIVE
+
+For using between and not between filters you have to provide two values to the filter. Ordering
+of this values doesn't matter, the filter will detect if the first or second is the smaller one.
+
+For providing multiple values use the following url 
+
+```
+https://.../posts?test_date_filter[]=2023-01-01&test_date_filter[]=2023-01-10
+```
+
+or programmatically
+
+```php
+Post::filter(['created_at_filter' => ['2023-01-01', '2023-01-10']])->get();
+```
+
+This will find all posts created between or not between 1st and 10th of January.
+FilterMode::BETWEEN will include both days, FilterMode::BETWEEN_EXCLUSIVE will exclude both days.
+FilterMode::NOT_BETWEEN will also exclude posts, that are created on one of both days,
+FilterMode::NOT_BETWEEN_INCLUSIVE will include posts that are created on these days.
 
 ### String Filter
 
@@ -380,6 +405,83 @@ The options function must be implemented, given values for the filter will be
 removed if not contained in this array.
 
 Select filters only have the EQUAL mode.
+
+### Numeric Filter
+
+Create the filter
+```bash
+php artisan make:filter TestNumericFilter -t numeric -f fieldname
+```
+
+this creates a filter class the extends NumericFilter
+
+```php
+<?php
+
+namespace App\Models\Filters;
+
+use Lacodix\LaravelModelFilter\Filters\NumericFilter;
+
+class TestNumericFilter extends NumericFilter
+{
+    protected string $field = 'fieldname';
+}
+```
+
+A fieldname must be set, this will apply a where query to the model-query
+where fieldname equals the given value.
+
+Default mode is EQUAL
+
+Change filter mode:
+
+```php
+<?php
+
+namespace App\Models\Filters;
+
+use Lacodix\LaravelModelFilter\Enums\FilterMode;
+use Lacodix\LaravelModelFilter\Filters\NumericFilter;
+
+class TestNumericFilter extends NumericFilter
+{
+    protected FilterMode $mode = FilterMode::LOWER;
+
+    protected string $field = 'fieldname';
+}
+```
+
+Allowed modes are
+- FilterMode::LOWER
+- FilterMode::GREATER
+- FilterMode::LOWER_OR_EQUAL
+- FilterMode::GREATER_OR_EQUAL
+- FilterMode::EQUAL (default)
+- FilterMode::BETWEEN
+- FilterMode::BETWEEN_EXCLUSIVE
+- FilterMode::NOT_BETWEEN
+- FilterMode::NOT_BETWEEN_INCLUSIVE
+
+For using between and not between filters you have to provide two values to the filter. Ordering
+of this values doesn't matter, the filter will detect if the first or second is the smaller one.
+
+For providing multiple values use the following url
+
+```
+https://.../posts?test_numeric_filter[]=100&test_date_filter[]=1000
+```
+
+or programmatically
+
+```php
+Post::filter(['test_numeric_filter' => [100, 1000]])->get();
+```
+
+This will find all posts where fieldname is between 100 and 1000.
+FilterMode::BETWEEN will include both values, FilterMode::BETWEEN_EXCLUSIVE will exclude both values.
+FilterMode::NOT_BETWEEN will also exclude posts, that have one of the both values in the selected field,
+FilterMode::NOT_BETWEEN_INCLUSIVE will include posts that have these values.
+
 
 ### Boolean Filter
 
@@ -487,6 +589,76 @@ Post::filter(['test_individual_filter' => 'myvalue'])->get()
 Both examples will result in a string-values parameter on the apply function.
 
 To get an array with multiple values follow the boolean-filter example.
+
+## Filter Validation
+
+Some filters include validation. DateFilters for example will validate the inserted values for
+the given format 'Y-m-d'. The used format can be overwritten with the config value 'date_format'.
+If a given value does not fit the validation, an ValidationException will be thrown.
+
+NumericFilters validates the input for numerical values.
+
+SelectFilter ignore invalid data. If a given value is not part of the options array, it is not applied
+to the filter, no filtering will be executed. Nevertheless you can add your own validation rules to all 
+filters by overwriting the rules() function. You can use all possibilities of Laravels Validator.
+
+```php
+    // add this function in any SelectFilter
+ 
+    public function rules(): array
+    {
+        return [
+            'fieldname' => 'in:' . implode(',', $this->options()),
+        ];
+    }
+```
+
+After adding this function to a SelectFilter, this will automatically throw a ValidationException
+if a value is given that is not part of your allowed options.
+
+### Customize Error Messages & Attributes
+
+If you wish to customize the validation messages that are thrown with the ValidationException,
+you can overwrite the $messages property of the Filter.
+
+If you want to keep the default Laravel validation messages, but just customize the :attribute 
+portion of the message, you can specify custom attribute names using the $validationAttributes
+property.
+
+```php 
+    protected $messages = [
+        'fieldname.numeric' => 'The Field must be a number.',
+    ];
+```
+
+and/or    
+
+```php
+    protected $validationAttributes = [
+        'fieldname' => 'Field'
+    ];
+```
+
+if you don't know the fieldname before, you can also overwrite the corresponding methods
+messages() and validationAttributes()
+
+```php 
+    protected function messages() {
+        return [
+            $this->field . '.numeric' => 'The Field must be a number.',
+        ];
+    }
+```
+
+and/or
+
+```php
+    protected function validationAttributes() {
+        return [
+            $this->field => 'Field',
+        ];
+    }
+```
 
 ## Advanced Usage
 

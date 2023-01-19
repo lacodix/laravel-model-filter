@@ -29,6 +29,7 @@ class MakeFilterCommand extends GeneratorCommand
             'string' => 'string_filter',
             'select' => 'select_filter',
             'date' => 'date_filter',
+            'numeric' => 'numeric_filter',
             default => 'filter',
         } . '.stub';
     }
