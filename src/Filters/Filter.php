@@ -10,9 +10,8 @@ use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
 abstract class Filter
 {
-    public $messages;
-    public $validationAttributes;
-    protected MessageBag $errorBag;
+    public array $messages = [];
+    public array $validationAttributes = [];
 
     protected FilterMode $mode = FilterMode::EQUAL;
 
@@ -42,8 +41,6 @@ abstract class Filter
         $validator = Validator::make($data, $rules, $messages, $attributes);
         $validatedData = $validator->validate();
 
-        $this->errorBag = new MessageBag;
-
         return $validatedData;
     }
 
@@ -60,8 +57,7 @@ abstract class Filter
     {
         return match (true) {
             method_exists($this, 'messages') => $this->messages(),
-            property_exists($this, 'messages') => $this->messages,
-            default => [],
+            default => $this->messages,
         };
     }
 
@@ -69,8 +65,7 @@ abstract class Filter
     {
         return match (true) {
             method_exists($this, 'validationAttributes') => $this->validationAttributes(),
-            property_exists($this, 'validationAttributes') => $this->validationAttributes,
-            default => [],
+            default => $this->validationAttributes,
         };
     }
 }
