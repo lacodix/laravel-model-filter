@@ -4,7 +4,6 @@ namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
