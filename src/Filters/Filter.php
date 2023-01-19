@@ -38,9 +38,8 @@ abstract class Filter
         [$rules, $messages, $attributes] = $this->getValidationData($rules, $messages, $attributes);
 
         $validator = Validator::make($data, $rules, $messages, $attributes);
-        $validatedData = $validator->validate();
 
-        return $validatedData;
+        return $validator->validate();
     }
 
     protected function getValidationData($rules, $messages, $attributes): array
