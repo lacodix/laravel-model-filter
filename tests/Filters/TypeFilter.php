@@ -15,4 +15,11 @@ class TypeFilter extends SelectFilter
             'post',
         ];
     }
+
+    public function rules(): array
+    {
+        return [
+            'type' => 'in:' . implode(',', $this->options()),
+        ];
+    }
 }

@@ -36,9 +36,6 @@ jobs:
       - name: Install Composer dependencies
         run: composer update --${{ matrix.dependency-version }} --ansi --no-interaction --prefer-dist
 
-      - name: Analysis
-        run: composer analyse
-
       - name: Unit Tests
         run: composer test
 

@@ -20,6 +20,7 @@ class PostFactory extends Factory
             'created_at' => $this->faker->dateTimeBetween('-1 week', '+1 week'),
             'published' => $this->faker->boolean,
             'content' => $this->faker->text,
+            'counter' => $this->faker->randomNumber(5),
         ];
     }
 }
