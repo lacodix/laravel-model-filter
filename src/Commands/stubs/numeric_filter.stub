@@ -1,0 +1,10 @@
+<?php
+
+namespace {{ namespace }};
+
+use Lacodix\LaravelModelFilter\Filters\NumericFilter;
+
+class {{ class }} extends NumericFilter
+{
+    protected string $field = '{{ field }}';
+}

@@ -57,10 +57,10 @@ class DateFilter extends SingleFieldFilter
         return match ($this->mode->needsMultipleValues()) {
             true => [
                 $this->field => 'required|array|size:2',
-                $this->field . '.*' => 'date_format:Y-m-d',
+                $this->field . '.*' => 'date_format:' . config('model-filter.date_format'),
             ],
             false => [
-                $this->field => 'required|date_format:Y-m-d',
+                $this->field => 'required|date_format:' . config('model-filter.date_format'),
             ],
         };
     }
