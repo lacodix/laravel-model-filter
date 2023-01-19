@@ -42,11 +42,9 @@ class DateFilter extends SingleFieldFilter
 
     protected function prepareValues(array|string $values): array
     {
-        return Arr::map(parent::prepareValues($values), function ($value) {
-            return is_array($value)
-                ? array_values(Arr::sort(Arr::map($value, fn ($date) => $this->getValueForFilter($date))))
-                : $this->getValueForFilter($value);
-        });
+        return Arr::map(parent::prepareValues($values), fn ($value) => is_array($value)
+            ? array_values(Arr::sort(Arr::map($value, fn ($date) => $this->getValueForFilter($date))))
+            : $this->getValueForFilter($value));
     }
 
     protected function getValueForFilter(string $value): mixed
@@ -56,7 +54,7 @@ class DateFilter extends SingleFieldFilter
 
     public function rules(): array
     {
-        return match($this->mode->needsMultipleValues()) {
+        return match ($this->mode->needsMultipleValues()) {
             true => [
                 $this->field => 'required|array|size:2',
                 $this->field . '.*' => 'date_format:Y-m-d',

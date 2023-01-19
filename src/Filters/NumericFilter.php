@@ -41,11 +41,9 @@ class NumericFilter extends SingleFieldFilter
 
     protected function prepareValues(array|string $values): array
     {
-        return Arr::map(parent::prepareValues($values), function ($value) {
-            return is_array($value)
-                ? array_values(Arr::sort($value))
-                : $value;
-        });
+        return Arr::map(parent::prepareValues($values), fn ($value) => is_array($value)
+            ? array_values(Arr::sort($value))
+            : $value);
     }
 
     public function rules(): array

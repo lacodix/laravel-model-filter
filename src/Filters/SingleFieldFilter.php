@@ -5,7 +5,6 @@ namespace Lacodix\LaravelModelFilter\Filters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
-use Lacodix\LaravelModelFilter\Exceptions\FilterValueException;
 
 abstract class SingleFieldFilter extends Filter
 {

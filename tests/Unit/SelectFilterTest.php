@@ -1,8 +1,6 @@
 <?php
 
-use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
-use function Pest\Faker\faker;
 use Tests\Models\Post;
 
 it('can be filtered by select', function () {

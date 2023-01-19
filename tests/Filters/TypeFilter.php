@@ -19,7 +19,7 @@ class TypeFilter extends SelectFilter
     public function rules(): array
     {
         return [
-            'type' => 'in:' . join(',',$this->options()),
+            'type' => 'in:' . implode(',', $this->options()),
         ];
     }
 }
