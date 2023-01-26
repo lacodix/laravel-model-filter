@@ -3,7 +3,6 @@
 namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Arr;
 
 class BooleanFilter extends Filter
 {

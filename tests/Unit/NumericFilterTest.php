@@ -146,4 +146,3 @@ it('is invalid with non numeric formats on single value', function () {
         'counter_greater_filter_throws' => 'asdf',
     ]);
 })->throws(ValidationException::class);
-
