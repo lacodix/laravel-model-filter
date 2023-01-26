@@ -7,7 +7,7 @@ use Lacodix\LaravelModelFilter\Filters\Filter;
 
 class {{ class }} extends Filter
 {
-    public function apply(Builder $query, array|string $values): Builder
+    public function apply(Builder $query): Builder
     {
         $value = is_array($values) ? current($values) : $values;
 

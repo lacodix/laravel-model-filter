@@ -6,6 +6,7 @@ use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Lacodix\LaravelModelFilter\Enums\ValidationMode;
 use Lacodix\LaravelModelFilter\Filters\Filter;
 
 trait HasFilters
@@ -20,11 +21,20 @@ trait HasFilters
 
         $this->filters()
             ->filter(
-                static fn (Filter $filter, string|int $key) => $values->has($filter->queryName($key))
+                static fn (Filter $filter)
+                    => $values->has($filter->queryName()) && $filter->applicable()
             )
             ->each(
-                static fn (Filter $filter, string|int $key) => $filter
-                    ->apply($query, $values->get($filter->queryName($key)))
+                static fn (Filter $filter) => $filter
+                    ->values($values->get($filter->queryName()))
+                    ->when(
+                        $filter->validationMode === ValidationMode::THROW,
+                        fn (Filter $filter) => $filter->validate()
+                    )
+                    ->when(
+                        $filter->validationMode === ValidationMode::THROW || ! $filter->fails(),
+                        fn (Filter $filter) => $filter->apply($query)
+                    )
             );
 
         return $query;
@@ -47,6 +57,6 @@ trait HasFilters
     {
         return $this
             ->filters()
-            ->map(static fn (Filter $filter, string|int $key) => $filter->queryName($key))->values()->all();
+            ->map(static fn (Filter $filter) => $filter->queryName())->values()->all();
     }
 }

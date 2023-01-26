@@ -3,25 +3,73 @@
 namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Conditionable;
+use Illuminate\Support\Traits\Macroable;
+use Illuminate\Validation\Validator;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
+use Lacodix\LaravelModelFilter\Enums\ValidationMode;
 
 abstract class Filter
 {
+    use Macroable;
+    use Conditionable;
+
     public array $messages = [];
     public array $validationAttributes = [];
 
-    protected FilterMode $mode = FilterMode::EQUAL;
+    public FilterMode $mode = FilterMode::EQUAL;
+    public ValidationMode $validationMode = ValidationMode::FILTER;
 
     protected array $options;
 
-    public function queryName(string|int $key): string
+    protected string $queryName;
+    protected array $values;
+    protected Validator $validator;
+
+    public function setQueryName(string $queryName): self
     {
-        return is_int($key) ? Str::snake(class_basename(static::class)) : $key;
+        $this->queryName = $queryName;
+
+        return $this;
     }
 
-    abstract public function apply(Builder $query, string|array $values): Builder;
+    public function mode(FilterMode $mode): self
+    {
+        $this->mode = $mode;
+
+        return $this;
+    }
+
+    public function validationMode(ValidationMode $validationMode): self
+    {
+        $this->validationMode = $validationMode;
+
+        return $this;
+    }
+
+    public function values(string|array $values): self
+    {
+        $this->values = Arr::wrap($values);
+
+        return $this;
+    }
+
+    public function queryName(): string
+    {
+        $this->queryName ??= Str::snake(class_basename(static::class));
+
+        return $this->queryName;
+    }
+
+    public function applicable(): bool
+    {
+        return true;
+    }
+
+    abstract public function apply(Builder $query): Builder;
 
     public function options(): array
     {
@@ -33,22 +81,28 @@ abstract class Filter
         return [];
     }
 
-    protected function validate($data, $rules = null, $messages = [], $attributes = []): array
+    public function fails(): bool
     {
-        [$rules, $messages, $attributes] = $this->getValidationData($rules, $messages, $attributes);
+        $this->validator ??= $this->createValidator();
 
-        $validator = Validator::make($data, $rules, $messages, $attributes);
-
-        return $validator->validate();
+        return $this->validator->fails();
     }
 
-    protected function getValidationData($rules, $messages, $attributes): array
+    public function validate(): array
     {
-        $rules = is_null($rules) ? $this->rules() : $rules;
-        $messages = empty($messages) ? $this->getMessages() : $messages;
-        $attributes = empty($attributes) ? $this->getValidationAttributes() : $attributes;
+        $this->validator ??= $this->createValidator();
 
-        return [$rules, $messages, $attributes];
+        return $this->validator->validate();
+    }
+
+    protected function createValidator(): Validator
+    {
+        return ValidatorFacade::make(
+            $this->values,
+            $this->rules(),
+            $this->getMessages(),
+            $this->getValidationAttributes()
+        );
     }
 
     protected function getMessages()

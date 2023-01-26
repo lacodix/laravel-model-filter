@@ -91,6 +91,18 @@ https://.../posts?created_at_filter=2023-01-01
 ```
 
 The name of the query parameter equals the filter class name in snake case.
+Nevertheless you can specify the query parameter name by adding the parameter $queryName to your filter classes
+
+```php
+    ...
+    protected string $queryName = 'my_query_param'
+```
+
+then you can apply your filter by calling this url:
+
+```
+https://.../posts?my_query_param=2023-01-01
+```
 
 This filter can be applied to multiple models.
 
@@ -100,6 +112,13 @@ To use the filter programmatically, you can just provide the parameters as array
 
 ```php
 Post::filter(['created_at_filter' => '2023-01-01'])->get();
+```
+
+if you changed the query parameter name of your filter, you must take this also in account when using filter 
+programmatically
+
+```php
+Post::filter(['my_query_param' => '2023-01-01'])->get();
 ```
 
 ### Multiple Filters
@@ -127,7 +146,7 @@ use Lacodix\LaravelModelFilter\Filters\DateFilter;
 
 class CreatedAtFilter extends DateFilter
 {
-    protected FilterMode $mode = FilterMode::LOWER_OR_EQUAL;
+    public FilterMode $mode = FilterMode::LOWER_OR_EQUAL;
 
     protected string $field = 'created_at';
 }
@@ -280,7 +299,7 @@ use Lacodix\LaravelModelFilter\Filters\DateFilter;
 
 class TestDateFilter extends DateFilter
 {
-    protected FilterMode $mode = FilterMode::LOWER;
+    public FilterMode $mode = FilterMode::LOWER;
 
     protected string $field = 'fieldname';
 }
@@ -356,7 +375,7 @@ use Lacodix\LaravelModelFilter\Filters\DateFilter;
 
 class TestDateFilter extends DateFilter
 {
-    protected FilterMode $mode = FilterMode::STARTS_WITH;
+    public FilterMode $mode = FilterMode::STARTS_WITH;
 
     protected string $field = 'fieldname';
 }
@@ -445,7 +464,7 @@ use Lacodix\LaravelModelFilter\Filters\NumericFilter;
 
 class TestNumericFilter extends NumericFilter
 {
-    protected FilterMode $mode = FilterMode::LOWER;
+    public FilterMode $mode = FilterMode::LOWER;
 
     protected string $field = 'fieldname';
 }
@@ -598,13 +617,26 @@ If a given value does not fit the validation, an ValidationException will be thr
 
 NumericFilters validates the input for numerical values.
 
-SelectFilter ignore invalid data. If a given value is not part of the options array, it is not applied
-to the filter, no filtering will be executed. Nevertheless you can add your own validation rules to all 
-filters by overwriting the rules() function. You can use all possibilities of Laravels Validator.
+SelectFilter validate against the available options.
+
+### Validation Mode
+
+Usually invalid values are just ignored. If invalid values are set, the filter is just not applied.
+You can switch the validation mode to a hard validation, to throw a ValidationException with invalid data.
+Just set the Validation Mode of your Filter like in the following example.
 
 ```php
-    // add this function in any SelectFilter
- 
+    ...
+    public ValidationMode $validationMode = ValidationMode::THROW;
+    ...
+```
+
+### Own Validatoin rules
+
+You can add your own validation rules to all filters by overwriting the rules() function. You can
+use all possibilities of Laravels Validator.
+
+```php
     public function rules(): array
     {
         return [
@@ -613,8 +645,7 @@ filters by overwriting the rules() function. You can use all possibilities of La
     }
 ```
 
-After adding this function to a SelectFilter, this will automatically throw a ValidationException
-if a value is given that is not part of your allowed options.
+depending on the ValidationMode of your filter, the filter will not be applied (default) or throw an exception.
 
 ### Customize Error Messages & Attributes
 
@@ -662,6 +693,55 @@ and/or
 
 ## Advanced Usage
 
+### Tweak filter behaviour
+
+Sometimes you don't need a direct match between filter values and database. For
+example if you want a SelectFilter for Verified and Unverified users, but the
+database doesn't contain a bool or string-value but kind of an email_verified_at
+date field that implicit means a user is verified if this field is not null.
+
+You can extend the available filters with own query logic. First create a SelectFilter
+as usual.
+
+```bash 
+php artisan make:filter UserVerified -t select -f email_verified_at
+```
+
+Then add option values like usual and additionally extend the filters query function 
+
+```php  
+<?php
+
+namespace App\Models\Filters;
+
+use Illuminate\Database\Eloquent\Builder;
+use Lacodix\LaravelModelFilter\Filters\SelectFilter;
+
+class UserVerifiedFilter extends SelectFilter
+{
+    protected string $field = 'email_verified_at';
+
+    public function options(): array
+    {
+        return [
+            'verified',
+            'unverified',
+        ];
+    }
+
+    protected function query(Builder $query, array $values): Builder
+    {
+        return match($values[$this->field]) {
+            'verified' => $query->whereNotNull($this->field),
+            'unverified' => $query->whereNull($this->field),
+            default => $query,
+        };
+    }
+}
+```
+
+### Use base filters without creating dedicated filter classes
+
 For the date, string and boolean-filter you don't need to create dedicated
 filter classes. Filter classes have a huge benefit if you can reuse it like the
 created_at filter in the first example, it is only created once and can be 
@@ -680,7 +760,7 @@ just overwrite the filters() method of the HasFilters trait.
 namespace App\Models;
 
 use App\Models\Filters\IndividualFilter;
-use App\Models\Filters\SelectFilter;
+use App\Models\Filters\MySelectFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Lacodix\LaravelModelFilter\Filters\BooleanFilter;
@@ -695,22 +775,25 @@ class Post extends Model
     public function filters(): Collection
     {
         return collect([
-            'created_at_lower_filter' => new DateFilter('created_at', FilterMode::LOWER),
-            'created_at_greater_filter' => new DateFilter('created_at', FilterMode::GREATER),
-            new SelectFilter(),
-            'starts_with' => new StringFilter('title', FilterMode::STARTS_WITH),
-            'ends_with' => new StringFilter('title', FilterMode::ENDS_WITH),
-            'contains' => new StringFilter('title', FilterMode::LIKE),
-            'equals' => new StringFilter('title', FilterMode::EQUAL),
-            'boolfilter' => new BooleanFilter(['published']),
+            (new DateFilter('created_at', FilterMode::LOWER))->setQueryName('created_at_lower_filter'),
+            (new DateFilter('created_at', FilterMode::GREATER))->setQueryName('created_at_greater_filter'),
+            new MySelectFilter(),
+            (new StringFilter('title', FilterMode::STARTS_WITH))->setQueryName('starts_with'),
+            (new StringFilter('title', FilterMode::ENDS_WITH))->setQueryName('ends_with'),
+            (new StringFilter('title', FilterMode::LIKE))->setQueryName('contains'),
+            (new StringFilter('title', FilterMode::EQUAL))->setQueryName('equals'),
+            (new BooleanFilter(['published']))->setQueryName('boolfilter'),
             new IndividualFilter(),
         ]);
     }
 }
 ```
 
-As you see it is possible to mix directly used filters and dedicated filter classes, because select and individual
-filters cannot be instantiated directly.
+As you see it is possible to mix directly used filters and dedicated filter classes. If you use multiple filters
+of the same type, you must specify the query name to distinguish the given values of the filters.
+
+When using one of the base filter classes, you can just call the setQueryName function on a filter instance. 
+
 To apply some of this filters, just call:
 
 ```php 

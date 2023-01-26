@@ -9,17 +9,15 @@ class BooleanFilter extends Filter
 {
     public function __construct(?array $options = null)
     {
-        $this->options = $options ?? $this->options;
+        $this->options = $options ?? $this->options ?? [];
     }
 
-    public function apply(Builder $query, array|string $values): Builder
+    public function apply(Builder $query): Builder
     {
-        $values = Arr::wrap($values);
-
         foreach ($this->options() as $key) {
             $query->when(
-                ! is_null($values[$key] ?? null),
-                fn ($query) => $query->where($key, $this->getValueForFilter($values[$key]))
+                ! is_null($this->values[$key] ?? null),
+                fn ($query) => $query->where($key, $this->getValueForFilter($this->values[$key]))
             );
         }
 
