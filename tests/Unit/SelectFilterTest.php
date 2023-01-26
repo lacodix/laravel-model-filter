@@ -3,7 +3,7 @@
 use Illuminate\Validation\ValidationException;
 use Tests\Models\Post;
 
-it('can be filtered by select', function () {
+beforeEach(function () {
     Post::factory()
         ->state([
             'type' => 'page',
@@ -17,13 +17,21 @@ it('can be filtered by select', function () {
         ])
         ->count(10)
         ->create();
+});
 
+it('can be filtered by select', function () {
     expect(Post::filter(['type_filter' => 'page'])->count())->toEqual(15)
         ->and(Post::filter(['type_filter' => 'post'])->count())->toEqual(10);
 });
 
+it('is doesn\'t apply if single value is invalid', function () {
+    expect(Post::filter([
+        'type_filter' => 'asdf',
+    ])->count())->toEqual(25);
+});
+
 it('is invalid with not allowed value', function () {
     Post::filter([
-        'type_filter' => 'asdf',
+        'type_filter_throws' => 'asdf',
     ]);
-})->throws(ValidationException::class);
+})->throws(ValidationException::class)->only();

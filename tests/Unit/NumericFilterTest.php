@@ -117,9 +117,24 @@ it('can be filtered by number exact', function () {
     ])->count())->toEqual(1);
 });
 
+it('is doesn\'t apply if values are invalid', function () {
+    expect(Post::filter([
+        'counter_between' => [
+            1000,
+            'asdf',
+        ],
+    ])->count())->toEqual(39);
+});
+
+it('is doesn\'t apply if single value is invalid', function () {
+    expect(Post::filter([
+        'counter_greater_filter' => 'asdf',
+    ])->count())->toEqual(39);
+});
+
 it('is invalid with non numeric formats on multi value', function () {
     Post::filter([
-        'counter_between' => [
+        'counter_between_throws' => [
             1000,
             'asdf',
         ],
@@ -128,6 +143,6 @@ it('is invalid with non numeric formats on multi value', function () {
 
 it('is invalid with non numeric formats on single value', function () {
     Post::filter([
-        'counter_greater_filter' => 'asdf',
+        'counter_greater_filter_throws' => 'asdf',
     ]);
 })->throws(ValidationException::class);

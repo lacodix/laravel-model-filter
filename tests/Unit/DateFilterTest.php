@@ -118,9 +118,24 @@ it('can be filtered by date exact', function () {
     ])->count())->toEqual(1);
 });
 
+it('is doesn\'t apply if values are invalid', function () {
+    expect(Post::filter([
+        'created_at_between' => [
+            Carbon::now()->subWeek()->format('Y-m-d'),
+            'asdf',
+        ],
+    ])->count())->toEqual(39);
+});
+
+it('is doesn\'t apply if single value is invalid', function () {
+    expect(Post::filter([
+        'created_at_greater_filter' => 'asdf',
+    ])->count())->toEqual(39);
+});
+
 it('is invalid with non date formats on multi value', function () {
     Post::filter([
-        'created_at_between' => [
+        'created_at_between_throws' => [
             Carbon::now()->subWeek()->format('Y-m-d'),
             'asdf',
         ],
@@ -129,6 +144,6 @@ it('is invalid with non date formats on multi value', function () {
 
 it('is invalid with non date formats on single value', function () {
     Post::filter([
-        'created_at_greater_filter' => 'asdf',
+        'created_at_greater_filter_throws' => 'asdf',
     ]);
 })->throws(ValidationException::class);
