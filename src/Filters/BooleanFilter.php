@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class BooleanFilter extends Filter
 {
+    protected string $component = 'boolean';
+
     public function __construct(?array $options = null)
     {
         $this->options = $options ?? $this->options ?? [];

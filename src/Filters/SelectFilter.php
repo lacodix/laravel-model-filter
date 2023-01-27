@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class SelectFilter extends SingleFieldFilter
 {
+    protected string $component = 'select';
+
     protected function query(Builder $query): Builder
     {
         return $query

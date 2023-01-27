@@ -34,4 +34,4 @@ it('is invalid with not allowed value', function () {
     Post::filter([
         'type_filter_throws' => 'asdf',
     ]);
-})->throws(ValidationException::class)->only();
+})->throws(ValidationException::class);

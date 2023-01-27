@@ -22,7 +22,7 @@ You can publish the config file with:
 php artisan vendor:publish --tag="laravel-model-filter-config"
 ```
 
-This is the contents of the published config file:
+This is the content of the published config file:
 
 ```php
 return [
@@ -30,6 +30,12 @@ return [
     'search_query_value_name' => 'search',
     'search_query_fields_name' => 'search_for',
 ];
+```
+
+You can publish the view components with:
+
+```bash
+php artisan vendor:publish --tag="laravel-model-filter-views"
 ```
 
 ## Usage Example Of Filters
@@ -410,9 +416,11 @@ class TestSelectFilter extends SelectFilter
     public function options(): array
     {
         // add the allowed values here
-        'value1',
-        'value2',
-        ...
+        return [
+            'value1',
+            'value2',
+            ...
+        ];
     }
 }
 ```
@@ -691,6 +699,124 @@ and/or
     }
 ```
 
+## Visualization / Views
+
+For convenience this packet ships with a set of views for each filter-type. The available types
+are boolean, date, numeric, select and text. Each view creates a simple input with headline,
+that name fits to the queryName property of the filter.
+
+### All filters of a model
+
+You can also use a model filters component that includes all filter views for a dedicated model.
+
+```html
+    <x-lacodix-filter::model-filters model="App\Models\Post" />
+```
+
+you can set the model via a class name string, or via an instance of the model.
+
+```html
+    <x-lacodix-filter::model-filters :model="$post" />
+```
+
+This will result in the following HTML code given the following example classes
+
+```html 
+<form method="get">
+    <div class="filter-container select">
+        <div class="filter-title">
+            Post Type Filter
+        </div>
+
+        <div class="filter-content">
+            <select class="filter-input" name="post_type_filter" onchange="this.form.submit()">
+                <option value="">&mdash;</option>
+                <option value="page">page</option>
+                <option value="post">post</option>
+            </select>
+        </div>
+    </div>
+</form>
+```
+
+```php
+File: App\Models\Filters\PostTypeFilter  
+<?php
+
+namespace App\Models\Filters;
+
+use Lacodix\LaravelModelFilter\Filters\SelectFilter;
+
+class PostTypeFilter extends SelectFilter
+{
+    protected string $field = 'type';
+
+    public function options(): array
+    {
+        return [
+            'page',
+            'post',
+        ];
+    }
+}
+
+
+
+File: App\Models\Post  
+<?php
+
+namespace App\Models;
+
+use App\Models\Filters\PostTypeFilter;
+use Illuminate\Database\Eloquent\Model;
+use Lacodix\LaravelModelFilter\Traits\HasFilters;
+
+class Post extends Model
+{
+    use HasFilters;
+
+    protected array $filters = [
+        PostTypeFilter::class,
+    ];
+}
+
+```
+
+### Filter styles
+
+You can style all filters with the following classes:
+
+.filter-container is the surrounding div of any filter types. Cou can specify the filter type
+with the corresponding classes like boolean, select, text, numeric, date, boolean:
+e.g.: .filter-container.select
+
+more available classes are filter-title, filter-content and filter-input.
+
+### Individual view settings
+
+You can change the component used by a filter, by overwriting a filters $component property.
+If you for example create an individual filter you can decide if it will use one of the 
+given components, or you can also select an individual component with one of the following 
+options:
+
+```php 
+    ...
+    protected string $component = 'select';
+```
+
+This will search for a select-component in the packages components filters views folder:
+resources\views\vendor\laravel-model-filters\components\filters\select.blade.php
+
+```php 
+    ...
+    public function getComponent(): string
+    {
+        return 'my-component';
+    }
+```
+
+This will use the individual component <x-my-component> for the filters view.
+
 ## Advanced Usage
 
 ### Tweak filter behaviour
@@ -775,14 +901,14 @@ class Post extends Model
     public function filters(): Collection
     {
         return collect([
-            (new DateFilter('created_at', FilterMode::LOWER))->setQueryName('created_at_lower_filter'),
-            (new DateFilter('created_at', FilterMode::GREATER))->setQueryName('created_at_greater_filter'),
+            (new DateFilter('created_at', FilterMode::LOWER))->queryName('created_at_lower_filter'),
+            (new DateFilter('created_at', FilterMode::GREATER))->queryName('created_at_greater_filter'),
             new MySelectFilter(),
-            (new StringFilter('title', FilterMode::STARTS_WITH))->setQueryName('starts_with'),
-            (new StringFilter('title', FilterMode::ENDS_WITH))->setQueryName('ends_with'),
-            (new StringFilter('title', FilterMode::LIKE))->setQueryName('contains'),
-            (new StringFilter('title', FilterMode::EQUAL))->setQueryName('equals'),
-            (new BooleanFilter(['published']))->setQueryName('boolfilter'),
+            (new StringFilter('title', FilterMode::STARTS_WITH))->queryName('starts_with'),
+            (new StringFilter('title', FilterMode::ENDS_WITH))->queryName('ends_with'),
+            (new StringFilter('title', FilterMode::LIKE))->queryName('contains'),
+            (new StringFilter('title', FilterMode::EQUAL))->queryName('equals'),
+            (new BooleanFilter(['published']))->queryName('boolfilter'),
             new IndividualFilter(),
         ]);
     }
@@ -792,7 +918,7 @@ class Post extends Model
 As you see it is possible to mix directly used filters and dedicated filter classes. If you use multiple filters
 of the same type, you must specify the query name to distinguish the given values of the filters.
 
-When using one of the base filter classes, you can just call the setQueryName function on a filter instance. 
+When using one of the base filter classes, you can just call the queryName function on a filter instance. 
 
 To apply some of this filters, just call:
 

@@ -8,6 +8,8 @@ use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
 class NumericFilter extends SingleFieldFilter
 {
+    protected string $component = 'numeric';
+
     public function values(string|array $values): self
     {
         parent::values($values);

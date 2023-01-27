@@ -5,6 +5,7 @@ namespace Tests;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Testing\Concerns\InteractsWithViews;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Str;
 use Lacodix\LaravelModelFilter\LaravelModelFilterServiceProvider;
@@ -12,6 +13,7 @@ use Lacodix\LaravelModelFilter\LaravelModelFilterServiceProvider;
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
     use LazilyRefreshDatabase;
+    use InteractsWithViews;
 
     protected function setUp(): void
     {
