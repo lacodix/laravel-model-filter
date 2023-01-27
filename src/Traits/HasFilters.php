@@ -22,11 +22,11 @@ trait HasFilters
         $this->filters()
             ->filter(
                 static fn (Filter $filter)
-                    => $values->has($filter->queryName()) && $filter->applicable()
+                    => $values->has($filter->getQueryName()) && $filter->applicable()
             )
             ->each(
                 static fn (Filter $filter) => $filter
-                    ->values($values->get($filter->queryName()))
+                    ->values($values->get($filter->getQueryName()))
                     ->when(
                         $filter->validationMode === ValidationMode::THROW,
                         fn (Filter $filter) => $filter->validate()
@@ -57,6 +57,6 @@ trait HasFilters
     {
         return $this
             ->filters()
-            ->map(static fn (Filter $filter) => $filter->queryName())->values()->all();
+            ->map(static fn (Filter $filter) => $filter->getQueryName())->values()->all();
     }
 }

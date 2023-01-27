@@ -9,6 +9,8 @@ use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
 class DateFilter extends SingleFieldFilter
 {
+    protected string $component = 'date';
+
     public function values(string|array $values): self
     {
         parent::values($values);

@@ -29,7 +29,10 @@ abstract class Filter
     protected array $values;
     protected Validator $validator;
 
-    public function setQueryName(string $queryName): self
+    protected string $component = 'text';
+    protected string $title;
+
+    public function queryName(string $queryName): self
     {
         $this->queryName = $queryName;
 
@@ -57,11 +60,18 @@ abstract class Filter
         return $this;
     }
 
-    public function queryName(): string
+    public function getQueryName(): string
     {
         $this->queryName ??= Str::snake(class_basename(static::class));
 
         return $this->queryName;
+    }
+
+    public function title(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
     }
 
     public function applicable(): bool
@@ -93,6 +103,18 @@ abstract class Filter
         $this->validator ??= $this->createValidator();
 
         return $this->validator->validate();
+    }
+
+    public function getComponent(): string
+    {
+        return 'lacodix-filter::filters.' . $this->component;
+    }
+
+    public function getTitle(): string
+    {
+        $this->title ??= ucwords(str_replace('_', ' ', Str::snake(class_basename($this))));
+
+        return $this->title;
     }
 
     protected function createValidator(): Validator
