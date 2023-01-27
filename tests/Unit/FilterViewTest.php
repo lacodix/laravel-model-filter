@@ -1,8 +1,6 @@
 <?php
 
-use Illuminate\Validation\ValidationException;
 use Tests\Models\Post;
-use Tests\Models\Poster;
 
 beforeEach(function () {
     Post::factory()
