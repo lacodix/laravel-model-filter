@@ -27,22 +27,27 @@ trait IsSearchable
         );
     }
 
-    protected function applySearchQuery(Builder $query, string $search, ?array $searchable = null)
-    {
-        return $query->where(
-            fn (Builder $searchQuery) => $this->searchable($searchable)
-                ->each(fn (SearchMode $mode, string $field) => $mode->applyQuery($searchQuery, $field, $search))
-        );
-    }
-
-    protected function searchable(?array $searchable = null): Collection
+    public function searchable(?array $searchable = null): Collection
     {
         $searchable ??= $this->searchable ?? [];
 
         return collect(
             Arr::isAssoc($searchable) ? $searchable : array_fill_keys($searchable, SearchMode::LIKE)
         )
-            ->only($this->searchable ?? [])
+            ->only($this->searchableFieldNames() ?? [])
             ->map(fn ($mode) => is_string($mode) ? SearchMode::fromString($mode) : $mode);
+    }
+
+    public function searchableFieldNames(): array
+    {
+        return Arr::isAssoc($this->searchable) ? array_keys($this->searchable) : $this->searchable;
+    }
+
+    protected function applySearchQuery(Builder $query, string $search, ?array $searchable = null)
+    {
+        return $query->where(
+            fn (Builder $searchQuery) => $this->searchable($searchable)
+                ->each(fn (SearchMode $mode, string $field) => $mode->applyQuery($searchQuery, $field, $search))
+        );
     }
 }

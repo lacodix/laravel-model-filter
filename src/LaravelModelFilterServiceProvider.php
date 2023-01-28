@@ -19,6 +19,7 @@ class LaravelModelFilterServiceProvider extends PackageServiceProvider
             ->name('laravel-model-filter')
             ->hasConfigFile()
             ->hasViews('lacodix-filter')
+            ->hasTranslations()
             ->hasCommand(MakeFilterCommand::class);
     }
 }

@@ -35,8 +35,17 @@ return [
 You can publish the view components with:
 
 ```bash
-php artisan vendor:publish --tag="laravel-model-filter-views"
+php artisan vendor:publish --tag="lacodix-filter-views"
 ```
+
+You can publish the translation files with:
+
+```bash
+php artisan vendor:publish --tag="lacodix-filter-translations"
+```
+
+Translations are only needed, if you use one of the predefined ready to use filters like the
+TrashedFilter.
 
 ## Usage Example Of Filters
 
@@ -617,6 +626,34 @@ Both examples will result in a string-values parameter on the apply function.
 
 To get an array with multiple values follow the boolean-filter example.
 
+## Predefined Filters
+
+### TrashedFilter
+
+Sometimes you have models that uses laravels SoftDeletes trait. In this cases the default
+behaviour is showing only the models that aren't deleted, but sometimes you want to show all
+models including deleted or even only deleted models.
+
+For this cases you can add the TrashedFilter to your model. The TrashedFilter is based on 
+the SelectFilter and offers two options "with trashed" and "only trashed".
+
+To apply this filter use 
+
+```
+https://.../posts?trashed_filter=with_trashed
+```
+
+or
+
+```php
+Post::filter(['trashed_filter' => 'only_trashed'])->get()
+```
+
+The latter might be useless, since you could easily use ->onlyTrashed() directly. The benefit
+comes with the out of the box and ready to use select box view.
+
+If you want configure the select options just publish and change the translations of the package.
+
 ## Filter Validation
 
 Some filters include validation. DateFilters for example will validate the inserted values for
@@ -805,7 +842,7 @@ options:
 ```
 
 This will search for a select-component in the packages components filters views folder:
-resources\views\vendor\laravel-model-filters\components\filters\select.blade.php
+resources\views\vendor\lacodix-filter\components\filters\select.blade.php
 
 ```php 
     ...
