@@ -32,7 +32,7 @@ trait HasFilters
                         fn (Filter $filter) => $filter->validate()
                     )
                     ->when(
-                        $filter->validationMode === ValidationMode::THROW || ! $filter->fails(),
+                        ! $filter->fails(),
                         fn (Filter $filter) => $filter->apply($query)
                     )
             );
