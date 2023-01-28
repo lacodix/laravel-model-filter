@@ -9,8 +9,8 @@ class TrashedFilter extends SelectFilter
     public function apply(Builder $query): Builder
     {
         return match (current($this->values)) {
-            'with_trashed' => $query->withTrashed(),
-            'only_trashed' => $query->onlyTrashed(),
+            'with_trashed' => $query->withTrashed(), // @phpstan-ignore-line
+            'only_trashed' => $query->onlyTrashed(), // @phpstan-ignore-line
             default => $query,
         };
     }
