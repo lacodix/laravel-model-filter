@@ -26,28 +26,28 @@ class DateFilter extends SingleFieldFilter
     {
         return match ($this->mode) {
             FilterMode::LOWER => $query->whereDate($this->field, '<', $this->values[$this->field]),
-            FilterMode::LOWER_OR_EQUAL => $query->whereDate($this->field, '<=', $this->values[$this->field]),
+            FilterMode::LOWER_OR_EQUAL => $query->where($this->field, '<=', $this->values[$this->field] . ' 23:59:59'),
             FilterMode::GREATER => $query->whereDate($this->field, '>', $this->values[$this->field]),
-            FilterMode::GREATER_OR_EQUAL => $query->whereDate($this->field, '>=', $this->values[$this->field]),
+            FilterMode::GREATER_OR_EQUAL => $query->where($this->field, '>=', $this->values[$this->field] . ' 00:00:00'),
             FilterMode::BETWEEN => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
-                    ->whereDate($this->field, '>=', $this->values[$this->field][0])
-                    ->whereDate($this->field, '<=', $this->values[$this->field][1])
+                    ->where($this->field, '>=', $this->values[$this->field][0] . ' 00:00:00')
+                    ->where($this->field, '<=', $this->values[$this->field][1] . ' 23:59:59')
             ),
             FilterMode::BETWEEN_EXCLUSIVE => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
-                    ->whereDate($this->field, '>', $this->values[$this->field][0])
-                    ->whereDate($this->field, '<', $this->values[$this->field][1])
+                    ->where($this->field, '>', $this->values[$this->field][0] . ' 23:59:59')
+                    ->where($this->field, '<', $this->values[$this->field][1] . ' 00:00:00')
             ),
             FilterMode::NOT_BETWEEN => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
-                    ->orWhereDate($this->field, '<', $this->values[$this->field][0])
-                    ->orWhereDate($this->field, '>', $this->values[$this->field][1])
+                    ->orWhere($this->field, '<', $this->values[$this->field][0] . ' 00:00:00')
+                    ->orWhere($this->field, '>', $this->values[$this->field][1] . ' 23:59:59')
             ),
             FilterMode::NOT_BETWEEN_INCLUSIVE => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
-                    ->orWhereDate($this->field, '<=', $this->values[$this->field][0])
-                    ->orWhereDate($this->field, '>=', $this->values[$this->field][1])
+                    ->orWhere($this->field, '<=', $this->values[$this->field][0] . ' 23:59:59')
+                    ->orWhere($this->field, '>=', $this->values[$this->field][1] . ' 00:00:00')
             ),
             default => $query->whereDate($this->field, $this->values[$this->field]),
         };
