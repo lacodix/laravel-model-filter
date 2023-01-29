@@ -8,7 +8,7 @@
 >
     <select class="filter-input" name="{{ $name }}" onchange="this.form.submit()">
         <option value="">&mdash;</option>
-        @foreach ($filter->options() as $option)
+        @foreach ($filter->options() as $key => $option)
             <option value="{{ $option }}"{{ request()->get($name, '') === $option ? ' selected' : '' }}>
                 {{ is_numeric($key) ? $option : $key }}
             </option>
