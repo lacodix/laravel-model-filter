@@ -1,5 +1,6 @@
 @props([
     'model',
+    'group' => '__default'
 ])
 
 @php
@@ -9,7 +10,7 @@
 @endphp
 
 <form method="get">
-    @foreach ($model->filters() as $filter)
+    @foreach ($model->filters($group) as $filter)
         <x-dynamic-component
             :component="$filter->getComponent()"
             :filter="$filter"
