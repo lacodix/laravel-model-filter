@@ -1,0 +1,12 @@
+<?php
+
+namespace {{ namespace }};
+
+use Lacodix\LaravelModelFilter\Filters\EnumFilter;
+
+class {{ class }} extends EnumFilter
+{
+    protected string $field = '{{ field }}';
+
+    protected string $enum = ''; // add enum::class here
+}

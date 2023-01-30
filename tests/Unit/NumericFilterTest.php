@@ -132,6 +132,18 @@ it('is doesn\'t apply if single value is invalid', function () {
     ])->count())->toEqual(39);
 });
 
+it('is doesn\'t apply if value is out of min/max', function () {
+    Post::factory()
+        ->count(2)
+        ->create([
+            'counter' => faker()->numberBetween(22000, 30000)
+        ]);
+
+    expect(Post::filter([
+        'counter_filter' => '21000',
+    ])->count())->toEqual(41);
+});
+
 it('is invalid with non numeric formats on multi value', function () {
     Post::filter([
         'counter_between_throws' => [

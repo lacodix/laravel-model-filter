@@ -13,6 +13,7 @@ use Lacodix\LaravelModelFilter\Filters\NumericFilter;
 use Lacodix\LaravelModelFilter\Filters\StringFilter;
 use Lacodix\LaravelModelFilter\Traits\HasFilters;
 use Lacodix\LaravelModelFilter\Traits\IsSearchable;
+use Tests\Filters\CounterFilter;
 use Tests\Filters\IndividualFilter;
 use Tests\Filters\TypeFilter;
 
@@ -156,6 +157,8 @@ class Post extends Model
                 ->queryName('counter_between_throws')
                 ->mode(FilterMode::BETWEEN)
                 ->validationMode(ValidationMode::THROW),
+
+            new CounterFilter(),
         ]);
     }
 }
