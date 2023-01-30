@@ -1009,6 +1009,15 @@ only in several cases just create a default group like this:
     ];
 ```
 
+### Visualisation for Filter Groups
+
+If you use different groups for Backend and Frontend you can still use the filter overview
+component and add a group to it.
+
+```html
+    <x-lacodix-filter::model-filters model="App\Models\Post" group="backend" />
+```
+
 ## Advanced Usage
 
 ### Tweak filter behaviour
