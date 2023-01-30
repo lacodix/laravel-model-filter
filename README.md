@@ -442,6 +442,79 @@ removed if not contained in this array.
 
 Select filters only have the EQUAL mode.
 
+### Enum Filter
+
+The EnumFilter is a special variation of the SelectFilter that automatically offers all
+cases out of an PHP Enum.
+
+Create the filter
+```bash
+php artisan make:filter TestEnumFilter -t enum -f fieldname
+```
+
+this creates a filter class the extends EnumFilter, and you have to add the Enum Name to the
+$enum property like in this example.
+
+```php
+<?php
+
+namespace App\Models\Filters;
+
+use App\Models\Enums\ActiveState;
+use Lacodix\LaravelModelFilter\Filters\SelectFilter;
+
+class TestSelectFilter extends SelectFilter
+{
+    protected string $field = 'state';
+
+    protected string $enum = 'ActiveState::class';
+}
+```
+
+The Enum could for example have values like this
+```
+<?php
+
+namespace App\Models\Enums;
+
+enum ActiveState: string
+{
+    case ACTIVE = 'active';
+    case INACTIVE = 'inactive';
+}
+```
+
+A fieldname must be set, this will apply a where query to the model-query
+where fieldname equals the given value. The possible values are automatically extracted
+out of the enum - in this case it will be 'active' and 'inactive'. The database field
+state should contain one of this both values.
+
+For Visualisation of the select values you can set a translation string prefix. If you
+have translations for the both strings (active, inactive) in a translation file named
+users.php and prefixed with 'status_', this means your translation strings have the 
+keys users.status_active and users.status_inactive. To automatically add the translated
+strings to your select filter views, just add the $translationPrefix property to your
+filter.
+
+```php
+<?php
+
+namespace App\Models\Filters;
+
+use App\Models\Enums\ActiveState;
+use Lacodix\LaravelModelFilter\Filters\SelectFilter;
+
+class TestSelectFilter extends SelectFilter
+{
+    protected string $field = 'state';
+
+    protected string $enum = 'ActiveState::class';
+    protected string $translationPrefix = 'users.status_';
+}
+```
+
+Enum filters only have the EQUAL mode like SelectFilters.
+
 ### Numeric Filter
 
 Create the filter
@@ -660,7 +733,24 @@ Some filters include validation. DateFilters for example will validate the inser
 the given format 'Y-m-d'. The used format can be overwritten with the config value 'date_format'.
 If a given value does not fit the validation, an ValidationException will be thrown.
 
-NumericFilters validates the input for numerical values.
+NumericFilters validates the input for numerical values. You can also add minimum and maximum check
+for the numeric filters by setting the properties $min and/or $max on the NumericFilter.
+
+```php
+<?php
+
+namespace App\Models\Filters;
+
+use Lacodix\LaravelModelFilter\Filters\NumericFilter;
+
+class TestNumericFilter extends NumericFilter
+{
+    protected string $field = 'fieldname';
+
+    protected int $min = 100;
+    protected int $max = 1000;
+}
+```
 
 SelectFilter validate against the available options.
 
@@ -854,6 +944,71 @@ resources\views\vendor\lacodix-filter\components\filters\select.blade.php
 
 This will use the individual component <x-my-component> for the filters view.
 
+## Filter Groups
+
+Sometimes it is necessary to group your filters. Think about situations where you want to
+use different filters for frontend and backend. Maybe there are hidden fields on your models,
+that are only visible to admins/users, but not visible for guests.
+
+Your users shall be able to filter only a part of your filters or even more usefull you want
+to use different views for your filters in front and backend. In the backend you could have kind
+of a resource-table while in the frontend u use styled cards to visualize your models.
+
+You can use different filter groups by adding a multidimensional array to the filters property
+
+```php
+<?php
+
+namespace App\Models;
+
+use App\Models\Filters\PublishedFilter;
+use App\Models\Filters\CreatedAtFilter;
+use App\Models\Filters\HotFilter;
+use Illuminate\Database\Eloquent\Model;
+use Lacodix\LaravelModelFilter\Traits\HasFilters;
+
+class Post extends Model
+{
+    use HasFilters;
+
+    protected array $filters = [
+        'frontend' => [
+            HotFilter::class,
+        ],
+        'backend' => [
+            CreatedAtFilter::class,
+            PublishedFilter::class,
+        ],
+    ];
+}
+```
+
+To make use of the different filter groups just add a group parameter to the scope
+
+```php
+Post::filterByQueryString('frontend')->get()
+```
+or
+```php 
+Post::filter(['hot_filter' => 'hot'], 'frontend')->get();
+Post::filter(['created_at_filter' => '2023-01-01'], 'backend')->get();
+```
+
+If you don't add a group, the groupname will be '__default'. So if you want to use groups
+only in several cases just create a default group like this:
+
+```php
+    protected array $filters = [
+        'frontend' => [
+            HotFilter::class,
+        ],
+        '__default' => [
+            CreatedAtFilter::class,
+            PublishedFilter::class,
+        ],
+    ];
+```
+
 ## Advanced Usage
 
 ### Tweak filter behaviour
@@ -979,6 +1134,17 @@ https://.../posts?created_at_lower_filter=2023-01-01&starts_with=test&boolfilter
 
 ```bash
 composer test
+```
+
+## Contributing
+
+Please run the following commands and solve potential problems before committing
+and think about adding tests for new functionality.
+
+```bash 
+composer csfixer:test
+composer rector:test
+composer phpstan:test
 ```
 
 ## Changelog

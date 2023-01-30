@@ -29,6 +29,7 @@ class MakeFilterCommand extends GeneratorCommand
             'boolean' => 'boolean_filter',
             'string' => 'string_filter',
             'select' => 'select_filter',
+            'enum' => 'enum_filter',
             'date' => 'date_filter',
             'numeric' => 'numeric_filter',
             default => 'filter',

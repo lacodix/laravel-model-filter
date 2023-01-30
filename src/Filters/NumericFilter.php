@@ -10,6 +10,9 @@ class NumericFilter extends SingleFieldFilter
 {
     protected string $component = 'numeric';
 
+    protected int $min;
+    protected int $max;
+
     public function values(string|array $values): self
     {
         parent::values($values);
@@ -57,11 +60,21 @@ class NumericFilter extends SingleFieldFilter
         return match ($this->mode->needsMultipleValues()) {
             true => [
                 $this->field => 'required|array|size:2',
-                $this->field . '.*' => 'numeric',
+                $this->field . '.*' => 'numeric' . $this->getMinRule() . $this->getMaxRule(),
             ],
             false => [
-                $this->field => 'required|numeric',
+                $this->field => 'required|numeric' . $this->getMinRule() . $this->getMaxRule(),
             ],
         };
+    }
+
+    protected function getMinRule(): string
+    {
+        return isset($this->min) ? '|min:' . $this->min : '';
+    }
+
+    protected function getMaxRule(): string
+    {
+        return isset($this->max) ? '|max:' . $this->max : '';
     }
 }
