@@ -53,7 +53,7 @@ abstract class Filter
         return $this;
     }
 
-    public function values(string|array $values): self
+    public function populate(string|array $values): self
     {
         $this->values = Arr::wrap($values);
 

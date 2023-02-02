@@ -11,9 +11,9 @@ class DateFilter extends SingleFieldFilter
 {
     protected string $component = 'date';
 
-    public function values(string|array $values): self
+    public function populate(string|array $values): self
     {
-        parent::values($values);
+        parent::populate($values);
 
         $this->values = Arr::map($this->values, fn ($value) => is_array($value)
             ? array_values(Arr::sort($value))

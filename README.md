@@ -672,18 +672,31 @@ use Lacodix\LaravelModelFilter\Filters\Filter;
 
 class TestIndividualFilter extends Filter
 {
-    public function apply(Builder $query, array|string $values): Builder
+    public function apply(Builder $query): Builder
     {
         $value = is_array($values) ? current($values) : $values;
 
-        return $query->where('field', $values);
+        return $query->where('field', $value);
+    }
+    
+    public function populate(string|array $values): self
+    {
+        $this->values = Arr::wrap($values);
+
+        return $this;
     }
 }
 ```
 
-You have just to implement the apply function that can be created absolutely free. 
-All given values will be added to the values parameter. To get a single value it can 
-be used like in select, string and date-filter
+You have just to implement the apply function that can be created absolutely free.
+The filter values are injected inside the filter scopes by calling the populate method of the filter.
+The populate method is responsible for getting the data to filter for. How the filter cares about its 
+filter data is totally up to you. The above example shows a way of handling array and string input with 
+one relevant value for the filter.
+You can find different populate options in NumericFilter, DateFilter (this both filters care about
+ordering of the both input values when populating it) and in the SingleFieldFilter, that takes care
+of saving it with the fieldname.<br />
+But in the end, it is up to you what happens in populate and apply.
 
 ```
 https://.../posts?test_individual_filter=myvalue
@@ -838,6 +851,10 @@ You can also use a model filters component that includes all filter views for a 
 
 ```html
     <x-lacodix-filter::model-filters model="App\Models\Post" />
+```
+or even better
+```html
+    <x-lacodix-filter::model-filters :model="Post::class" />
 ```
 
 you can set the model via a class name string, or via an instance of the model.
@@ -1015,7 +1032,7 @@ If you use different groups for Backend and Frontend you can still use the filte
 component and add a group to it.
 
 ```html
-    <x-lacodix-filter::model-filters model="App\Models\Post" group="backend" />
+    <x-lacodix-filter::model-filters :model="Post::class" group="backend" />
 ```
 
 ## Advanced Usage
