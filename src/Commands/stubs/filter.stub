@@ -13,4 +13,11 @@ class {{ class }} extends Filter
 
         return $query->where('field', $value);
     }
+
+    public function populate(string|array $values): self
+    {
+        $this->values = Arr::wrap($values);
+
+        return $this;
+    }
 }

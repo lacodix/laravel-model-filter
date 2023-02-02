@@ -13,9 +13,9 @@ class NumericFilter extends SingleFieldFilter
     protected int $min;
     protected int $max;
 
-    public function values(string|array $values): self
+    public function populate(string|array $values): self
     {
-        parent::values($values);
+        parent::populate($values);
 
         $this->values = Arr::map($this->values, fn ($value) => is_array($value)
             ? array_values(Arr::sort($value))
@@ -66,6 +66,16 @@ class NumericFilter extends SingleFieldFilter
                 $this->field => 'required|numeric' . $this->getMinRule() . $this->getMaxRule(),
             ],
         };
+    }
+
+    public function getMin(): ?int
+    {
+        return $this->min ?? null;
+    }
+
+    public function getMax(): ?int
+    {
+        return $this->max ?? null;
     }
 
     protected function getMinRule(): string
