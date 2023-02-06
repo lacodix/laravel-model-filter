@@ -4,12 +4,11 @@
     "keywords": [
         "lacodix",
         "laravel",
-        "laravel-filter",
-        "laravel-search",
-        "laravel-model-filter",
-        "laravel-eloquent-search",
-        "laravel-model-filter",
-        "laravel-eloquent-search"
+        "filter",
+        "filters",
+        "search",
+        "model",
+        "eloquent"
     ],
     "homepage": "https://github.com/lacodix/laravel-model-filter",
     "license": "MIT",
