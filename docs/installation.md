@@ -1,0 +1,42 @@
+---
+title: Installation
+weight: 3
+---
+
+You can install the package via composer:
+
+```bash
+composer require lacodix/laravel-model-filter
+```
+
+The package brings a config file and views with translations, that can be published.
+
+```bash
+php artisan vendor:publish --tag="laravel-model-filter-config"
+```
+
+This is the content of the published config file:
+
+```php
+return [
+    'date_format' => 'Y-m-d',
+    'search_query_value_name' => 'search',
+    'search_query_fields_name' => 'search_for',
+];
+```
+
+You can publish the view components with:
+
+```bash
+php artisan vendor:publish --tag="lacodix-filter-views"
+```
+
+You can publish the translation files with:
+
+```bash
+php artisan vendor:publish --tag="lacodix-filter-translations"
+```
+
+Translations are only needed, if you use one of the predefined ready to use filters like the
+TrashedFilter.
+
