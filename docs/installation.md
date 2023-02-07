@@ -9,6 +9,8 @@ You can install the package via composer:
 composer require lacodix/laravel-model-filter
 ```
 
+### Config file
+
 The package brings a config file and views with translations, that can be published.
 
 ```bash
@@ -25,11 +27,15 @@ return [
 ];
 ```
 
+### Views for filter components
+
 You can publish the view components with:
 
 ```bash
 php artisan vendor:publish --tag="lacodix-filter-views"
 ```
+
+### Translation files for predefined filters
 
 You can publish the translation files with:
 
