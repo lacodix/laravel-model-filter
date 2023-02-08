@@ -1,6 +1,6 @@
 ---
-title: v0.8
-slogan: Filter and search eloquent models
+title: v0
+slogan: A Laravel package for filtering and searching models from database with ease.
 githubUrl: https://github.com/lacodix/laravel-model-filter
 branch: master
 ---

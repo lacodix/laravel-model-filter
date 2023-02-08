@@ -53,6 +53,13 @@ abstract class Filter
         return $this;
     }
 
+    public function title(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
     public function populate(string|array $values): self
     {
         $this->values = Arr::wrap($values);
@@ -65,13 +72,6 @@ abstract class Filter
         $this->queryName ??= Str::snake(class_basename(static::class));
 
         return $this->queryName;
-    }
-
-    public function title(string $title): self
-    {
-        $this->title = $title;
-
-        return $this;
     }
 
     public function applicable(): bool

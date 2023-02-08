@@ -1,0 +1,108 @@
+---
+title: Filter Parameters
+weight: 3
+---
+
+When adding filters to models you usually use the $filters property
+
+```php
+    protected array $filters = [
+        CreatedAfterFilter::class,
+    ];
+```
+
+With this solution you are not able to set properties of the filter. But sometimes you need multiple almost
+identical filters, or you just want to use different headlines for the same filter when using it in different
+models. It would be kind of waste to create multiple filter classes for that.
+
+As an alternative you can just override the filters() method of the HasFilters trait.
+
+```php
+<?php
+
+namespace App\Models;
+
+use App\Models\Filters\CreatedAfterFilter;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Lacodix\LaravelModelFilter\Traits\HasFilters;
+
+class Post extends Model
+{
+    use HasFilters;
+
+    public function filters(): Collection
+    {
+        return collect([
+            new CreatedAfterFilter()
+        });
+    }
+}
+```
+
+The filters method returns a collection of filter instances. With that solution you can instanciate the
+filter and use methods on it. For convenience there are already some methods available on all filter classes.
+
+```php
+    public function filters(): Collection
+    {
+        return collect([
+            (new CreatedAfterFilter())
+                ->queryName('my_query_string')
+                ->mode(FilterMode::LOWER)
+                ->validationMode(ValidationMode::THROW)
+                ->title(__('My Headline')),
+        });
+    }
+```
+
+All this methods should be self explaining. In your own filter classes you can create more methods
+like this and you just need to return $this.
+
+## Use Base Filters Immediate
+
+With this option you can just use some available base filters without creating your
+own classes. For the date, string and boolean-filter you don't need to create dedicated
+filter classes. 
+
+Filter classes have a huge benefit if you can reuse it like an reusable 
+created_at filter, it is only created once and can be applied to multiple models.
+
+
+```php
+    public function filters(): Collection
+    {
+        return collect([
+            (new DateFilter('created_at'))
+                ->title('Created between')
+                ->queryName('created_at_between')
+                ->mode(FilterMode::BETWEEN),
+
+            (new StringFilter('title'))
+                ->title('Title')
+                ->queryName('title_starts_with')
+                ->mode(FilterMode::STARTS_WITH),
+
+            (new NumericFilter('counter'))
+                ->title('Count max')
+                ->queryName('counter_lower_filter')
+                ->mode(FilterMode::LOWER_OR_EQUAL),
+        });
+    }
+```
+
+To apply this filters the keys are equal to the query names.
+
+```php 
+Post::filter([
+    'created_at_between' => ['2023-01-01', '2023-01-31'],
+    'title_starts_with' => 'test',
+    'counter_lower_filter' => 500,
+])->get();
+```
+
+or open the url
+
+```
+https://.../posts?created_at_between[]=2023-01-01&created_at_between[]=2023-01-31&title_starts_with=test&counter_lower_filter=500
+```

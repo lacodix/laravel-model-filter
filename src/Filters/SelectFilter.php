@@ -8,7 +8,7 @@ class SelectFilter extends SingleFieldFilter
 {
     protected string $component = 'select';
 
-    protected function query(Builder $query): Builder
+    public function apply(Builder $query): Builder
     {
         return $query
             ->when(

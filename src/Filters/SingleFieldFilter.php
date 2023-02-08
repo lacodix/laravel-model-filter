@@ -2,7 +2,6 @@
 
 namespace Lacodix\LaravelModelFilter\Filters;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
 abstract class SingleFieldFilter extends Filter
@@ -28,11 +27,4 @@ abstract class SingleFieldFilter extends Filter
 
         return $this;
     }
-
-    public function apply(Builder $query): Builder
-    {
-        return $this->query($query);
-    }
-
-    abstract protected function query(Builder $query): Builder;
 }
