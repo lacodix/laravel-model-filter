@@ -2,7 +2,6 @@
 
 namespace Lacodix\LaravelModelFilter\Filters;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
 abstract class SingleFieldFilter extends Filter
