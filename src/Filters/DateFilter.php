@@ -22,7 +22,7 @@ class DateFilter extends SingleFieldFilter
         return $this;
     }
 
-    protected function query(Builder $query): Builder
+    public function apply(Builder $query): Builder
     {
         return match ($this->mode) {
             FilterMode::LOWER => $query->whereDate($this->field, '<', $this->values[$this->field]),

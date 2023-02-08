@@ -28,11 +28,4 @@ abstract class SingleFieldFilter extends Filter
 
         return $this;
     }
-
-    public function apply(Builder $query): Builder
-    {
-        return $this->query($query);
-    }
-
-    abstract protected function query(Builder $query): Builder;
 }
