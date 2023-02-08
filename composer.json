@@ -1,6 +1,7 @@
 {
     "name": "lacodix/laravel-model-filter",
     "description": "A Laravel package for filtering and searching models from database with ease.",
+    "type": "laravel-package",
     "keywords": [
         "lacodix",
         "laravel",
