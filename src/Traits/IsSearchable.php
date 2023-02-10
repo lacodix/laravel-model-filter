@@ -43,7 +43,7 @@ trait IsSearchable
         return Arr::isAssoc($this->searchable) ? array_keys($this->searchable) : $this->searchable;
     }
 
-    protected function applySearchQuery(Builder $query, string $search, ?array $searchable = null)
+    protected function applySearchQuery(Builder $query, string $search, ?array $searchable = null): Builder
     {
         return $query->where(
             fn (Builder $searchQuery) => $this->searchable($searchable)

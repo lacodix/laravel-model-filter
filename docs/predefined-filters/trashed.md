@@ -10,7 +10,7 @@ models including deleted or even only deleted models.
 For this cases you can add the TrashedFilter to your model. The TrashedFilter is based on
 the SelectFilter and offers two options "with trashed" and "only trashed".
 
-## Useage
+## Usage
 
 ```php
 <?php

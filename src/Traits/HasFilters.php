@@ -22,11 +22,11 @@ trait HasFilters
         $this->filters($group)
             ->filter(
                 static fn (Filter $filter)
-                    => $values->has($filter->getQueryName()) && $filter->applicable()
+                    => $values->has($filter->queryName()) && $filter->applicable()
             )
             ->each(
                 static fn (Filter $filter) => $filter
-                    ->populate($values->get($filter->getQueryName()))
+                    ->populate($values->get($filter->queryName()))
                     ->when(
                         $filter->validationMode === ValidationMode::THROW,
                         fn (Filter $filter) => $filter->validate()
@@ -67,7 +67,7 @@ trait HasFilters
     {
         return $this
             ->filters($group)
-            ->map(static fn (Filter $filter) => $filter->getQueryName())->values()->all();
+            ->map(static fn (Filter $filter) => $filter->queryName())->values()->all();
     }
 
     protected function getOnlyFilterUsableValues(array $values, string $group): Collection

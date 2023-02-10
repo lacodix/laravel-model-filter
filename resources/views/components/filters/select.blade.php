@@ -1,5 +1,5 @@
 @php
-    $name = $filter->getQueryName();
+    $name = $filter->queryName();
 @endphp
 
 <x-lacodix-filter::filters.layout

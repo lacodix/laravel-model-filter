@@ -1,6 +1,6 @@
 @php
     $multiple = $filter->mode->needsMultipleValues();
-    $varName = $filter->getQueryName();
+    $varName = $filter->queryName();
     $name = $varName . ($multiple ? '[]' : '');
 @endphp
 <x-lacodix-filter::filters.layout

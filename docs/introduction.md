@@ -3,7 +3,7 @@ title: Introduction
 weight: 1
 ---
 
-This package allows you to filter, search and sort model while fetching from database with ease.
+This package allows you to filter, search and sort models while fetching from database with ease.
 It contains additional functionality to use query strings to filter, search and sort.
 
 Once installed you can filter, search and sort Models.
@@ -26,7 +26,7 @@ php artisan make:filter CreatedAfterFilter --type=date --field=created_at
 public FilterMode $mode = FilterMode::GREATER_OR_EQUAL;
 
 // Apply this filter and the HasFilters trait to a Model
-// App\Models\Posts
+// App\Models\Post
 use HasFilters;
 protected array $filters = [
     CreatedAfterFilter::class,
@@ -38,25 +38,6 @@ Post::filter(['created_after_filter' => '2023-01-01'])->get();
 // Do the same via query string by calling
 // this url: https://.../posts?created_after_filter=2023-01-01
 Post::filterByQueryString()->get();
-```
-
-## Search
-
-```php
-// add searchable fields and the IsSearchable trait to Model:
-// App\Models\Post
-use IsSearchable;
-protected array $searchable = [
-    'title',
-    'content',
-];
-
-// Somewhere in controller, find all posts that contain "test" in title or content
-Post::search('test')->get();
-
-// Do the same via query string by calling
-// this url: https://.../posts?search=test
-Post::searchByQueryString()->get();
 ```
 
 ## Visualize
@@ -99,8 +80,48 @@ Post::filter(['hot_filter' => 'hot'], 'frontend')->get();
 Post::filter(['created_after_filter' => '2023-01-01'], 'backend')->get();
 ```
 
+## Search
+
+```php
+// add searchable fields and the IsSearchable trait to Model:
+// App\Models\Post
+use IsSearchable;
+protected array $searchable = [
+    'title',
+    'content',
+];
+
+// Somewhere in controller, find all posts that contain "test" in title or content
+Post::search('test')->get();
+
+// Do the same via query string by calling
+// this url: https://.../posts?search=test
+Post::searchByQueryString()->get();
+```
+
+## Sorting
+
+```php
+// add sortable fields and the IsSortable trait to Model:
+// App\Models\Post
+use IsSortable;
+protected array $sortable = [
+    'title',
+    'created_at',
+    'content',
+];
+
+// Somewhere in controller, get all post sorted by title in descending order
+Post::sort(['title' => 'desc'])->get();
+
+// Do the same via query string by calling
+// this url: https://.../posts?sort[title]=desc
+Post::sortByQueryString()->get();
+```
+
 ## We have badges
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/lacodix/laravel-model-filter.svg?style=flat-square)](https://packagist.org/packages/lacodix/laravel-model-filter)
+
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/lacodix/laravel-model-filter.svg?style=flat-square)](https://packagist.org/packages/lacodix/laravel-model-filter) 
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/lacodix/laravel-model-filter/test.yaml?branch=master&label=tests&style=flat-square)](https://github.com/lacodix/laravel-model-filter/actions?query=workflow%3Atest+branch%3Amaster)
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/lacodix/laravel-model-filter/style.yaml?branch=master&label=code%20style&style=flat-square)](https://github.com/lacodix/laravel-model-filter/actions?query=workflow%3Astyle+branch%3Amaster)
 [![Total Downloads](https://img.shields.io/packagist/dt/lacodix/laravel-model-filter.svg?style=flat-square)](https://packagist.org/packages/lacodix/laravel-model-filter)
