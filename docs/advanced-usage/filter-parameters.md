@@ -48,10 +48,10 @@ filter and use methods on it. For convenience there are already some methods ava
     {
         return collect([
             (new CreatedAfterFilter())
-                ->queryName('my_query_string')
-                ->mode(FilterMode::LOWER)
-                ->validationMode(ValidationMode::THROW)
-                ->title(__('My Headline')),
+                ->setQueryName('my_query_string')
+                ->setMode(FilterMode::LOWER)
+                ->setValidationMode(ValidationMode::THROW)
+                ->setTitle(__('My Headline')),
         });
     }
 ```
@@ -74,19 +74,19 @@ created_at filter, it is only created once and can be applied to multiple models
     {
         return collect([
             (new DateFilter('created_at'))
-                ->title('Created between')
-                ->queryName('created_at_between')
-                ->mode(FilterMode::BETWEEN),
+                ->setTitle('Created between')
+                ->setQueryName('created_at_between')
+                ->setMode(FilterMode::BETWEEN),
 
             (new StringFilter('title'))
-                ->title('Title')
-                ->queryName('title_starts_with')
-                ->mode(FilterMode::STARTS_WITH),
+                ->setTitle('Title')
+                ->setQueryName('title_starts_with')
+                ->setMode(FilterMode::STARTS_WITH),
 
             (new NumericFilter('counter'))
-                ->title('Count max')
-                ->queryName('counter_lower_filter')
-                ->mode(FilterMode::LOWER_OR_EQUAL),
+                ->setTitle('Count max')
+                ->setQueryName('counter_lower_filter')
+                ->setMode(FilterMode::LOWER_OR_EQUAL),
         });
     }
 ```

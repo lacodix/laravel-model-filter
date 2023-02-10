@@ -1,5 +1,5 @@
 ---
-title: Changelog
+title: Contribute
 weight: 6
 ---
 

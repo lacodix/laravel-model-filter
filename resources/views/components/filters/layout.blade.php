@@ -6,7 +6,7 @@
     {{ $attributes->class('filter-container') }}
 >
     <div class="filter-title">
-        {{ $filter->getTitle() }}
+        {{ $filter->title() }}
     </div>
 
     <div class="filter-content">

@@ -47,11 +47,11 @@ Post::searchByQueryString()->get();
 
 and open the url
 
-```bash
+```
 https://.../posts?search=test
 ```
 
-You can change the name of query parameter with the config file value model-filter.search
+You can change the name of query parameter with the config file value model-filter.search_query_value_name
 
 ## Search mode
 
@@ -96,6 +96,9 @@ This flexibility is also possible via query-string
 ```
 https://.../posts?search=test&search_for[title]=equal&search_for[content]=like
 ```
+
+You can also change the name of query parameter search_for with the config file value 
+model-filter.search_query_fields_name
 
 ### Security
 

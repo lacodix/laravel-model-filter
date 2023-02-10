@@ -12,7 +12,7 @@
 <form method="get">
     @foreach ($model->filters($group) as $filter)
         <x-dynamic-component
-            :component="$filter->getComponent()"
+            :component="$filter->component()"
             :filter="$filter"
         />
     @endforeach

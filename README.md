@@ -40,7 +40,7 @@ php artisan make:filter CreatedAfterFilter --type=date --field=created_at
 public FilterMode $mode = FilterMode::GREATER_OR_EQUAL;
 
 // Apply this filter and the HasFilters trait to a Model
-// App\Models\Posts
+// App\Models\Post
 use HasFilters;
 protected array $filters = [
     CreatedAfterFilter::class,
@@ -124,7 +124,7 @@ composer test
 Please run the following commands and solve potential problems before committing
 and think about adding tests for new functionality.
 
-```bash 
+```bash
 composer csfixer:test
 composer rector:test
 composer phpstan:test

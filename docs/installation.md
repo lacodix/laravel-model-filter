@@ -45,4 +45,3 @@ php artisan vendor:publish --tag="lacodix-filter-translations"
 
 Translations are only needed, if you use one of the predefined ready to use filters like the
 TrashedFilter.
-

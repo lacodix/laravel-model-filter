@@ -87,14 +87,14 @@ class Post extends Model
 ## Change headline
 
 To change the headline of the filter visualisation just overwrite the $title property of the filter
-or if you need translations you can also overwrite the getTitle()-Method.
+or if you need translations you can also overwrite the title()-Method.
 
 ```php
     protected string $title = 'My Filter';
 ```
 
 ```php
-    public function getTitle(): string
+    public function title(): string
     {
         return __('My Filter');
     }
@@ -154,7 +154,7 @@ resources\views\vendor\lacodix-filter\components\filters\select.blade.php
 
 ```php 
     ...
-    public function getComponent(): string
+    public function component(): string
     {
         return 'my-component';
     }
