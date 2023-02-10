@@ -5,7 +5,7 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/lacodix/laravel-model-filter/style.yaml?branch=master&label=code%20style&style=flat-square)](https://github.com/lacodix/laravel-model-filter/actions?query=workflow%3Astyle+branch%3Amaster)
 [![Total Downloads](https://img.shields.io/packagist/dt/lacodix/laravel-model-filter.svg?style=flat-square)](https://packagist.org/packages/lacodix/laravel-model-filter)
 
-This package allows you to filter, search and sort model while fetching from database with ease.
+This package allows you to filter, search and sort models while fetching from database with ease.
 It contains additional functionality to use query strings to filter, search and sort.
 
 Once installed you can filter, search and sort Models.
