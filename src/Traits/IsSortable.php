@@ -6,8 +6,6 @@ use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use Lacodix\LaravelModelFilter\Enums\SearchMode;
 
 trait IsSortable
 {
@@ -37,7 +35,7 @@ trait IsSortable
 
         collect($sort)
             ->only($this->sortableFieldNames() ?? [])
-            ->map(fn ($direction) => strtolower($direction) === 'desc' ? 'desc' : 'asc')
+            ->map(fn (string $direction) => strtolower($direction) === 'desc' ? 'desc' : 'asc')
             ->each(fn (string $direction, string $field) => $query->orderBy($field, $direction));
 
         return $query;
