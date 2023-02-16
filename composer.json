@@ -1,6 +1,6 @@
 {
     "name": "lacodix/laravel-model-filter",
-    "description": "A Laravel package for filtering and searching models from database with ease.",
+    "description": "A Laravel package to filter, search and sort models with ease while fetching from database.",
     "type": "laravel-package",
     "keywords": [
         "lacodix",
@@ -23,18 +23,18 @@
     "require": {
         "php": "^8.1",
         "ext-intl": "*",
-        "illuminate/contracts": "^9.0",
+        "illuminate/contracts": "^9.0|^10.0",
         "spatie/laravel-package-tools": "^1.13.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.13",
-        "illuminate/database": "^9.47",
-        "illuminate/support": "^9.47",
+        "illuminate/database": "^9.47|^10.0",
+        "illuminate/support": "^9.47|^10.0",
         "laravel/pint": "^1.0",
         "nunomaduro/collision": "^6.0",
         "nunomaduro/larastan": "^2.0.1",
         "nunomaduro/phpinsights": "^2.6",
-        "orchestra/testbench": "^7.19",
+        "orchestra/testbench": "^7.19|^8.0",
         "pestphp/pest": "^1.21",
         "pestphp/pest-plugin-faker": "^1.0",
         "pestphp/pest-plugin-laravel": "^1.1",
