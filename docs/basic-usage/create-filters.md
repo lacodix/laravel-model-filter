@@ -1,5 +1,5 @@
 ---
-title: Create and apply Filters
+title: Create and apply filters
 weight: 1
 ---
 
@@ -77,11 +77,16 @@ Post::filter(['created_after_filter' => '2023-01-01'])->get();
 
 ## Filter by query string
 
-To filter by query string use the filterByQueryString scope.<br />
+To filter by query string use the filterByQueryString scope.
+
+```php
+Post::filterByQueryString()->get();
+```
+
+and call the corresponding url like this
 
 ```
-// For example call this url: https://.../posts?created_after_filter=2023-01-01
-Post::filterByQueryString()->get();
+https://.../posts?created_after_filter=2023-01-01
 ```
 
 ## Multiple Filters
@@ -99,6 +104,11 @@ Post::filter([
 Or via query string
 
 ```
-// example url: https://.../posts?created_after_filter=2023-01-01&published_filter=1
+https://.../posts?created_after_filter=2023-01-01&published_filter=1
+```
+
+With the same code as for one filter
+
+```php
 Post::filterByQueryString()->get();
 ```
