@@ -1,10 +1,11 @@
 @php
     $name = $filter->queryName();
+    $classes = 'select ' . $name;
 @endphp
 
 <x-lacodix-filter::filters.layout
     :filter="$filter"
-    class="select"
+    :class="$classes"
 >
     <select class="filter-input" name="{{ $name }}" onchange="this.form.submit()">
         <option value="">&mdash;</option>

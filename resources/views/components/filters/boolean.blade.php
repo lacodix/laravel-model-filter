@@ -1,10 +1,11 @@
 @php
     $name = $filter->queryName();
+    $classes = 'boolean ' . $name;
 @endphp
 
 <x-lacodix-filter::filters.layout
     :filter="$filter"
-    class="select"
+    :class="$classes"
 >
     @foreach ($filter->options() as $key => $option)
         <label class="filter-input">

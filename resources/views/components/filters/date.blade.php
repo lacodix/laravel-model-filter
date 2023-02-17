@@ -2,10 +2,11 @@
     $multiple = $filter->mode->needsMultipleValues();
     $varName = $filter->queryName();
     $name = $varName . ($multiple ? '[]' : '');
+    $classes = 'date ' . $varName;
 @endphp
 <x-lacodix-filter::filters.layout
     :filter="$filter"
-    class="date"
+    :class="$classes"
 >
     @if ($multiple)
         <input

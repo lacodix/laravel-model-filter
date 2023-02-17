@@ -1,10 +1,11 @@
 @php
     $name = $filter->queryName();
+    $classes = 'text ' . $name;
 @endphp
 
 <x-lacodix-filter::filters.layout
     :filter="$filter"
-    class="select"
+    :class="$classes"
 >
     <input
         class="filter-input"
