@@ -51,7 +51,8 @@ filter and use methods on it. For convenience there are already some methods ava
                 ->setQueryName('my_query_string')
                 ->setMode(FilterMode::LOWER)
                 ->setValidationMode(ValidationMode::THROW)
-                ->setTitle(__('My Headline')),
+                ->setTitle(__('My Headline'))
+                ->setComponent('date'),
         });
     }
 ```
