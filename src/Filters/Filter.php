@@ -60,6 +60,13 @@ abstract class Filter
         return $this;
     }
 
+    public function setComponent(string $component): self
+    {
+        $this->component = $component;
+
+        return $this;
+    }
+
     public function populate(string|array $values): self
     {
         $this->values = Arr::wrap($values);
