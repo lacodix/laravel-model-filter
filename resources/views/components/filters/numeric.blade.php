@@ -2,10 +2,11 @@
     $multiple = $filter->mode->needsMultipleValues();
     $varName = $filter->queryName();
     $name = $varName . ($multiple ? '[]' : '');
+    $classes = 'numeric ' . $varName;
 @endphp
 <x-lacodix-filter::filters.layout
     :filter="$filter"
-    class="numeric"
+    :class="$classes"
 >
     @if ($multiple)
         <input
