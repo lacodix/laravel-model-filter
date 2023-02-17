@@ -12,13 +12,13 @@ this packet ships with a set of views for each filter-type. Each view creates a 
 Additionally it comes with a blade component for integration of all filters of a model.
 
 ```html
-    <x-lacodix-filter::model-filters :model="Post::class" />
+<x-lacodix-filter::model-filters :model="Post::class" />
 ```
 
 you can set the model via a class name string, or via an instance of the model.
 
 ```html
-    <x-lacodix-filter::model-filters :model="$post" />
+<x-lacodix-filter::model-filters :model="$post" />
 ```
 
 This will result in the following HTML code given the following example classes below
@@ -82,6 +82,14 @@ class Post extends Model
     ];
 }
 
+```
+
+## Form attributes
+
+You can also add attributes to the form and change the method, if needed, like so:
+
+```html
+<x-lacodix-filter::model-filters :model="Post::class" method="post" :action="route('posts')" />
 ```
 
 ## Change headline

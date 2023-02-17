@@ -1,6 +1,7 @@
 @props([
     'model',
-    'group' => '__default'
+    'method' => 'get',
+    'group' => '__default',
 ])
 
 @php
@@ -9,11 +10,13 @@
     }
 @endphp
 
-<form method="get">
+<form {{ $attributes->merge(['method' => $method]) }}>
     @foreach ($model->filters($group) as $filter)
         <x-dynamic-component
             :component="$filter->component()"
             :filter="$filter"
         />
     @endforeach
+
+    {{ $footer ?? '' }}
 </form>
