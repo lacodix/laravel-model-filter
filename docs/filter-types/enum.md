@@ -21,9 +21,9 @@ $enum property like in this example. The enum must be a string backed enum.
 namespace App\Models\Filters;
 
 use App\Models\Enums\ActiveState;
-use Lacodix\LaravelModelFilter\Filters\SelectFilter;
+use Lacodix\LaravelModelFilter\Filters\EnumFilter;
 
-class TestSelectFilter extends SelectFilter
+class TestEnumFilter extends EnumFilter
 {
     protected string $field = 'state';
 
@@ -64,9 +64,9 @@ filter.
 namespace App\Models\Filters;
 
 use App\Models\Enums\ActiveState;
-use Lacodix\LaravelModelFilter\Filters\SelectFilter;
+use Lacodix\LaravelModelFilter\Filters\EnumFilter;
 
-class TestSelectFilter extends SelectFilter
+class TestEnumFilter extends EnumFilter
 {
     protected string $field = 'state';
 
