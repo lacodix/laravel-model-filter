@@ -1,5 +1,5 @@
 ---
-title: Select Filter
+title: Enum Filter
 weight: 5
 ---
 
