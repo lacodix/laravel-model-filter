@@ -83,7 +83,7 @@ abstract class Filter
 
     public function component(): string
     {
-        return 'lacodix-filter::filters.' . $this->component;
+        return config('model-filter.filter_component_prefix') . $this->component;
     }
 
     public function title(): string
