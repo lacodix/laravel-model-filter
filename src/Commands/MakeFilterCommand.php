@@ -3,7 +3,6 @@
 namespace Lacodix\LaravelModelFilter\Commands;
 
 use Illuminate\Console\GeneratorCommand;
-use Illuminate\Support\Str;
 
 class MakeFilterCommand extends GeneratorCommand
 {
@@ -19,7 +18,7 @@ class MakeFilterCommand extends GeneratorCommand
         return str_replace(
             '{{ field }}',
             $this->option('field'),
-            parent::buildClass(Str::finish($name, 'Filter'))
+            parent::buildClass($name)
         );
     }
 

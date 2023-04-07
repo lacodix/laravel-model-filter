@@ -62,3 +62,46 @@ https://.../posts?test_boolean_filter[published]=1&test_boolean_filter[active]=0
 The given value must be castable to a boolean value. This means adding the string "false" would result in true!!
 
 Values that are not of interest can be omitted like it is done with "boolvalue" in the above example.
+
+## Calculated Values
+
+Sometimes you need a boolean filter but you don't have a boolean database-field. For example
+if you want to filter for all open transactions, but you have debit and credit columns. As long this both
+columns differ, your transaction is open, as soon as it is the same, it is finished.
+
+To achive such a boolean filter, you can overwrite the apply-method of the boolean filter.
+
+```php
+<?php
+
+namespace App\Models\Filters;
+
+use Illuminate\Database\Eloquent\Builder;
+use Lacodix\LaravelModelFilter\Filters\BooleanFilter;
+
+class TransactionStatus extends BooleanFilter
+{
+    public function options(): array
+    {
+        return [
+            'open' => __('open'),
+            'paid' => __('paid'),
+        ];
+    }
+
+    public function apply(Builder $query): Builder
+    {
+        if ($this->values['open'] ?? false) {
+            $query->whereColumn('debit','<>', 'credit');
+        }
+        if ($this->values['paid'] ?? false) {
+            $query->whereColumn('debit','=', 'credit');
+        }
+
+        return $query;
+    }
+}
+```
+
+As you can see, you just need to access $this->values to request the filter value and then you are
+able to apply a query of your own.
