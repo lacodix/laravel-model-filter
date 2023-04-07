@@ -3,7 +3,6 @@
 namespace Lacodix\LaravelModelFilter\Commands;
 
 use Illuminate\Console\GeneratorCommand;
-use Illuminate\Support\Str;
 
 class MakeFilterCommand extends GeneratorCommand
 {
