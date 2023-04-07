@@ -19,7 +19,7 @@ class MakeFilterCommand extends GeneratorCommand
         return str_replace(
             '{{ field }}',
             $this->option('field'),
-            parent::buildClass(Str::finish($name, 'Filter'))
+            parent::buildClass($name)
         );
     }
 
