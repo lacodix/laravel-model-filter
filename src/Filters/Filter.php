@@ -98,6 +98,11 @@ abstract class Filter
         return true;
     }
 
+    public function visible(): bool
+    {
+        return true;
+    }
+
     abstract public function apply(Builder $query): Builder;
 
     public function options(): array

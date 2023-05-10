@@ -49,9 +49,12 @@ trait HasFilters
 
     public function filters(string $group = '__default'): Collection
     {
-        return $this->filterInstances[$group] ??= $this->getGroupedFilters($group)->map(
-            static fn ($filterOrName) => $filterOrName instanceof Filter ? $filterOrName : new $filterOrName()
-        );
+        return $this->filterInstances[$group] ??= $this
+            ->getGroupedFilters($group)
+            ->map(
+                static fn ($filterOrName) => $filterOrName instanceof Filter ? $filterOrName : new $filterOrName()
+            )
+            ->filter(fn ($filter) => $filter->visible());
     }
 
     protected function getGroupedFilters($group): Collection

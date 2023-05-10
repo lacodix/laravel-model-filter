@@ -1,6 +1,6 @@
 ---
 title: Use Sorting
-weight: 7
+weight: 8
 ---
 
 Sorting models is also straight forward like searching. You can define the database fields that shall be usable for
