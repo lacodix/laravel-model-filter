@@ -1,6 +1,6 @@
 ---
 title: Use Search
-weight: 6
+weight: 7
 ---
 
 Searching models is really straight forward. You can define the database fields that shall be searchable and just apply

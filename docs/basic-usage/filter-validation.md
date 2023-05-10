@@ -1,6 +1,6 @@
 ---
 title: Filter Validation
-weight: 5
+weight: 6
 ---
 
 Some filters include validation. DateFilters for example will validate the inserted values for

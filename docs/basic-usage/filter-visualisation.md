@@ -1,6 +1,6 @@
 ---
 title: Filter Visualisation
-weight: 4
+weight: 5
 ---
 
 To use your filters in your web application you have to offer the filter options to your visitors.
