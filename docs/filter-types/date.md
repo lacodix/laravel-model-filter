@@ -60,22 +60,31 @@ Allowed modes are
 
 ## Modes with two values
 
-For using the between and not between filters you have to provide two values to the filter. Ordering
-of this values doesn't matter, the filter will detect if the first or second is the smaller one.
+For using the between and not between filters you have to provide two values to the filter. You can
+omit one of the values, if it shall not be applied. You can offer a between filter and
+only fill in the first or second value to get behaviour like a lower or greater filter. 
 
 For providing multiple values use the following query parameters
 
 ```
+# For FilterMode::BETWEEN
+# finds all between 2023-01-01 and 2023-01-10
 https://.../posts?test_date_filter[]=2023-01-01&test_date_filter[]=2023-01-10
+https://.../posts?test_date_filter[0]=2023-01-01&test_date_filter[1]=2023-01-10
+
+# finds all greater or equal than 2023-01-01
+https://.../posts?test_date_filter[0]=2023-01-01&test_date_filter[1]=
+
+# finds all smaller or equal then 2023-01-10
+https://.../posts?test_date_filter[0]=&test_date_filter[1]=2023-01-10
 ```
 
 or programmatically
 
 ```php
 Post::filter(['created_at_filter' => ['2023-01-01', '2023-01-10']])->get();
+Post::filter(['created_at_filter' => ['', '2023-01-10']])->get();
 ```
-
-This will find all posts created between or not between 1st and 10th of January.
 
 FilterMode::BETWEEN will include both days, FilterMode::BETWEEN_EXCLUSIVE will exclude both days.
 

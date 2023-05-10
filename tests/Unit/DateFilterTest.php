@@ -67,13 +67,13 @@ it('can be filtered by date between', function () {
     ])->count())->toEqual(14);
 });
 
-it('can be filtered by date between with wrong order', function () {
+it('cannot be filtered by date between with wrong order', function () {
     expect(Post::filter([
         'created_at_between' => [
             Carbon::now()->addWeek()->format('Y-m-d'),
             Carbon::now()->subWeek()->format('Y-m-d'),
         ],
-    ])->count())->toEqual(14);
+    ])->count())->toEqual(0);
 });
 
 it('can be filtered by date between exclusive', function () {
@@ -94,13 +94,13 @@ it('can be filtered by date not between', function () {
     ])->count())->toEqual(25);
 });
 
-it('can be filtered by date not between with wrong order', function () {
+it('cannot be filtered by date not between with wrong order', function () {
     expect(Post::filter([
         'created_at_not_between' => [
             Carbon::now()->addWeek()->format('Y-m-d'),
             Carbon::now()->subWeek()->format('Y-m-d'),
         ],
-    ])->count())->toEqual(25);
+    ])->count())->toEqual(39);
 });
 
 it('can be filtered by date not between inclusive', function () {

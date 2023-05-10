@@ -75,10 +75,10 @@ https://.../posts?test_numeric_filter[]=100&test_date_filter[]=1000
 https://.../posts?test_numeric_filter[0]=100&test_date_filter[1]=1000
 
 # finds all greater or equal than 100
-https://.../posts?test_date_filter[0]=100
+https://.../posts?test_date_filter[0]=100&test_date_filter[1]=
 
 # finds all smaller or equal than 1000
-https://.../posts?test_date_filter[1]=1000
+https://.../posts?test_date_filter[0]=&test_date_filter[1]=1000
 ```
 
 or programmatically
