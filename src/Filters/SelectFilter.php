@@ -3,6 +3,7 @@
 namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 
 class SelectFilter extends SingleFieldFilter
 {
@@ -10,6 +11,10 @@ class SelectFilter extends SingleFieldFilter
 
     public function apply(Builder $query): Builder
     {
+        if (is_int(Arr::first($this->options()))) {
+            $this->values[$this->field] = (int)$this->values[$this->field];
+        }
+
         return $query
             ->when(
                 in_array($this->values[$this->field], $this->options()),
