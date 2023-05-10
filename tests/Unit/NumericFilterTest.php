@@ -66,13 +66,13 @@ it('can be filtered by number between', function () {
     ])->count())->toEqual(14);
 });
 
-it('can be filtered by number between with wrong order', function () {
+it('cannot be filtered by number between with wrong order', function () {
     expect(Post::filter([
         'counter_between' => [
             14500,
             5500,
         ],
-    ])->count())->toEqual(14);
+    ])->count())->toEqual(0);
 });
 
 it('can be filtered by number between exclusive', function () {
@@ -93,13 +93,13 @@ it('can be filtered by number not between', function () {
     ])->count())->toEqual(25);
 });
 
-it('can be filtered by number not between with wrong order', function () {
+it('cannot be filtered by number not between with wrong order', function () {
     expect(Post::filter([
         'counter_not_between' => [
-            5500,
             14500,
+            5500,
         ],
-    ])->count())->toEqual(25);
+    ])->count())->toEqual(39); // finds all - <= 14500 or >= 5500
 });
 
 it('can be filtered by number not between inclusive', function () {
