@@ -18,7 +18,7 @@ class NumericFilter extends SingleFieldFilter
         parent::populate($values);
 
         $this->values = Arr::map($this->values, fn ($value) => is_array($value)
-            ? array_values(Arr::sort($value))
+            ? array_values($value)
             : $value);
 
         return $this;
@@ -33,23 +33,23 @@ class NumericFilter extends SingleFieldFilter
             FilterMode::GREATER_OR_EQUAL => $query->where($this->field, '>=', $this->values[$this->field]),
             FilterMode::BETWEEN => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
-                    ->where($this->field, '>=', $this->values[$this->field][0])
-                    ->where($this->field, '<=', $this->values[$this->field][1])
+                    ->when(is_numeric($this->values[$this->field][0]), fn ($q) => $q->where($this->field, '>=', $this->values[$this->field][0]))
+                    ->when(is_numeric($this->values[$this->field][1]), fn ($q) => $q->where($this->field, '<=', $this->values[$this->field][1]))
             ),
             FilterMode::BETWEEN_EXCLUSIVE => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
-                    ->where($this->field, '>', $this->values[$this->field][0])
-                    ->where($this->field, '<', $this->values[$this->field][1])
+                    ->when(is_numeric($this->values[$this->field][0]), fn ($q) => $q->where($this->field, '>', $this->values[$this->field][0]))
+                    ->when(is_numeric($this->values[$this->field][1]), fn ($q) => $q->where($this->field, '<', $this->values[$this->field][1]))
             ),
             FilterMode::NOT_BETWEEN => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
-                    ->orWhere($this->field, '<', $this->values[$this->field][0])
-                    ->orWhere($this->field, '>', $this->values[$this->field][1])
+                    ->when(is_numeric($this->values[$this->field][0]), fn ($q) => $q->orWhere($this->field, '<', $this->values[$this->field][0]))
+                    ->when(is_numeric($this->values[$this->field][1]), fn ($q) => $q->orWhere($this->field, '>', $this->values[$this->field][1]))
             ),
             FilterMode::NOT_BETWEEN_INCLUSIVE => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
-                    ->orWhere($this->field, '<=', $this->values[$this->field][0])
-                    ->orWhere($this->field, '>=', $this->values[$this->field][1])
+                    ->when(is_numeric($this->values[$this->field][0]), fn ($q) => $q->orWhere($this->field, '<=', $this->values[$this->field][0]))
+                    ->when(is_numeric($this->values[$this->field][1]), fn ($q) => $q->orWhere($this->field, '>=', $this->values[$this->field][1]))
             ),
             default => $query->where($this->field, $this->values[$this->field]),
         };
