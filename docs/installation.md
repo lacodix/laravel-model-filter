@@ -14,7 +14,7 @@ composer require lacodix/laravel-model-filter
 The package brings a config file and views with translations, that can be published.
 
 ```bash
-php artisan vendor:publish --tag="laravel-model-filter-config"
+php artisan vendor:publish --tag="model-filter-config"
 ```
 
 This is the content of the published config file:
@@ -40,7 +40,7 @@ php artisan vendor:publish --tag="lacodix-filter-views"
 You can publish the translation files with:
 
 ```bash
-php artisan vendor:publish --tag="lacodix-filter-translations"
+php artisan vendor:publish --tag="model-filter-translations"
 ```
 
 Translations are only needed, if you use one of the predefined ready to use filters like the
