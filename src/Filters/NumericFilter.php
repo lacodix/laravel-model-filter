@@ -17,7 +17,7 @@ class NumericFilter extends SingleFieldFilter
     {
         parent::populate($values);
 
-        $this->values = Arr::map($this->values, fn ($value) => is_array($value)
+        $this->values = Arr::map($this->values, static fn ($value) => is_array($value)
             ? array_values($value)
             : $value);
 

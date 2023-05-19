@@ -11,7 +11,7 @@ trait IsSortable
 {
     public function scopeSort(Builder $query, ?array $sort): Builder
     {
-        return $query->when(!empty($sort), fn (Builder $query) => $this->applySortQuery($query, $sort));
+        return $query->when(! empty($sort), fn (Builder $query) => $this->applySortQuery($query, $sort));
     }
 
     public function scopeSortByQueryString(Builder $query): Builder
@@ -35,8 +35,8 @@ trait IsSortable
 
         collect($sort)
             ->only($this->sortableFieldNames() ?? [])
-            ->map(fn (string $direction) => strtolower($direction) === 'desc' ? 'desc' : 'asc')
-            ->each(fn (string $direction, string $field) => $query->orderBy($field, $direction));
+            ->map(static fn (string $direction) => strtolower($direction) === 'desc' ? 'desc' : 'asc')
+            ->each(static fn (string $direction, string $field) => $query->orderBy($field, $direction));
 
         return $query;
     }

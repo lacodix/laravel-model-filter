@@ -35,7 +35,7 @@ trait IsSearchable
             Arr::isAssoc($searchable) ? $searchable : array_fill_keys($searchable, SearchMode::LIKE)
         )
             ->only($this->searchableFieldNames() ?? [])
-            ->map(fn ($mode) => is_string($mode) ? SearchMode::fromString($mode) : $mode);
+            ->map(static fn ($mode) => is_string($mode) ? SearchMode::fromString($mode) : $mode);
     }
 
     public function searchableFieldNames(): array
@@ -47,7 +47,7 @@ trait IsSearchable
     {
         return $query->where(
             fn (Builder $searchQuery) => $this->searchable($searchable)
-                ->each(fn (SearchMode $mode, string $field) => $mode->applyQuery($searchQuery, $field, $search))
+                ->each(static fn (SearchMode $mode, string $field) => $mode->applyQuery($searchQuery, $field, $search))
         );
     }
 }

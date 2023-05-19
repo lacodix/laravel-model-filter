@@ -15,7 +15,7 @@ class DateFilter extends SingleFieldFilter
     {
         parent::populate($values);
 
-        $this->values = Arr::map($this->values, fn ($value) => is_array($value)
+        $this->values = Arr::map($this->values, static fn ($value) => is_array($value)
             ? array_values($value)
             : $value);
 
@@ -53,11 +53,6 @@ class DateFilter extends SingleFieldFilter
         };
     }
 
-    protected function getValueForFilter(string $value): mixed
-    {
-        return Carbon::parse($value);
-    }
-
     public function rules(): array
     {
         return match ($this->mode->needsMultipleValues()) {
@@ -69,5 +64,10 @@ class DateFilter extends SingleFieldFilter
                 $this->field => 'required|date_format:' . config('model-filter.date_format'),
             ],
         };
+    }
+
+    protected function getValueForFilter(string $value): mixed
+    {
+        return Carbon::parse($value);
     }
 }
