@@ -9,7 +9,7 @@ weight: 7
 php artisan make:filter TestBooleanFilter -t boolean
 ```
 
-this creates a filter class the extends BooleanFilter
+this creates a filter class that extends BooleanFilter
 
 ```php
 <?php

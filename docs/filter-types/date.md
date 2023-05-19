@@ -9,7 +9,7 @@ weight: 2
 php artisan make:filter TestDateFilter -t date -f fieldname
 ```
 
-this creates a filter class the extends DateFilter
+this creates a filter class that extends DateFilter
 
 ```php
 <?php

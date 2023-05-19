@@ -9,7 +9,7 @@ weight: 4
 php artisan make:filter TestSelectFilter -t select -f fieldname
 ```
 
-this creates a filter class the extends SelectFilter
+this creates a filter class that extends SelectFilter
 
 ```php
 <?php
@@ -39,6 +39,30 @@ where fieldname equals the given value.
 
 The options function must be implemented, given values for the filter will be
 removed if not contained in this array.
+
+You can simply use other model ids for the options
+
+```
+    public function options(): array
+    {
+        return OtherModel::query()
+            ->pluck('id')
+            ->toArray();
+    }
+```
+
+If you want to use different key and values for the options, keep in mind that the
+filters expect the values for filtering in the values of the returned array.
+The keys are only used for visualisation in the seleect input fields.
+
+```
+    public function options(): array
+    {
+        return OtherModel::query()
+            ->pluck('id', 'title')
+            ->toArray();
+    }
+```
 
 ## Filter Modes
 

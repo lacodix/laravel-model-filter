@@ -12,7 +12,7 @@ cases out of an PHP Enum.
 php artisan make:filter TestEnumFilter -t enum -f fieldname
 ```
 
-this creates a filter class the extends EnumFilter, and you have to add the enum name to the
+this creates a filter class that extends EnumFilter, and you have to add the enum name to the
 $enum property like in this example. The enum must be a string backed enum. 
 
 ```php
