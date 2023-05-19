@@ -9,7 +9,7 @@ weight: 3
 php artisan make:filter TestStringFilter -t string -f fieldname
 ```
 
-this creates a filter class the extends StringFilter
+this creates a filter class that extends StringFilter
 
 ```php
 <?php

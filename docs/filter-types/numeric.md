@@ -9,7 +9,7 @@ weight: 6
 php artisan make:filter TestNumericFilter -t numeric -f fieldname
 ```
 
-this creates a filter class the extends NumericFilter
+this creates a filter class that extends NumericFilter
 
 ```php
 <?php
