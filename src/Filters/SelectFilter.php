@@ -12,7 +12,7 @@ class SelectFilter extends SingleFieldFilter
     public function apply(Builder $query): Builder
     {
         if (is_int(Arr::first($this->options()))) {
-            $this->values[$this->field] = (int)$this->values[$this->field];
+            $this->values[$this->field] = (int) $this->values[$this->field];
         }
 
         return $query

@@ -21,19 +21,18 @@ trait HasFilters
 
         $this->filters($group)
             ->filter(
-                static fn (Filter $filter)
-                    => $values->has($filter->queryName()) && $filter->applicable()
+                static fn (Filter $filter) => $values->has($filter->queryName()) && $filter->applicable()
             )
             ->each(
                 static fn (Filter $filter) => $filter
                     ->populate($values->get($filter->queryName()))
                     ->when(
                         $filter->validationMode === ValidationMode::THROW,
-                        fn (Filter $filter) => $filter->validate()
+                        static fn (Filter $filter) => $filter->validate()
                     )
                     ->when(
                         ! $filter->fails(),
-                        fn (Filter $filter) => $filter->apply($query)
+                        static fn (Filter $filter) => $filter->apply($query)
                     )
             );
 
@@ -54,7 +53,7 @@ trait HasFilters
             ->map(
                 static fn ($filterOrName) => $filterOrName instanceof Filter ? $filterOrName : new $filterOrName()
             )
-            ->filter(fn ($filter) => $filter->visible());
+            ->filter(static fn ($filter) => $filter->visible());
     }
 
     protected function getGroupedFilters($group): Collection
