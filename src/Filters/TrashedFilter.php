@@ -7,6 +7,11 @@ use Illuminate\Support\Arr;
 
 class TrashedFilter extends SelectFilter
 {
+    public function title(): string
+    {
+        return trans('model-filter::filters.trashed');
+    }
+
     public function apply(Builder $query): Builder
     {
         return match (current($this->values)) {
@@ -19,8 +24,8 @@ class TrashedFilter extends SelectFilter
     public function options(): array
     {
         return [
-            trans('lacodix-filter::filters.with_trashed') => 'with_trashed',
-            trans('lacodix-filter::filters.only_trashed') => 'only_trashed',
+            trans('model-filter::filters.with_trashed') => 'with_trashed',
+            trans('model-filter::filters.only_trashed') => 'only_trashed',
         ];
     }
 
