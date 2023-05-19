@@ -3,6 +3,7 @@
 namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 
 class TrashedFilter extends SelectFilter
 {
@@ -28,5 +29,12 @@ class TrashedFilter extends SelectFilter
         return [
             'type' => 'in:with_trashed,only_trashed',
         ];
+    }
+
+    public function populate(string|array $values): self
+    {
+        $this->values = [$values];
+
+        return $this;
     }
 }
