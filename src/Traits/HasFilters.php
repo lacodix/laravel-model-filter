@@ -56,7 +56,7 @@ trait HasFilters
                 static fn ($filterOrName) => $filterOrName instanceof Filter ? $filterOrName : new $filterOrName()
             )
             ->filter(static fn ($filter) => $filter->visible())
-            ->map(fn ($filter) => $filter->hasMacro('mapFilter') ? $filter->mapFilter() : $filter);
+            ->map(fn ($filter) => $filter->hasMacro('mapFilter') ? $filter->mapFilter($this) : $filter);
     }
 
     protected function getGroupedFilters($group): Collection
