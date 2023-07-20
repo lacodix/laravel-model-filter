@@ -25,18 +25,14 @@ trait HasFilters
             ->filter(
                 static fn (Filter $filter) => $values->has($filter->queryName()) && $filter->applicable()
             )
-            ->map(
-                fn (Filter $filter) =>
-                    $filter instanceof SingleFieldFilter && ! is_null($filter->getField())
-                        ? $filter->field($this->getQualifiedFilterField($filter->getField()))
-                        : $filter
-            )
             ->each(
                 static fn (Filter $filter) => $filter
                     ->populate($values->get($filter->queryName()))
                     ->when(
                         $filter->validationMode === ValidationMode::THROW,
-                        static fn (Filter $filter) => $filter->validate()
+                        static function (Filter $filter) {
+                            $filter->validate();
+                        }
                     )
                     ->when(
                         ! $filter->fails(),
