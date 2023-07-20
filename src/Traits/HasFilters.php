@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Lacodix\LaravelModelFilter\Enums\ValidationMode;
 use Lacodix\LaravelModelFilter\Filters\Filter;
+use Lacodix\LaravelModelFilter\Filters\SingleFieldFilter;
 
 trait HasFilters
 {
@@ -22,6 +24,12 @@ trait HasFilters
         $this->filters($group)
             ->filter(
                 static fn (Filter $filter) => $values->has($filter->queryName()) && $filter->applicable()
+            )
+            ->map(
+                fn (Filter $filter) =>
+                    $filter instanceof SingleFieldFilter && ! is_null($filter->getField())
+                        ? $filter->field($this->getQualifiedFilterField($filter->getField()))
+                        : $filter
             )
             ->each(
                 static fn (Filter $filter) => $filter
@@ -77,5 +85,15 @@ trait HasFilters
         return collect($values)
             ->only($this->getAllFilterQueryNames($group))
             ->filter();
+    }
+
+    protected function getQualifiedFilterField(string $field): string
+    {
+        // Is already a qualified field name
+        if (Str::contains($field, '.')) {
+            return $field;
+        }
+
+        return $this->getTable() . '.' . $field;
     }
 }

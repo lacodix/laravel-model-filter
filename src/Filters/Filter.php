@@ -32,42 +32,42 @@ abstract class Filter
     protected string $component = 'text';
     protected string $title;
 
-    public function setQueryName(string $queryName): self
+    public function setQueryName(string $queryName): static
     {
         $this->queryName = $queryName;
 
         return $this;
     }
 
-    public function setMode(FilterMode $mode): self
+    public function setMode(FilterMode $mode): static
     {
         $this->mode = $mode;
 
         return $this;
     }
 
-    public function setValidationMode(ValidationMode $validationMode): self
+    public function setValidationMode(ValidationMode $validationMode): static
     {
         $this->validationMode = $validationMode;
 
         return $this;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(string $title): static
     {
         $this->title = $title;
 
         return $this;
     }
 
-    public function setComponent(string $component): self
+    public function setComponent(string $component): static
     {
         $this->component = $component;
 
         return $this;
     }
 
-    public function populate(string|array $values): self
+    public function populate(string|array $values): static
     {
         $this->values = Arr::wrap($values);
 
