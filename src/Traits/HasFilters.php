@@ -80,14 +80,4 @@ trait HasFilters
             ->only($this->getAllFilterQueryNames($group))
             ->filter();
     }
-
-    protected function getQualifiedFilterField(string $field): string
-    {
-        // Is already a qualified field name
-        if (Str::contains($field, '.')) {
-            return $field;
-        }
-
-        return $this->getTable() . '.' . $field;
-    }
 }
