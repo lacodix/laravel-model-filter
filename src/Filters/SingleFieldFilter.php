@@ -27,16 +27,4 @@ abstract class SingleFieldFilter extends Filter
 
         return $this;
     }
-
-    public function field(string $field): static
-    {
-        $this->field = $field;
-
-        return $this;
-    }
-
-    public function getField(): ?string
-    {
-        return $this->field ?? null;
-    }
 }
