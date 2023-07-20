@@ -7,10 +7,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Lacodix\LaravelModelFilter\Enums\ValidationMode;
 use Lacodix\LaravelModelFilter\Filters\Filter;
-use Lacodix\LaravelModelFilter\Filters\SingleFieldFilter;
 
 trait HasFilters
 {
