@@ -28,7 +28,9 @@ trait HasFilters
                     ->populate($values->get($filter->queryName()))
                     ->when(
                         $filter->validationMode === ValidationMode::THROW,
-                        static fn (Filter $filter) => $filter->validate()
+                        static function (Filter $filter) {
+                            $filter->validate();
+                        }
                     )
                     ->when(
                         ! $filter->fails(),

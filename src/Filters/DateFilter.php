@@ -11,7 +11,7 @@ class DateFilter extends SingleFieldFilter
 {
     protected string $component = 'date';
 
-    public function populate(string|array $values): self
+    public function populate(string|array $values): static
     {
         parent::populate($values);
 

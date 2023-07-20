@@ -28,7 +28,7 @@ class TestIndividualFilter extends Filter
         return $query->where('field', $value);
     }
     
-    public function populate(string|array $values): self
+    public function populate(string|array $values): static
     {
         $this->values = Arr::wrap($values);
 
@@ -91,7 +91,7 @@ class TestIndividualFilter extends SingleFieldFilter
         return $query->where('field', $value);
     }
     
-    public function populate(string|array $values): self
+    public function populate(string|array $values): static
     {
         $this->values = Arr::wrap($values);
 

@@ -13,7 +13,7 @@ class NumericFilter extends SingleFieldFilter
     protected int $min;
     protected int $max;
 
-    public function populate(string|array $values): self
+    public function populate(string|array $values): static
     {
         parent::populate($values);
 

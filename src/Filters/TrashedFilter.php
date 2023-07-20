@@ -35,7 +35,7 @@ class TrashedFilter extends SelectFilter
         ];
     }
 
-    public function populate(string|array $values): self
+    public function populate(string|array $values): static
     {
         $this->values = [$values];
 
