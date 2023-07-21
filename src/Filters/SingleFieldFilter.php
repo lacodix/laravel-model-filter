@@ -17,7 +17,7 @@ abstract class SingleFieldFilter extends Filter
         }
     }
 
-    public function populate(string|array $values): self
+    public function populate(string|array $values): static
     {
         if (! is_array($values) || ! Arr::isAssoc($values) || ! Arr::has($values, $this->field)) {
             $values = [
