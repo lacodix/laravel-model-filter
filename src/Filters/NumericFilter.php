@@ -27,31 +27,31 @@ class NumericFilter extends SingleFieldFilter
     public function apply(Builder $query): Builder
     {
         return match ($this->mode) {
-            FilterMode::LOWER => $query->where($this->field, '<', $this->values[$this->field]),
-            FilterMode::LOWER_OR_EQUAL => $query->where($this->field, '<=', $this->values[$this->field]),
-            FilterMode::GREATER => $query->where($this->field, '>', $this->values[$this->field]),
-            FilterMode::GREATER_OR_EQUAL => $query->where($this->field, '>=', $this->values[$this->field]),
+            FilterMode::LOWER => $query->where($this->getQualifiedField(), '<', $this->values[$this->field]),
+            FilterMode::LOWER_OR_EQUAL => $query->where($this->getQualifiedField(), '<=', $this->values[$this->field]),
+            FilterMode::GREATER => $query->where($this->getQualifiedField(), '>', $this->values[$this->field]),
+            FilterMode::GREATER_OR_EQUAL => $query->where($this->getQualifiedField(), '>=', $this->values[$this->field]),
             FilterMode::BETWEEN => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
-                    ->when(is_numeric($this->values[$this->field][0]), fn ($q) => $q->where($this->field, '>=', $this->values[$this->field][0]))
-                    ->when(is_numeric($this->values[$this->field][1]), fn ($q) => $q->where($this->field, '<=', $this->values[$this->field][1]))
+                    ->when(is_numeric($this->values[$this->field][0]), fn ($q) => $q->where($this->getQualifiedField(), '>=', $this->values[$this->field][0]))
+                    ->when(is_numeric($this->values[$this->field][1]), fn ($q) => $q->where($this->getQualifiedField(), '<=', $this->values[$this->field][1]))
             ),
             FilterMode::BETWEEN_EXCLUSIVE => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
-                    ->when(is_numeric($this->values[$this->field][0]), fn ($q) => $q->where($this->field, '>', $this->values[$this->field][0]))
-                    ->when(is_numeric($this->values[$this->field][1]), fn ($q) => $q->where($this->field, '<', $this->values[$this->field][1]))
+                    ->when(is_numeric($this->values[$this->field][0]), fn ($q) => $q->where($this->getQualifiedField(), '>', $this->values[$this->field][0]))
+                    ->when(is_numeric($this->values[$this->field][1]), fn ($q) => $q->where($this->getQualifiedField(), '<', $this->values[$this->field][1]))
             ),
             FilterMode::NOT_BETWEEN => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
-                    ->when(is_numeric($this->values[$this->field][0]), fn ($q) => $q->orWhere($this->field, '<', $this->values[$this->field][0]))
-                    ->when(is_numeric($this->values[$this->field][1]), fn ($q) => $q->orWhere($this->field, '>', $this->values[$this->field][1]))
+                    ->when(is_numeric($this->values[$this->field][0]), fn ($q) => $q->orWhere($this->getQualifiedField(), '<', $this->values[$this->field][0]))
+                    ->when(is_numeric($this->values[$this->field][1]), fn ($q) => $q->orWhere($this->getQualifiedField(), '>', $this->values[$this->field][1]))
             ),
             FilterMode::NOT_BETWEEN_INCLUSIVE => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
-                    ->when(is_numeric($this->values[$this->field][0]), fn ($q) => $q->orWhere($this->field, '<=', $this->values[$this->field][0]))
-                    ->when(is_numeric($this->values[$this->field][1]), fn ($q) => $q->orWhere($this->field, '>=', $this->values[$this->field][1]))
+                    ->when(is_numeric($this->values[$this->field][0]), fn ($q) => $q->orWhere($this->getQualifiedField(), '<=', $this->values[$this->field][0]))
+                    ->when(is_numeric($this->values[$this->field][1]), fn ($q) => $q->orWhere($this->getQualifiedField(), '>=', $this->values[$this->field][1]))
             ),
-            default => $query->where($this->field, $this->values[$this->field]),
+            default => $query->where($this->getQualifiedField(), $this->values[$this->field]),
         };
     }
 

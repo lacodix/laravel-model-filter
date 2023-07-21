@@ -3,10 +3,12 @@
 namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 abstract class SingleFieldFilter extends Filter
 {
     protected string $field;
+    protected ?string $table = null;
 
     public function __construct(?string $field = null)
     {
@@ -28,15 +30,19 @@ abstract class SingleFieldFilter extends Filter
         return $this;
     }
 
-    public function field(string $field): static
+    public function table(string $table): static
     {
-        $this->field = $field;
+        $this->table = $table;
 
         return $this;
     }
 
-    public function getField(): ?string
+    public function getQualifiedField(): string
     {
-        return $this->field ?? null;
+        if (Str::contains($this->field, '.') || is_null($this->table)) {
+            return $this->field;
+        }
+
+        return $this->table . '.' . $this->field;
     }
 }
