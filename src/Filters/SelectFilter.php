@@ -18,7 +18,7 @@ class SelectFilter extends SingleFieldFilter
         return $query
             ->when(
                 in_array($this->values[$this->field], $this->options()),
-                fn ($query) => $query->where($this->field, $this->values[$this->field])
+                fn ($query) => $query->where($this->getQualifiedField(), $this->values[$this->field])
             );
     }
 
