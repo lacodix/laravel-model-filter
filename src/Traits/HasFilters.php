@@ -79,6 +79,6 @@ trait HasFilters
     {
         return collect($values)
             ->only($this->getAllFilterQueryNames($group))
-            ->filter();
+            ->filter(fn ($value) => isset($value) && $value !== '');
     }
 }
