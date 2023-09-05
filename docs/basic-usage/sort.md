@@ -45,10 +45,10 @@ applies the sorting to allowed fields.
 
 This also allows to use the sort by query string.
 
-## Search by a query string
+## Sort by a query string
 
 ```php
-Post::searchByQueryString()->get();
+Post::sortByQueryString()->get();
 ```
 
 and open the url
@@ -59,7 +59,7 @@ https://.../posts?sort[title]=desc
 
 You can change the name of query parameter with the config file value model-filter.sort_query_value_name
 
-## Search direction
+## Sort direction
 
 You can use the both directions `asc` and `desc`. The usage is case insensitive.
 
