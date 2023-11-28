@@ -61,7 +61,7 @@
         "test-coverage": "vendor/bin/pest --coverage",
         "format": "vendor/bin/pint",
         "csfixer:test": "php-cs-fixer fix -v",
-        "phpstan:test": "phpstan analyse --ansi",
+        "phpstan:test": "php -d memory_limit=-1 vendor/bin/phpstan analyse --ansi",
         "rector:test": "rector process --ansi",
         "insights": "phpinsights analyse --ansi -v --no-interaction"
     },
