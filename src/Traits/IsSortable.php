@@ -9,9 +9,12 @@ use Illuminate\Support\Arr;
 
 trait IsSortable
 {
-    public function scopeSort(Builder $query, ?array $sort): Builder
+    public function scopeSort(Builder $query, ?array $sort = null): Builder
     {
-        return $query->when(! empty($sort), fn (Builder $query) => $this->applySortQuery($query, $sort));
+        return $query->when(
+            ! empty($sort) || $this->hasDefaultSorting(),
+            fn (Builder $query) => $this->applySortQuery($query, $sort)
+        );
     }
 
     public function scopeSortByQueryString(Builder $query): Builder
@@ -26,18 +29,51 @@ trait IsSortable
 
     public function sortableFieldNames(): array
     {
-        return Arr::isAssoc($this->sortable) ? array_keys($this->sortable) : $this->sortable;
+        return array_keys($this->sortableFields());
     }
 
-    protected function applySortQuery(Builder $query, array $sort): Builder
+    public function sortableFields(): array
     {
-        $sort = Arr::isAssoc($sort) ? $sort : array_fill_keys($sort, 'asc');
+        if (! Arr::isAssoc($this->sortable)) {
+            return array_fill_keys($this->sortable, null);
+        }
 
-        collect($sort)
+        return $this->fillDirections($this->sortable);
+    }
+
+    public function hasDefaultSorting(): bool
+    {
+        return Arr::isAssoc($this->sortable);
+    }
+
+    protected function applySortQuery(Builder $query, ?array $sort): Builder
+    {
+        $sort = $this->fillDirections($sort ?? [], 'asc');
+
+        collect($this->sortableFields())
+            ->merge($sort)
             ->only($this->sortableFieldNames() ?? [])
+            ->filter()
             ->map(static fn (string $direction) => strtolower($direction) === 'desc' ? 'desc' : 'asc')
             ->each(static fn (string $direction, string $field) => $query->orderBy($field, $direction));
 
         return $query;
+    }
+
+    protected function fillDirections($fields, ?string $value = null): array
+    {
+        $results = [];
+
+        foreach ($fields as $col => $dir) {
+            if (is_numeric($col)) {
+                $results[$dir] = $value;
+
+                continue;
+            }
+
+            $results[$col] = $dir;
+        }
+
+        return $results;
     }
 }

@@ -63,6 +63,36 @@ You can change the name of query parameter with the config file value model-filt
 
 You can use the both directions `asc` and `desc`. The usage is case insensitive.
 
+You can also omit the direction if you want `asc` sorting
+
+```php
+Post::sort(['title'])->get();
+```
+
+## Default sorting
+
+Sometimes you need the possibility to sort by a column even if no sorting direction is given. Or you want to
+sort by another column even if some sortings are given. For such cases you can define a default sorting direction
+on your sortable columns:
+
+```php
+    protected array $sortable = [
+        'title',
+        'created_at' => 'desc',
+        'content',
+    ];
+```
+
+In this example the columns will be sorted in descending order by create_at column even if it is not given.
+
+```php
+Post::sort()->get();
+...
+Post::sortByQueryString()->get();
+```
+
+This is indeed more useful for usage with querystring, since you could just add the direction on your own by code.
+
 ### Security
 
 For security reason it is only possible to sort for fields that are marked as sortable. 
