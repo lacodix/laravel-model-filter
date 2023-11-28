@@ -64,6 +64,19 @@ The keys are only used for visualisation in the seleect input fields.
     }
 ```
 
+## Multiselect
+
+If you want to give multiple values to filter for, you can set the mode to CONTAINS
+
+```
+public FilterMode $mode = FilterMode::CONTAINS;
+```
+
+with this mode you can filter for multiple values. All models that fit to one of the given options will be found. It
+is still comparing the model column against the given filter values. To get it working in your views, you have to 
+name the input element as an array, see select.blade.php for an example when using the multiple option.
+
 ## Filter Modes
 
-Select filters only have the EQUAL mode.
+- FilterMode::EQUAL
+- FilterMode::CONTAINS

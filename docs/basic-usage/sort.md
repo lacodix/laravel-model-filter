@@ -93,6 +93,10 @@ Post::sortByQueryString()->get();
 
 This is indeed more useful for usage with querystring, since you could just add the direction on your own by code.
 
+ATTENTION: keep in mind that it is still necessary to call one of the scopes `sort` or `sortByQueryString` to apply
+the sorting functionality. If you want to sort your models even without calling one of this functions, take in account
+to use a default global scope on your model.
+
 ### Security
 
 For security reason it is only possible to sort for fields that are marked as sortable. 
