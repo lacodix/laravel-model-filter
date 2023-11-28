@@ -94,6 +94,11 @@ class Post extends Model
                 ->setQueryName('type_filter_throws')
                 ->setValidationMode(ValidationMode::THROW),
 
+            (new TypeFilter())
+                ->setTitle(ucwords(str_replace('_', ' ', 'type_multi')))
+                ->setQueryName('type_multi')
+                ->setMode(FilterMode::CONTAINS),
+
             (new StringFilter('title'))
                 ->setTitle(ucwords(str_replace('_', ' ', 'starts_with')))
                 ->setQueryName('starts_with')

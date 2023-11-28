@@ -3,6 +3,7 @@
 use Carbon\Carbon;
 use function Pest\Faker\faker;
 use Tests\Models\Post;
+use Tests\Models\Comment;
 
 beforeEach(function () {
     Post::factory()
