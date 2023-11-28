@@ -35,4 +35,3 @@ it('overwrites default sorting', function () {
 it('overwrites default sorting without given direction', function () {
     expect(Comment::sort(['title'])->first())->title->toEqual('all the first one');
 });
-

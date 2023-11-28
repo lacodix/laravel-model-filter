@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Validation\ValidationException;
 use Tests\Models\Post;
 
 beforeEach(function () {
