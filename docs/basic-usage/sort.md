@@ -97,6 +97,23 @@ ATTENTION: keep in mind that it is still necessary to call one of the scopes `so
 the sorting functionality. If you want to sort your models even without calling one of this functions, take in account
 to use a default global scope on your model.
 
+ATTENTION: kepp also in mind that given sort-parameters will automatically overwrite default sorting.
+
+```php
+    protected array $sortable = [
+        'title',
+        'created_at' => 'desc',
+        'content',
+    ];
+```
+
+```php
+    Post::sort(['title' => 'desc'])->get();
+```
+
+in this example it will NOT sort by created_at but only by title.
+Default sorting will only be applied if not manual sorting is given.
+
 ### Security
 
 For security reason it is only possible to sort for fields that are marked as sortable. 

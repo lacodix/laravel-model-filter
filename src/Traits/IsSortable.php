@@ -48,9 +48,14 @@ trait IsSortable
 
     protected function applySortQuery(Builder $query, ?array $sort): Builder
     {
+        $sortableFields = $this->sortableFields();
         $sort = $this->fillDirections($sort ?? [], 'asc');
 
-        collect($this->sortableFields())
+        if (! empty($sort)) {
+            $sortableFields = array_fill_keys(array_keys($sortableFields), null);
+        }
+
+        collect($sortableFields)
             ->merge($sort)
             ->only($this->sortableFieldNames() ?? [])
             ->filter()
