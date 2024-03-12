@@ -46,7 +46,7 @@ jobs:
 
       - name: Install Composer dependencies
         run: |
-          composer require "illuminate/contracts:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer require "illuminate/contracts:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update --dev
           composer update --${{ matrix.dependency-version }} --no-interaction --prefer-dist --no-suggest
 
       - name: Unit Tests
