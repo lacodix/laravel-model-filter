@@ -1,6 +1,5 @@
 <?php
 
-use function Pest\Faker\faker;
 use Tests\Models\Post;
 
 it('can be filtered by string', function () {

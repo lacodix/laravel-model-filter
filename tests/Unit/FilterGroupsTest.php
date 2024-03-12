@@ -1,6 +1,5 @@
 <?php
 
-use function Pest\Faker\faker;
 use Tests\Models\Comment;
 
 beforeEach(function () {

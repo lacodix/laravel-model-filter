@@ -3,7 +3,6 @@
 namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Arr;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
 class SelectFilter extends SingleFieldFilter

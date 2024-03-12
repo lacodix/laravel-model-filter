@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Validation\ValidationException;
-use function Pest\Faker\faker;
 use Tests\Models\Post;
 
 beforeEach(function () {

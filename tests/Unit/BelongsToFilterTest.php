@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Validation\ValidationException;
-use Tests\Models\Post;
 use Tests\Models\Comment;
+use Tests\Models\Post;
 
 beforeEach(function () {
     $this->post1 = Post::factory()
@@ -47,7 +47,7 @@ it('can be filtered by multi select', function () {
     expect(Comment::filter(['post_filter_multi' => [$this->post1->id, $this->post2->id]])->count())->toEqual(12);
 });
 
-it('contains the correct values', function() {
+it('contains the correct values', function () {
     expect(array_keys((new \Tests\Filters\PostFilter())->options()))->toHaveCount(5)
         ->toContain($this->post1->title)
         ->toContain($this->post2->title);
