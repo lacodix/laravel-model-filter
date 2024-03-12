@@ -16,7 +16,7 @@ jobs:
         dependency-version: [prefer-lowest, prefer-stable]
         include:
           - laravel: 11.*
-            testbench: 8.*
+            testbench: 9.*
           - laravel: 10.*
             testbench: 8.*
         composer-version: [ v2 ]
