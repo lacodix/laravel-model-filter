@@ -8,25 +8,25 @@ beforeEach(function () {
     Post::factory()
         ->count(15)
         ->create([
-            'counter' => faker()->numberBetween(0, 5000)
+            'counter' => $this->faker->numberBetween(0, 5000)
         ]);
 
     Post::factory()
         ->count(7)
         ->create([
-            'counter' => faker()->numberBetween(6000, 9000)
+            'counter' => $this->faker->numberBetween(6000, 9000)
         ]);
 
     Post::factory()
         ->count(4)
         ->create([
-            'counter' => faker()->numberBetween(11000, 14000)
+            'counter' => $this->faker->numberBetween(11000, 14000)
         ]);
 
     Post::factory()
         ->count(10)
         ->create([
-            'counter' => faker()->numberBetween(15000, 20000)
+            'counter' => $this->faker->numberBetween(15000, 20000)
         ]);
 
     Post::factory()
@@ -136,7 +136,7 @@ it('is doesn\'t apply if value is out of min/max', function () {
     Post::factory()
         ->count(2)
         ->create([
-            'counter' => faker()->numberBetween(22000, 30000)
+            'counter' => $this->faker->numberBetween(22000, 30000)
         ]);
 
     expect(Post::filter([

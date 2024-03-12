@@ -6,21 +6,21 @@ use Tests\Models\Post;
 it('can be filtered by string', function () {
     Post::factory()
         ->state([
-            'title' => 'no '.faker()->words(4, true).' test',
+            'title' => 'no '.$this->faker->words(4, true).' test',
         ])
         ->count(5)
         ->create();
 
     Post::factory()
         ->state([
-            'title' => 'no '.faker()->words(2, true).' test '.faker()->words(2, true).' no',
+            'title' => 'no '.$this->faker->words(2, true).' test '.$this->faker->words(2, true).' no',
         ])
         ->count(5)
         ->create();
 
     Post::factory()
         ->state([
-            'title' => 'test '.faker()->words(4, true).' no',
+            'title' => 'test '.$this->faker->words(4, true).' no',
         ])
         ->count(10)
         ->create();

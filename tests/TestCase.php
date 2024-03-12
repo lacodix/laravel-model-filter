@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithViews;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
 use Lacodix\LaravelModelFilter\LaravelModelFilterServiceProvider;
 
@@ -14,6 +15,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
     use LazilyRefreshDatabase;
     use InteractsWithViews;
+    use WithFaker;
 
     protected function setUp(): void
     {

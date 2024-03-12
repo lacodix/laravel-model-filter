@@ -7,19 +7,19 @@ use Tests\Models\Post;
 beforeEach(function () {
     Post::factory()
         ->state([
-            'title' => 'no '.faker()->words(4, true).' test',
+            'title' => 'no '.$this->faker->words(4, true).' test',
         ])
         ->create();
 
     Post::factory()
         ->state([
-            'title' => 'no '.faker()->words(2, true).' test '.faker()->words(2, true).' no',
+            'title' => 'no '.$this->faker->words(2, true).' test '.$this->faker->words(2, true).' no',
         ])
         ->create();
 
     Post::factory()
         ->state([
-            'title' => 'test '.faker()->words(4, true).' no',
+            'title' => 'test '.$this->faker->words(4, true).' no',
         ])
         ->create();
 
@@ -31,19 +31,19 @@ beforeEach(function () {
 
     Post::factory()
         ->state([
-            'content' => 'no '.faker()->words(4, true).' test',
+            'content' => 'no '.$this->faker->words(4, true).' test',
         ])
         ->create();
 
     Post::factory()
         ->state([
-            'content' => 'no '.faker()->words(2, true).' test '.faker()->words(2, true).' no',
+            'content' => 'no '.$this->faker->words(2, true).' test '.$this->faker->words(2, true).' no',
         ])
         ->create();
 
     Post::factory()
         ->state([
-            'content' => 'test '.faker()->words(4, true).' no',
+            'content' => 'test '.$this->faker->words(4, true).' no',
             'type' => 'page',
         ])
         ->create();

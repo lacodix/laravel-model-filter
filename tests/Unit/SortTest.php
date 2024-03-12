@@ -16,7 +16,7 @@ beforeEach(function () {
 
     Post::factory()
         ->state([
-            'title' => 'b filler '.faker()->words(2, true),
+            'title' => 'b filler '.$this->faker->words(2, true),
             'counter' => 50,
             'type' => 'post',
             'created_at' => Carbon::now()->subDay(),
