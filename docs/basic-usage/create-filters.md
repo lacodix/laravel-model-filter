@@ -7,6 +7,14 @@ Filters are class based. This means each filter is located in its own class file
 be located in \App\Models\Filters. Filters can be applied to multiple models.
 Filters can use one of the existing base filters or can be set up individually.
 
+For filter creation we added an artisan comman
+```
+php artisan make:filter
+```
+You can call this command without any parameters to get prompted for your settings. You get asked which
+kind of filter you want to create and finally will get asked for needed parameters and options. In our
+examples we will use parameters and options to create the filter in one shot.
+
 ## Create your first filter
 
 ```bash

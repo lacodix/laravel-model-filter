@@ -1,0 +1,13 @@
+<?php
+
+namespace {{ namespace }};
+
+use Lacodix\LaravelModelFilter\Filters\BelongsToFilter;
+
+class {{ class }} extends BelongsToFilter
+{
+    protected string $field = '{{ field }}';
+
+    protected string $relationModel = {{ relationName }}::class;
+    protected string $titleColumn = '{{ relationTitle }}';
+}

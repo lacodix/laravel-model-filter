@@ -28,7 +28,7 @@ trait HasFilters
                     ->populate($values->get($filter->queryName()))
                     ->when(
                         $filter->validationMode === ValidationMode::THROW,
-                        static function (Filter $filter) {
+                        static function (Filter $filter): void {
                             $filter->validate();
                         }
                     )
@@ -79,6 +79,6 @@ trait HasFilters
     {
         return collect($values)
             ->only($this->getAllFilterQueryNames($group))
-            ->filter(fn ($value) => isset($value) && $value !== '');
+            ->filter(static fn ($value) => isset($value) && $value !== '');
     }
 }

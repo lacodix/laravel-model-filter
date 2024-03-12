@@ -26,8 +26,7 @@ enum FilterMode
             self::BETWEEN_EXCLUSIVE,
             self::NOT_BETWEEN,
             self::NOT_BETWEEN_INCLUSIVE,
-            self::CONTAINS
-                => true,
+            self::CONTAINS => true,
             default => false,
         };
     }

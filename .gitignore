@@ -11,3 +11,4 @@ Thumbs.db
 /node_modules
 /vendor
 /build
+composer.lock

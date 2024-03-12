@@ -53,7 +53,7 @@ You can simply use other model ids for the options
 
 If you want to use different key and values for the options, keep in mind that the
 filters expect the values for filtering in the values of the returned array.
-The keys are only used for visualisation in the seleect input fields.
+The keys are only used for visualisation in the select input fields.
 
 ```
     public function options(): array
