@@ -4,9 +4,13 @@ namespace Tests\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Lacodix\LaravelModelFilter\Enums\FilterMode;
+use Lacodix\LaravelModelFilter\Enums\ValidationMode;
 use Lacodix\LaravelModelFilter\Traits\HasFilters;
 use Lacodix\LaravelModelFilter\Traits\IsSortable;
 use Tests\Filters\CounterFilter;
+use Tests\Filters\PostFilter;
 use Tests\Filters\PublishedFilter;
 
 class Comment extends Model
@@ -15,15 +19,6 @@ class Comment extends Model
     use HasFilters;
     use IsSortable;
 
-    protected $filters = [
-        'frontend' => [
-            PublishedFilter::class,
-        ],
-        'backend' => [
-            CounterFilter::class,
-        ],
-    ];
-
     protected array $sortable = [
         'title' => 'desc',
         'created_at',
@@ -31,4 +26,34 @@ class Comment extends Model
     ];
 
     protected $guarded = [];
+
+    public function filters(string $group = '__default'): Collection
+    {
+        return collect(([
+            'frontend' => collect([
+                new PublishedFilter(),
+            ]),
+            'backend' => [
+                new CounterFilter(),
+            ],
+            '__default' => [
+                new PostFilter(),
+
+                (new PostFilter())
+                    ->setTitle(ucwords(str_replace('_', ' ', 'post_filter_throws')))
+                    ->setQueryName('post_filter_throws')
+                    ->setValidationMode(ValidationMode::THROW),
+
+                (new PostFilter())
+                    ->setTitle(ucwords(str_replace('_', ' ', 'post_filter_multi')))
+                    ->setQueryName('post_filter_multi')
+                    ->setMode(FilterMode::CONTAINS),
+            ],
+        ])[$group] ?? []);
+    }
+
+    public function post()
+    {
+        return $this->belongsTo(Post::class);
+    }
 }

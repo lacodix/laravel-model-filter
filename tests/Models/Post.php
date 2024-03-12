@@ -174,4 +174,9 @@ class Post extends Model
             new CounterFilter(),
         ]);
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

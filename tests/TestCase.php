@@ -43,6 +43,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
         Capsule::schema()->create('comments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('post_id')->nullable();
             $table->string('title');
             $table->boolean('published');
             $table->text('content');
