@@ -21,10 +21,10 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cache dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.composer/cache/files
           key: dependencies-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
@@ -37,7 +37,7 @@ jobs:
           tools: cs2pr
 
       - name: Install Composer dependencies
-        run: composer update --${{ matrix.dependency-version }} --ansi --no-interaction --prefer-dist
+        run: composer update --${{ matrix.dependency-version }} --ansi --no-interaction --prefer-dist --dev
 
       - name: PHPStan
         run: composer run phpstan:test -- --error-format=checkstyle | cs2pr

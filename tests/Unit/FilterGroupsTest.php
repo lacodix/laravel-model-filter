@@ -1,13 +1,12 @@
 <?php
 
-use function Pest\Faker\faker;
 use Tests\Models\Comment;
 
 beforeEach(function () {
     Comment::factory()
         ->state([
             'published' => false,
-            'counter' => faker()->numberBetween(0, 5000),
+            'counter' => $this->faker->numberBetween(0, 5000),
         ])
         ->count(7)
         ->create();
@@ -15,7 +14,7 @@ beforeEach(function () {
     Comment::factory()
         ->state([
             'published' => true,
-            'counter' => faker()->numberBetween(0, 5000),
+            'counter' => $this->faker->numberBetween(0, 5000),
         ])
         ->count(5)
         ->create();
@@ -23,7 +22,7 @@ beforeEach(function () {
     Comment::factory()
         ->state([
             'published' => false,
-            'counter' => faker()->numberBetween(6000, 10000),
+            'counter' => $this->faker->numberBetween(6000, 10000),
         ])
         ->count(7)
         ->create();
@@ -31,7 +30,7 @@ beforeEach(function () {
     Comment::factory()
         ->state([
             'published' => true,
-            'counter' => faker()->numberBetween(6000, 10000),
+            'counter' => $this->faker->numberBetween(6000, 10000),
         ])
         ->count(5)
         ->create();
@@ -39,7 +38,7 @@ beforeEach(function () {
     Comment::factory()
         ->state([
             'published' => false,
-            'counter' => faker()->numberBetween(12000, 20000),
+            'counter' => $this->faker->numberBetween(12000, 20000),
         ])
         ->count(7)
         ->create();
@@ -47,7 +46,7 @@ beforeEach(function () {
     Comment::factory()
         ->state([
             'published' => true,
-            'counter' => faker()->numberBetween(12000, 20000),
+            'counter' => $this->faker->numberBetween(12000, 20000),
         ])
         ->count(5)
         ->create();

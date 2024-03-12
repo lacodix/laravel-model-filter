@@ -125,8 +125,9 @@ Please run the following commands and solve potential problems before committing
 and think about adding tests for new functionality.
 
 ```bash
-composer csfixer:test
 composer rector:test
+composer insights
+composer csfixer:test
 composer phpstan:test
 ```
 

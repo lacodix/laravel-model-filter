@@ -2,32 +2,31 @@
 
 use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
-use function Pest\Faker\faker;
 use Tests\Models\Post;
 
 beforeEach(function () {
     Post::factory()
         ->count(15)
         ->create([
-            'created_at' => faker()->dateTimeBetween('-10 week', '-3 week'),
+            'created_at' => $this->faker->dateTimeBetween('-10 week', '-3 week'),
         ]);
 
     Post::factory()
         ->count(7)
         ->create([
-            'created_at' => faker()->dateTimeBetween('-5 day', '-1 day'),
+            'created_at' => $this->faker->dateTimeBetween('-5 day', '-1 day'),
         ]);
 
     Post::factory()
         ->count(4)
         ->create([
-            'created_at' => faker()->dateTimeBetween('+1 day', '+5 day'),
+            'created_at' => $this->faker->dateTimeBetween('+1 day', '+5 day'),
         ]);
 
     Post::factory()
         ->count(10)
         ->create([
-            'created_at' => faker()->dateTimeBetween('+3 week', '+10 week'),
+            'created_at' => $this->faker->dateTimeBetween('+3 week', '+10 week'),
         ]);
 
     Post::factory()

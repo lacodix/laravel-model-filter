@@ -1,12 +1,11 @@
 <?php
 
-use function Pest\Faker\faker;
 use Tests\Models\Comment;
 
 beforeEach(function () {
     Comment::factory()
         ->state([
-            'title' => 'the ' . faker()->words(random_int(5, 15), true)
+            'title' => 'the ' . $this->faker->words(random_int(5, 15), true)
         ])
         ->count(7)
         ->create();

@@ -76,6 +76,11 @@ return [
         ForbiddenNormalClasses::class,
         ForbiddenTraits::class,
         LineLengthSniff::class,
+        SlevomatCodingStandard\Sniffs\Classes\SuperfluousExceptionNamingSniff::class,
+        SlevomatCodingStandard\Sniffs\ControlStructures\DisallowEmptySniff::class,
+        NunoMaduro\PhpInsights\Domain\Sniffs\ForbiddenSetterSniff::class,
+        SlevomatCodingStandard\Sniffs\Classes\ForbiddenPublicPropertySniff::class,
+        NunoMaduro\PhpInsights\Domain\Insights\ForbiddenDefineFunctions::class,
     ],
 
     'config' => [
@@ -96,11 +101,11 @@ return [
     */
 
     'requirements' => [
-//        'min-quality' => 0,
-//        'min-complexity' => 0,
-//        'min-architecture' => 0,
-//        'min-style' => 0,
-//        'disable-security-check' => false,
+        'min-quality' => 100,
+        'min-complexity' => 80,
+        'min-architecture' => 100,
+        'min-style' => 100,
+        'disable-security-check' => false,
     ],
 
     /*
