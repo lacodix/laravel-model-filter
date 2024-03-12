@@ -12,7 +12,7 @@ trait IsSortable
     public function scopeSort(Builder $query, ?array $sort = null): Builder
     {
         return $query->when(
-            ! empty($sort) || $this->hasDefaultSorting(),
+            $sort !== null && $sort !== [] || $this->hasDefaultSorting(),
             fn (Builder $query) => $this->applySortQuery($query, $sort)
         );
     }

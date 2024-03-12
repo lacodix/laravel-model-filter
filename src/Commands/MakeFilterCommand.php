@@ -85,7 +85,7 @@ class MakeFilterCommand extends GeneratorCommand
             }
 
             $this->relationTitle = strtolower($this->option('title'));
-            if (! $this->relationTitle) {
+            if ($this->relationTitle === '' || $this->relationTitle === '0') {
                 $this->relationTitle = text('What database table column should be used for the title?');
             }
         }
