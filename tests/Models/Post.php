@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
+use Lacodix\LaravelModelFilter\Enums\TimeframeFilterPrecision;
 use Lacodix\LaravelModelFilter\Enums\ValidationMode;
 use Lacodix\LaravelModelFilter\Filters\BooleanFilter;
 use Lacodix\LaravelModelFilter\Filters\DateFilter;
@@ -16,6 +17,8 @@ use Lacodix\LaravelModelFilter\Traits\IsSearchable;
 use Lacodix\LaravelModelFilter\Traits\IsSortable;
 use Tests\Filters\CounterFilter;
 use Tests\Filters\IndividualFilter;
+use Tests\Filters\TagFilter;
+use Tests\Filters\TagTimeframeFilter;
 use Tests\Filters\TypeFilter;
 
 class Post extends Model
@@ -172,11 +175,40 @@ class Post extends Model
                 ->setValidationMode(ValidationMode::THROW),
 
             new CounterFilter(),
+
+            new TagFilter(),
+
+            (new TagFilter())
+                ->setTitle(ucwords(str_replace('_', ' ', 'tag_filter_contains')))
+                ->setQueryName('tag_filter_contains')
+                ->setMode(FilterMode::CONTAINS),
+
+            new TagTimeframeFilter(),
+
+            (new TagTimeframeFilter())
+                ->setTitle(ucwords(str_replace('_', ' ', 'tag_timeframe_filter_contains')))
+                ->setQueryName('tag_timeframe_filter_contains')
+                ->setMode(FilterMode::CONTAINS),
+
+            (new TagTimeframeFilter())
+                ->setTitle(ucwords(str_replace('_', ' ', 'tag_timeframe_filter_day')))
+                ->setQueryName('tag_timeframe_filter_day')
+                ->setPrecision(TimeframeFilterPrecision::DAY),
+
+            (new TagTimeframeFilter())
+                ->setTitle(ucwords(str_replace('_', ' ', 'tag_timeframe_filter_year')))
+                ->setQueryName('tag_timeframe_filter_year')
+                ->setPrecision(TimeframeFilterPrecision::YEAR),
         ]);
     }
 
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class)->withPivot(['start', 'end']);
     }
 }
