@@ -1,0 +1,15 @@
+<?php
+
+namespace {{ namespace }};
+
+use Lacodix\LaravelModelFilter\Filters\BelongsToManyTimeframeFilter;
+
+class {{ class }} extends BelongsToManyTimeframeFilter
+{
+    protected string $field = '{{ field }}';
+    protected string $startField = '{{ start_field }}';
+    protected string $endField = '{{ end_field }}';
+
+    protected string $relationModel = {{ relationName }}::class;
+    protected string $titleColumn = '{{ relationTitle }}';
+}

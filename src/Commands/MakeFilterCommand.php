@@ -22,6 +22,8 @@ class MakeFilterCommand extends GeneratorCommand
         'date' => 'Date',
         'numeric' => 'Numeric',
         'belongs-to' => 'Belongs To',
+        'belongs-to-many' => 'Belongs To Many',
+        'belongs-to-many-timeframe' => 'Belongs To Many Timeframe',
     ];
 
     protected ?string $fieldId = null;
@@ -32,12 +34,16 @@ class MakeFilterCommand extends GeneratorCommand
         'date',
         'numeric',
         'belongs-to',
+        'belongs-to-many',
+        'belongs-to-many-timeframe',
     ];
 
     protected ?string $relationName = null;
     protected ?string $relationTitle = null;
     protected array $fitersWithRelation = [
         'belongs-to',
+        'belongs-to-many',
+        'belongs-to-many-timeframe',
     ];
 
     protected $signature = 'make:filter
@@ -45,7 +51,9 @@ class MakeFilterCommand extends GeneratorCommand
         {--t|type= : For allowed types see documentation or just omit the attribute to get a selection. }
         {--f|field= : You must add a database columns for all filters that directly access database fields. }
         {--relation= : You must add a relation model for relation filters. }
-        {--title= : You must add a database column that contains the title for the relations filters. }';
+        {--title= : You must add a database column that contains the title for the relations filters. }
+        {--start_field= : For the Belongs To Many Timeframe filter you need to specify the start field. }
+        {--end_field= : For the Belongs To Many Timeframe filter you need to specify the end field. }';
 
     protected $description = 'Create a new eloquent filter';
 
@@ -98,11 +106,15 @@ class MakeFilterCommand extends GeneratorCommand
         return str_replace(
             [
                 '{{ field }}',
+                '{{ start_field }}',
+                '{{ end_field }}',
                 '{{ relationName }}',
                 '{{ relationTitle }}',
             ],
             [
                 $this->fieldId,
+                $this->option('start_field'),
+                $this->option('end_field'),
                 $this->relationName,
                 $this->relationTitle,
             ],
@@ -120,6 +132,8 @@ class MakeFilterCommand extends GeneratorCommand
             'date' => 'date_filter',
             'numeric' => 'numeric_filter',
             'belongs-to' => 'belongs_to_filter',
+            'belongs-to-many' => 'belongs_to_many_filter',
+            'belongs-to-many-timeframe' => 'belongs_to_many_timeframe_filter',
             default => 'filter',
         } . '.stub';
     }
