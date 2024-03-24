@@ -1,5 +1,5 @@
 ---
-title: Belongs To Many Filter
+title: Belongs To Many Timeframe Filter
 weight: 5
 ---
 
