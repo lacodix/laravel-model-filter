@@ -43,5 +43,5 @@ You can publish the translation files with:
 php artisan vendor:publish --tag="model-filter-translations"
 ```
 
-Translations are only needed, if you use one of the predefined ready to use filters like the
+Translations are only needed, if you use one of the predefined filters like the
 TrashedFilter.

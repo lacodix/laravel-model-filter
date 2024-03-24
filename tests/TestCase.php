@@ -53,6 +53,19 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             $table->timestamps();
         });
 
+        Capsule::schema()->create('tags', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->timestamps();
+        });
+
+        Capsule::schema()->create('post_tag', function (Blueprint $table) {
+            $table->foreignId('tag_id');
+            $table->foreignId('post_id');
+            $table->timestamp('start')->nullable();
+            $table->timestamp('end')->nullable();
+        });
+
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'Tests\\Database\\Factories\\'.Str::afterLast($modelName, '\\').'Factory'
         );
