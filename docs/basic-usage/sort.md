@@ -112,7 +112,7 @@ ATTENTION: kepp also in mind that given sort-parameters will automatically overw
 ```
 
 in this example it will NOT sort by created_at but only by title.
-Default sorting will only be applied if not manual sorting is given.
+Default sorting will only be applied if no manual sorting is given.
 
 ### Security
 

@@ -10,7 +10,7 @@ It contains additional functionality to use query strings to filter, search and 
 
 Once installed you can filter, search and sort Models.
 You can create own filters based on our base filters, create individual filters, or use
-one of the predefined filters, that are ready to use with less or even without configuration like TrashedFilter.
+one of the extended filters, that are ready to use with less or even without configuration like TrashedFilter.
 
 Additionally you can use the visualisation functionality of filters.
 

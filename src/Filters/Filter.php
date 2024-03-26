@@ -3,6 +3,7 @@
 namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use Illuminate\Support\Str;
@@ -31,6 +32,8 @@ abstract class Filter
 
     protected string $component = 'text';
     protected string $title;
+
+    protected ?Model $model = null;
 
     public function setQueryName(string $queryName): static
     {
@@ -63,6 +66,20 @@ abstract class Filter
     public function setComponent(string $component): static
     {
         $this->component = $component;
+
+        return $this;
+    }
+
+    public function setOptions(array $options): static
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    public function setModel(?Model $model): static
+    {
+        $this->model = $model;
 
         return $this;
     }
@@ -108,6 +125,11 @@ abstract class Filter
     public function options(): array
     {
         return $this->options ?? [];
+    }
+
+    public function model(): ?Model
+    {
+        return $this->model;
     }
 
     public function rules(): array
