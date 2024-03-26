@@ -35,7 +35,7 @@ You can publish the view components with:
 php artisan vendor:publish --tag="lacodix-filter-views"
 ```
 
-## Translation files for predefined filters
+## Translation files for extended filters
 
 You can publish the translation files with:
 
@@ -43,5 +43,5 @@ You can publish the translation files with:
 php artisan vendor:publish --tag="model-filter-translations"
 ```
 
-Translations are only needed, if you use one of the predefined filters like the
+Translations are only needed, if you use one of the extended filters like the
 TrashedFilter.
