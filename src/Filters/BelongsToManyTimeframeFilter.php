@@ -28,6 +28,11 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
         return $this;
     }
 
+    public function getPrecision(): TimeframeFilterPrecision
+    {
+        return $this->precision;
+    }
+
     public function apply(Builder $query): Builder
     {
         $this->relation = $query->getModel()->{$this->field}();
