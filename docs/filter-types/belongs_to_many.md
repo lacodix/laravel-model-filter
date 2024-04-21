@@ -36,7 +36,7 @@ class TestBelongsToManyFilter extends BelongsToManyFilter
 ```
 
 This will prepopulate a select filter with all the tags in your tags table, represended by the colum title.
-You can additionaly configure the id-table, if you use another table as key.
+You can additionaly configure the id-table, if you use another column as key.
 ```php
     protected string $relationModel = \App\Models\Tag::class;
     protected string $idColumn = 'key';

@@ -132,3 +132,36 @@ The following sort will not be executed for this case
 ```
 https://.../posts?sort[created_at]=desc
 ```
+
+### Usage together with spatie/eloquent-sortable
+
+[spatie/eloquent-sortable](https://github.com/spatie/eloquent-sortable) is a very popular package if you need to 
+reorder your models by a column on creation or in runtime. If you just need the global configuration you can
+use both packages together without any issues.
+
+But spatie/eloquent-sortable offers the option to set sort-columns and sorting behaviour on creation by model.
+For this you need to add a `protected array $sortable` Property to your model, what conflicts with our sortable
+trait (see this [example](https://github.com/spatie/eloquent-sortable?tab=readme-ov-file#example))
+
+```php
+public $sortable = [
+    'order_column_name' => 'order_column',
+    'sort_when_creating' => true,
+];
+```
+
+You cannot combine both $sortable properties, but you can just overwrite this methods:
+
+```php
+    public function determineOrderColumnName(): string
+    {
+        return 'order_column';
+    }
+
+    public function shouldSortWhenCreating(): bool
+    {
+        return true;
+    }
+```
+
+With this solution spatie's trait doesn't need the $sortable property and you can use it for our IsSortable trait.
