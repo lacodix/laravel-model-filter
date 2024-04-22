@@ -7,8 +7,8 @@ use Tests\Models\Tag;
 beforeEach(function () {
     testTime()->freeze('2022-07-10 12:34:56');
 
-    $this->tag1 = Tag::factory()->create();
-    $this->fakeTag = Tag::factory()->create();
+    $this->tag1 = Tag::factory(['title' => 'tag1'])->create();
+    $this->fakeTag = Tag::factory(['title' => 'faketag'])->create();
 
     // Posts mit verschiedenen Startpunkten
     $this->post1 = Post::factory()->hasAttached($this->tag1, [
