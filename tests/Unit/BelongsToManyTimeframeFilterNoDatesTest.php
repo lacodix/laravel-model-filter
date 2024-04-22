@@ -4,7 +4,7 @@ use Tests\Models\Post;
 use Tests\Models\Tag;
 
 beforeEach(function () {
-    $this->tag1 = Tag::factory()
+    $this->tag1 = Tag::factory(['title' => 'tag1'])
         ->hasAttached(
             Post::factory()
             ->state([
@@ -13,7 +13,7 @@ beforeEach(function () {
             ->count(3)
         )
         ->create();
-    $this->tag2 = Tag::factory()
+    $this->tag2 = Tag::factory(['title' => 'tag2'])
         ->hasAttached(
             Post::factory()
             ->state([
@@ -22,7 +22,7 @@ beforeEach(function () {
             ->count(5)
         )
         ->create();
-    $this->tag3 = Tag::factory()
+    $this->tag3 = Tag::factory(['title' => 'tag3'])
         ->hasAttached(
             Post::factory()
             ->state([
