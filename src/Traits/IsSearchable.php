@@ -47,7 +47,8 @@ trait IsSearchable
     {
         return $query->where(
             fn (Builder $searchQuery) => $this->searchable($searchable)
-                ->each(static fn (SearchMode $mode, string $field) => $mode->applyQuery($searchQuery, $field, $search))
+                ->each(static fn (SearchMode $mode, string $field)
+                    => $mode->applyQuery($searchQuery, $query->qualifyColumn($field), $search))
         );
     }
 }
