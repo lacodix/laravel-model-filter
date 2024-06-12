@@ -124,7 +124,7 @@ class MakeFilterCommand extends GeneratorCommand
 
     protected function getStub(): string
     {
-        return __DIR__ . '/stubs/' . match (strtolower($this->option('type'))) {
+        return __DIR__ . '/stubs/' . match ($this->filtertype) {
             'boolean' => 'boolean_filter',
             'string' => 'string_filter',
             'select' => 'select_filter',
