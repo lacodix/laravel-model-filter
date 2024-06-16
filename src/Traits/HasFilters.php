@@ -19,7 +19,7 @@ trait HasFilters
     {
         $values = $this->getOnlyFilterUsableValues($values, $group);
 
-        $this->filters($group)
+        $this->filterInstances($group)
             ->filter(
                 static fn (Filter $filter) => $values->has($filter->queryName()) && $filter->applicable()
             )
@@ -48,7 +48,12 @@ trait HasFilters
         return $this->scopeFilter($query, $request->all(), $group);
     }
 
-    public function filters(string $group = '__default'): Collection
+    public function filters(): array
+    {
+        return $this->filters ?? [];
+    }
+
+    public function filterInstances(string $group = '__default'): Collection
     {
         return $this->filterInstances[$group] ??= $this
             ->getGroupedFilters($group)
@@ -62,17 +67,19 @@ trait HasFilters
 
     protected function getGroupedFilters($group): Collection
     {
-        if (! Arr::isAssoc($this->filters)) {
-            $this->filters = ['__default' => $this->filters];
+        $filters = $this->filters();
+
+        if (! Arr::isAssoc($filters)) {
+            $filters = ['__default' => $filters];
         }
 
-        return collect($this->filters[$group] ?? []);
+        return collect($filters[$group] ?? []);
     }
 
     protected function getAllFilterQueryNames(string $group)
     {
         return $this
-            ->filters($group)
+            ->filterInstances($group)
             ->map(static fn (Filter $filter) => $filter->queryName())->values()->all();
     }
 
