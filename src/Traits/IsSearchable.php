@@ -5,7 +5,6 @@ namespace Lacodix\LaravelModelFilter\Traits;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Lacodix\LaravelModelFilter\Enums\SearchMode;
 
