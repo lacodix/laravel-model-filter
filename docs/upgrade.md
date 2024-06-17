@@ -74,7 +74,7 @@ But we added more modes to give you the option to search case insensitive and ev
 If you use Postgres and want keep current case sensitive searching, just set all LIKE search modes to 
 LIKE_CASE_SENSITIVE
 
-```
+```php
 // If no searchmode is given, LIKE is the default
 public function searchable(): array
 {
