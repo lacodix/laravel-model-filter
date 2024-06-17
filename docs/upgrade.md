@@ -70,3 +70,24 @@ is always insensitive, and with MySql it depends, while it is usually also insen
 
 All search modes of v2 (except EQUAL) are now case insensitive, since this is the most expected behaviour.
 But we added more modes to give you the option to search case insensitive and even with gaps between. 
+
+If you use Postgres and want keep current case sensitive searching, just set all LIKE search modes to 
+LIKE_CASE_SENSITIVE
+
+```
+// If no searchmode is given, LIKE is the default
+public function searchable(): array
+{
+    return [
+        'name',
+    ];
+}
+
+// Replace it:
+public function searchable(): array
+{
+    return [
+        'name' => SearchMode::LIKE_CASE_SENSITIVE,
+    ];
+}
+```
