@@ -46,7 +46,7 @@ New option with methods:
     public function filters(): array
     {
         return [
-            'name',
+            CompanyFilter::class,
         ];
     }
 ```
