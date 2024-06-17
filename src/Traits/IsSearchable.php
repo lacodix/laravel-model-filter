@@ -41,11 +41,17 @@ trait IsSearchable
     {
         $searchable ??= $this->searchable();
 
-        return collect(
-            Arr::isAssoc($searchable) ? $searchable : array_fill_keys($searchable, SearchMode::LIKE)
-        )
+        return collect($searchable)
             ->mapWithKeys(static fn ($value, $key) => is_numeric($key) ? [$value => SearchMode::LIKE] : [$key => $value])
+            ->only($this->searchableFieldNames() ?? [])
             ->map(static fn ($mode) => is_string($mode) ? SearchMode::fromString($mode) : $mode);
+    }
+
+    public function searchableFieldNames(): array
+    {
+        return collect($this->searchable())
+            ->map(static fn ($value, $key) => is_numeric($key) ? $value : $key)
+            ->all();
     }
 
     protected function applySearchQuery(Builder $query, string $search, ?array $searchable = null): Builder
