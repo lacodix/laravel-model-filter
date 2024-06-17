@@ -1,6 +1,6 @@
 ---
 title: Changelog
-weight: 5
+weight: 6
 ---
 
 All notable changes to laravel-model-filter are documented 

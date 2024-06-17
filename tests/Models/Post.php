@@ -4,7 +4,6 @@ namespace Tests\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 use Lacodix\LaravelModelFilter\Enums\TimeframeFilterPrecision;
 use Lacodix\LaravelModelFilter\Enums\ValidationMode;
@@ -41,9 +40,9 @@ class Post extends Model
         'counter',
     ];
 
-    public function filters(): Collection
+    public function filters(): array
     {
-        return collect([
+        return [
             (new DateFilter('created_at'))
                 ->setTitle(ucwords(str_replace('_', ' ', 'created_at_lower_filter')))
                 ->setQueryName('created_at_lower_filter')
@@ -199,7 +198,7 @@ class Post extends Model
                 ->setTitle(ucwords(str_replace('_', ' ', 'tag_timeframe_filter_year')))
                 ->setQueryName('tag_timeframe_filter_year')
                 ->setPrecision(TimeframeFilterPrecision::YEAR),
-        ]);
+        ];
     }
 
     public function comments()

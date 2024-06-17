@@ -1,6 +1,8 @@
 <?php
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
+use Lacodix\LaravelModelFilter\Traits\IsSortable;
 use Tests\Models\Post;
 
 beforeEach(function () {
@@ -69,3 +71,25 @@ it('is first when sorting by counter', function () {
 it('cannot sort for unknown sortables', function () {
     expect(Post::sort(['type' => 'asc'])->first())->title->toEqual('b filler the first');
 });
+
+it('is first when sorting by title with method', function () {
+    expect(SortableMethodPost::sort(['title' => 'asc'])->first())->title->toEqual('a the first')
+        ->and(SortableMethodPost::sort(['title' => 'desc'])->first())->title->toEqual('d the end');
+});
+
+class SortableMethodPost extends Model
+{
+    use IsSortable;
+
+    protected $table = 'posts';
+    protected $guarded = [];
+
+    public function sortable(): array
+    {
+        return [
+            'title',
+            'created_at',
+            'counter',
+        ];
+    }
+}

@@ -59,7 +59,7 @@ it('can be filtered by group', function () {
         ->and(Comment::filter(['counter_filter' => 10000], 'backend')->count())->toEqual(24);
 });
 
-it('can is not filtered with false group', function () {
+it('is not filtered with false group', function () {
     expect(Comment::filter(['published_filter' => ['published' => true]], 'backend')->count())->toEqual(36)
         ->and(Comment::filter(['published_filter' => ['published' => false]], 'backend')->count())->toEqual(36)
         ->and(Comment::filter(['counter_filter' => 5500], 'frontend')->count())->toEqual(36)

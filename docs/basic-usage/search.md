@@ -26,6 +26,15 @@ class Post extends Model
         'title',
         'content',
     ];
+    
+    // Alternative solution with method:
+    public function searchable(): array
+    {
+        return [
+            'title',
+            'content',
+        ];
+    }
 }
 ```
 
@@ -72,11 +81,24 @@ use Lacodix\LaravelModelFilter\Enums\SearchMode;
     ...
 ```
 
-Available search modes are
-- SearchMode::STARTS_WITH;
-- SearchMode::ENDS_WITH;
-- SearchMode::EQUAL;
-- SearchMode::LIKE (default);
+Available search modes are (the string behind is for usage in query string)
+- SearchMode::EQUAL 'equal'
+- SearchMode::LIKE (default) 'like'
+- SearchMode::LIKE_CASE_SENSITIVE 'like_case'
+- SearchMode::STARTS_WITH 'starts_with'
+- SearchMode::STARTS_WITH_CASE_SENSITIVE 'starts_with_case'
+- SearchMode::ENDS_WITH 'ends_with'
+- SearchMode::ENDS_WITH_CASE_SENSITIVE 'ends_with_case'
+- SearchMode::CONTAINS_ANY 'contains_any'
+- SearchMode::CONTAINS_ANY_CASE_SENSITIVE 'contains_any_case'
+- SearchMode::CONTAINS_ALL 'contains_all'
+- SearchMode::CONTAINS_ALL_CASE_SENSITIVE 'contains_all_case'
+
+The Contains modes behave identical to like modes, if only one search term is given. As soon as you search
+for multiple terms, it behaves different. searching for "test name" will find only entries that contain 
+"test name" with like modes, but it will find "test" and "name" in the contains modes. Please keep in mind
+that the contains searches are very expensive in the database, since it splits up your search terms and will
+perform multiple like comparisons.
 
 ## More flexibility
 

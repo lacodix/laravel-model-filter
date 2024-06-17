@@ -14,7 +14,7 @@ beforeEach(function () {
 });
 
 it('it prepopulates the filters options', function () {
-    expect((new TestPost)->filters()->first()->options())->toHaveCount(4)
+    expect((new TestPost)->filterInstances()->first()->options())->toHaveCount(4)
         ->toEqual(['post', 'page', 'comment', 'image']);
 });
 

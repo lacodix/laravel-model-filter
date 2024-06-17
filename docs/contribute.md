@@ -1,6 +1,6 @@
 ---
 title: Contribute
-weight: 6
+weight: 7
 ---
 
 ## Testing

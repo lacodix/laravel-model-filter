@@ -68,6 +68,14 @@ class Post extends Model
     protected array $filters = [
         CreatedAfterFilter::class,
     ];
+    
+    // Alternative solution with method:
+    public function filters(): array
+    {
+        return [
+            CreatedAfterFilter::class,
+        ];
+    }
 }
 ```
 
