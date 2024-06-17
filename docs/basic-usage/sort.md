@@ -27,6 +27,16 @@ class Post extends Model
         'created_at',
         'content',
     ];
+    
+    // Alternative solution with method:
+    public function sortable(): array
+    {
+        return [
+            'title',
+            'created_at',
+            'content',
+        ];
+    }
 }
 ```
 

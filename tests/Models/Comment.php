@@ -4,7 +4,6 @@ namespace Tests\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 use Lacodix\LaravelModelFilter\Enums\ValidationMode;
 use Lacodix\LaravelModelFilter\Traits\HasFilters;
@@ -27,9 +26,9 @@ class Comment extends Model
 
     protected $guarded = [];
 
-    public function filters(string $group = '__default'): Collection
+    public function filters(): array
     {
-        return collect(([
+        return [
             'frontend' => collect([
                 new PublishedFilter(),
             ]),
@@ -49,7 +48,7 @@ class Comment extends Model
                     ->setQueryName('post_filter_multi')
                     ->setMode(FilterMode::CONTAINS),
             ],
-        ])[$group] ?? []);
+        ];
     }
 
     public function post()

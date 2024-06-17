@@ -32,18 +32,25 @@ trait IsSortable
         return array_keys($this->sortableFields());
     }
 
+    public function sortable(): array
+    {
+        return $this->sortable ?? [];
+    }
+
     public function sortableFields(): array
     {
-        if (! Arr::isAssoc($this->sortable)) {
-            return array_fill_keys($this->sortable, null);
+        $sortable = $this->sortable();
+
+        if (! Arr::isAssoc($sortable)) {
+            return array_fill_keys($sortable, null);
         }
 
-        return $this->fillDirections($this->sortable);
+        return $this->fillDirections($sortable);
     }
 
     public function hasDefaultSorting(): bool
     {
-        return Arr::isAssoc($this->sortable);
+        return Arr::isAssoc($this->sortable());
     }
 
     protected function applySortQuery(Builder $query, ?array $sort): Builder

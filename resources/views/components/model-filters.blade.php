@@ -11,7 +11,7 @@
 @endphp
 
 <form {{ $attributes->merge(['method' => $method]) }}>
-    @foreach ($model->filters($group) as $filter)
+    @foreach ($model->filterInstances($group) as $filter)
         <x-dynamic-component
             :component="$filter->component()"
             :filter="$filter"

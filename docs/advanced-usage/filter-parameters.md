@@ -15,7 +15,7 @@ With this solution you are not able to set properties of the filter. But sometim
 identical filters, or you just want to use different headlines for the same filter when using it in different
 models. It would be kind of waste to create multiple filter classes for that.
 
-As an alternative you can just override the filters() method of the HasFilters trait.
+As an alternative you can just use the filters() method of the HasFilters trait.
 
 ```php
 <?php
@@ -31,34 +31,34 @@ class Post extends Model
 {
     use HasFilters;
 
-    public function filters(): Collection
+    public function filters(): array
     {
-        return collect([
+        return [
             new CreatedAfterFilter()
-        });
+        ];
     }
 }
 ```
 
-The filters method returns a collection of filter instances. With that solution you can instanciate the
-filter and use methods on it. For convenience there are already some methods available on all filter classes.
+With that solution you can instantiate the filter and use methods on it.
+For convenience there are already some methods available on all filter classes.
 
 ```php
-    public function filters(): Collection
+    public function filters(): array
     {
-        return collect([
+        return [
             (new CreatedAfterFilter())
                 ->setQueryName('my_query_string')
                 ->setMode(FilterMode::LOWER)
                 ->setValidationMode(ValidationMode::THROW)
                 ->setTitle(__('My Headline'))
                 ->setComponent('date'),
-        });
+        ];
     }
 ```
 
 All this methods should be self explaining. In your own filter classes you can create more methods
-like this and you just need to return $this.
+like this and you just need to return itself.
 
 ## Use Base Filters Immediate
 
@@ -71,9 +71,9 @@ created_at filter, it is only created once and can be applied to multiple models
 
 
 ```php
-    public function filters(): Collection
+    public function filters(): array
     {
-        return collect([
+        return [
             (new DateFilter('created_at'))
                 ->setTitle('Created between')
                 ->setQueryName('created_at_between')
@@ -88,7 +88,7 @@ created_at filter, it is only created once and can be applied to multiple models
                 ->setTitle('Count max')
                 ->setQueryName('counter_lower_filter')
                 ->setMode(FilterMode::LOWER_OR_EQUAL),
-        });
+        ];
     }
 ```
 

@@ -5,14 +5,18 @@ namespace Lacodix\LaravelModelFilter\Traits;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Lacodix\LaravelModelFilter\Enums\SearchMode;
 
 trait IsSearchable
 {
+    /** @var array<Collection> $filterInstances  */
+    protected array $searchableFields = [];
+
     public function scopeSearch(Builder $query, ?string $search, ?array $searchable = null): Builder
     {
+        $search = trim((string) $search);
+
         return $query->when($search, fn (Builder $query) => $this->applySearchQuery($query, $search, $searchable));
     }
 
@@ -27,26 +31,32 @@ trait IsSearchable
         );
     }
 
-    public function searchable(?array $searchable = null): Collection
+    public function searchable(): array
     {
-        $searchable ??= $this->searchable ?? [];
+        return $this->searchable ?? [];
+    }
 
-        return collect(
-            Arr::isAssoc($searchable) ? $searchable : array_fill_keys($searchable, SearchMode::LIKE)
-        )
+    public function searchableFields(?array $searchable = null): Collection
+    {
+        $searchable ??= $this->searchable();
+
+        return collect($searchable)
+            ->mapWithKeys(static fn ($value, $key) => is_numeric($key) ? [$value => SearchMode::LIKE] : [$key => $value])
             ->only($this->searchableFieldNames() ?? [])
             ->map(static fn ($mode) => is_string($mode) ? SearchMode::fromString($mode) : $mode);
     }
 
     public function searchableFieldNames(): array
     {
-        return Arr::isAssoc($this->searchable) ? array_keys($this->searchable) : $this->searchable;
+        return collect($this->searchable())
+            ->map(static fn ($value, $key) => is_numeric($key) ? $value : $key)
+            ->all();
     }
 
     protected function applySearchQuery(Builder $query, string $search, ?array $searchable = null): Builder
     {
         return $query->where(
-            fn (Builder $searchQuery) => $this->searchable($searchable)
+            fn (Builder $searchQuery) => $this->searchableFields($searchable)
                 ->each(static fn (SearchMode $mode, string $field) => $mode
                     ->applyQuery($searchQuery, $query->qualifyColumn($field), $search))
         );
