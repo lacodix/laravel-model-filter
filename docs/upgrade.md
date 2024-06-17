@@ -1,5 +1,5 @@
 ---
-title: Questions and issues
+title: Upgrade guide
 weight: 4
 ---
 
