@@ -14,6 +14,27 @@ class BelongsToFilter extends SelectFilter
     protected string $idColumn = 'id';
     protected string $titleColumn;
 
+    public function setRelationModel(string $relationModel): static
+    {
+        $this->relationModel = $relationModel;
+
+        return $this;
+    }
+
+    public function setIdColumn(string $idColumn): static
+    {
+        $this->idColumn = $idColumn;
+
+        return $this;
+    }
+
+    public function setTitleColumn(string $titleColumn): static
+    {
+        $this->titleColumn = $titleColumn;
+
+        return $this;
+    }
+
     public function options(): array
     {
         if (! isset($this->relationModel) || ! isset($this->titleColumn)) {
