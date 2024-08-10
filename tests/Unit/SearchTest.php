@@ -70,14 +70,12 @@ beforeEach(function () {
     Post::factory()
         ->state([
             'content' => 'test '.$this->faker->words(4, true).' no',
-            'type' => 'page',
         ])
         ->create();
 
     Post::factory()
         ->state([
             'content' => 'test',
-            'type' => 'post',
         ])
         ->create();
 });
