@@ -68,8 +68,7 @@ trait IsSearchable
                             )
                         )
                     )
-                    : $mode
-                        ->applyQuery($searchQuery, $query->qualifyColumn($field), $search))
+                    : $mode->applyQuery($searchQuery, $query->qualifyColumn($field), $search))
         );
     }
 }
