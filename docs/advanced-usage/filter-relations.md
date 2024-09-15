@@ -9,7 +9,7 @@ a Tag-Filter that can be applied to all models that have a tag relation.
 Thanks to [hfmiguel](https://github.com/hfmiguel) for this example.
 
 ```php
-class TagsFilter extends SelectInFilter
+class TagsFilter extends SelectFilter
 {
     public FilterMode $mode = FilterMode::EQUAL;
 
@@ -19,11 +19,6 @@ class TagsFilter extends SelectInFilter
     public function title(): string
     {
         return __('Tags');
-    }
-
-    public function component(): string
-    {
-        return 'select';
     }
 
     public function options(): array

@@ -6,6 +6,7 @@ use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Lacodix\LaravelModelFilter\Enums\SearchMode;
 
 trait IsSearchable
@@ -57,8 +58,19 @@ trait IsSearchable
     {
         return $query->where(
             fn (Builder $searchQuery) => $this->searchableFields($searchable)
-                ->each(static fn (SearchMode $mode, string $field) => $mode
-                    ->applyQuery($searchQuery, $query->qualifyColumn($field), $search))
+                ->each(static fn (SearchMode $mode, string $field) => Str::contains($field, '.')
+                    ? $searchQuery->orWhere(
+                        fn (Builder $orQuery) =>
+                            $orQuery->withWhereHas(
+                                Str::beforeLast($field, '.'),
+                                fn ($andQuery) => $andQuery->where( // Only needed to change inner applyQuery to and from or
+                                    fn ($subquery) => $mode
+                                        ->applyQuery($subquery, $subquery->qualifyColumn(Str::afterLast($field, '.')), $search)
+                                )
+                            )
+                    )
+                    : $mode
+                        ->applyQuery($searchQuery, $query->qualifyColumn($field), $search))
         );
     }
 }
