@@ -63,7 +63,7 @@ trait IsSearchable
                         fn (Builder $orQuery) =>
                             $orQuery->withWhereHas(
                                 Str::beforeLast($field, '.'),
-                                fn ($andQuery) => $andQuery->where(
+                                fn ($andQuery) => $andQuery->where( // Only needed to change inner applyQuery to and from or
                                     fn ($subquery) => $mode
                                         ->applyQuery($subquery, $subquery->qualifyColumn(Str::afterLast($field, '.')), $search)
                                 )
