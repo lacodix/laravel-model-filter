@@ -13,4 +13,11 @@ class EnumFilter extends SelectFilter
             ->mapWithKeys(fn ($case) => [trans($this->translationPrefix . $case->value) => $case->value])
             ->all();
     }
+
+    public function setEnum(string $enum): static
+    {
+        $this->enum = $enum;
+
+        return $this;
+    }
 }
