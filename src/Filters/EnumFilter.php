@@ -20,4 +20,11 @@ class EnumFilter extends SelectFilter
 
         return $this;
     }
+
+    public function setTranslationPrefix(string $translationPrefix): static
+    {
+        $this->translationPrefix = $translationPrefix;
+
+        return $this;
+    }
 }
