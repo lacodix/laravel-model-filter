@@ -54,7 +54,7 @@ trait IsSearchable
             ->all();
     }
 
-    protected function applySearcmhQuery(Builder $query, string $search, ?array $searchable = null): Builder
+    protected function applySearchQuery(Builder $query, string $search, ?array $searchable = null): Builder
     {
         return $query->where(
             fn (Builder $searchQuery) => $this->searchableFields($searchable)
