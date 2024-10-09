@@ -45,4 +45,11 @@ abstract class SingleFieldFilter extends Filter
 
         return $this->table . '.' . $this->field;
     }
+
+    public function queryName(): string
+    {
+        $this->queryName ??= $this->field ?? Str::snake(class_basename(static::class));
+
+        return $this->queryName;
+    }
 }
