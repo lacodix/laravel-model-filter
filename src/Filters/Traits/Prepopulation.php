@@ -8,7 +8,7 @@ trait Prepopulation
 {
     public function options(): array
     {
-        return $this->model?->query()
+        return $this->options ??= $this->model?->query()
             ->distinct($this->field)
             ->select($this->field)
             ->pluck($this->field)
