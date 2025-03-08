@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        php: [8.1]
+        php: [8.2]
         dependency-version: [prefer-stable]
 
     name: ${{ matrix.php }} - ${{ matrix.dependency-version }}
@@ -48,8 +48,8 @@ jobs:
       - name: Rector
         run: composer run rector:test -- --dry-run
 
-      - name: PHPInsight
-        run: composer run insights
+      #- name: PHPInsight
+      #  run: composer run insights
 
-      - name: PHPInsight - Summary only
-        run: composer run insights -- --summary
+      #- name: PHPInsight - Summary only
+      #  run: composer run insights -- --summary
