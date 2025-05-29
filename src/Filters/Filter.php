@@ -12,11 +12,13 @@ use Illuminate\Support\Traits\Macroable;
 use Illuminate\Validation\Validator;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 use Lacodix\LaravelModelFilter\Enums\ValidationMode;
+use Lacodix\LaravelModelFilter\Traits\Makeable;
 
 abstract class Filter
 {
     use Macroable;
     use Conditionable;
+    use Makeable;
 
     public array $messages = [];
     public array $validationAttributes = [];
