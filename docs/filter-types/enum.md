@@ -27,7 +27,7 @@ class TestEnumFilter extends EnumFilter
 {
     protected string $field = 'state';
 
-    protected string $enum = 'ActiveState::class';
+    protected string $enum = ActiveState::class;
 }
 ```
 
@@ -70,9 +70,26 @@ class TestEnumFilter extends EnumFilter
 {
     protected string $field = 'state';
 
-    protected string $enum = 'ActiveState::class';
+    protected string $enum = ActiveState::class;
     protected string $translationPrefix = 'users.status_';
+    protected bool useNameForTranslation = true;
 }
+```
+
+Per default the enum filter uses the enum values for translations. If you want to use
+the enum keys as translation keys, set the $useNameForTranslation property to true.
+
+## Instant usage
+
+```php
+    public function filters(): array 
+    {
+        return [
+            EnumFilter::make('state')
+                ->setEnum(ActiveState::class)
+                ->setTranslationPrefix('enums.' . ActiveState::class . '.', true),
+        ];
+    }
 ```
 
 ## Filter Modes

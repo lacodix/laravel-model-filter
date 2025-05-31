@@ -47,7 +47,7 @@ For convenience there are already some methods available on all filter classes.
     public function filters(): array
     {
         return [
-            (new CreatedAfterFilter())
+            CreatedAfterFilter::make()
                 ->setQueryName('my_query_string')
                 ->setMode(FilterMode::LOWER)
                 ->setValidationMode(ValidationMode::THROW)
@@ -59,6 +59,8 @@ For convenience there are already some methods available on all filter classes.
 
 All this methods should be self explaining. In your own filter classes you can create more methods
 like this and you just need to return itself.
+
+All Filters are "makeable" - so you can always use Filter::make($arguments...) instead of new Filter($arguments) 
 
 ## Use Base Filters Immediate
 
@@ -74,17 +76,17 @@ created_at filter, it is only created once and can be applied to multiple models
     public function filters(): array
     {
         return [
-            (new DateFilter('created_at'))
+            DateFilter::make('created_at')
                 ->setTitle('Created between')
                 ->setQueryName('created_at_between')
                 ->setMode(FilterMode::BETWEEN),
 
-            (new StringFilter('title'))
+            StringFilter::make('title')
                 ->setTitle('Title')
                 ->setQueryName('title_starts_with')
                 ->setMode(FilterMode::STARTS_WITH),
 
-            (new NumericFilter('counter'))
+            NumericFilter::make('counter')
                 ->setTitle('Count max')
                 ->setQueryName('counter_lower_filter')
                 ->setMode(FilterMode::LOWER_OR_EQUAL),
