@@ -1,9 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Http\Request;
-use Lacodix\LaravelModelFilter\Enums\SearchMode;
+use Illuminate\Support\Facades\Config;
 use Tests\Models\Post;
 
 beforeEach(function () {
