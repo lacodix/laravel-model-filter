@@ -88,6 +88,14 @@ it('can be found by search for overwritten fields', function () {
     expect(Post::search('test', ['title'])->count())->toEqual(4);
 });
 
+it('accepts a single field name as string parameter', function () {
+    expect(Post::search('test', 'title')->count())->toEqual(4);
+});
+
+it('accepts an array of multiple field names without modes', function () {
+    expect(Post::search('test', ['title', 'content'])->count())->toEqual(9);
+});
+
 it('can be found by search for overwritten modes', function () {
     expect(Post::search('test', [
         'title' => SearchMode::EQUAL,
