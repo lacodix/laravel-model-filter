@@ -15,7 +15,7 @@
             type="checkbox"
             onchange="this.form.submit()"
             value="1"
-            {{ request()->get($name . '.' . $option, false) ? 'checked' : '' }}
+            {{ request()->input($name . '.' . $option, false) ? 'checked' : '' }}
         > {{ $option }}</label>
     @endforeach
 </x-lacodix-filter::filters.layout>

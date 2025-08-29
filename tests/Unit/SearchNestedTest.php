@@ -101,6 +101,14 @@ it('can be found by search for overwritten fields', function () {
     expect(SearchableParameterCommentPost::search('test', ['comments.title'])->count())->toEqual(4);
 });
 
+it('accepts a single nested field name as string parameter', function () {
+    expect(SearchableParameterCommentPost::search('test', 'comments.title')->count())->toEqual(4);
+});
+
+it('accepts an array of multiple nested field names without modes', function () {
+    expect(SearchableParameterCommentPost::search('test', ['comments.title', 'comments.content'])->count())->toEqual(9);
+});
+
 it('can be found by search for overwritten modes', function () {
     expect(SearchableParameterCommentPost::search('test', [
         'comments.title' => SearchMode::EQUAL,

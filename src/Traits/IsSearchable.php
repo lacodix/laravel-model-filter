@@ -5,6 +5,7 @@ namespace Lacodix\LaravelModelFilter\Traits;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Lacodix\LaravelModelFilter\Enums\SearchMode;
@@ -14,7 +15,7 @@ trait IsSearchable
     /** @var array<Collection> $filterInstances  */
     protected array $searchableFields = [];
 
-    public function scopeSearch(Builder $query, ?string $search, ?array $searchable = null): Builder
+    public function scopeSearch(Builder $query, ?string $search, string|array|null $searchable = null): Builder
     {
         $search = trim((string) $search);
 
@@ -54,10 +55,10 @@ trait IsSearchable
             ->all();
     }
 
-    protected function applySearchQuery(Builder $query, string $search, ?array $searchable = null): Builder
+    protected function applySearchQuery(Builder $query, string $search, string|array|null $searchable = null): Builder
     {
         return $query->where(
-            fn (Builder $searchQuery) => $this->searchableFields($searchable)
+            fn (Builder $searchQuery) => $this->searchableFields(is_null($searchable) ? null : Arr::wrap($searchable))
                 ->each(static fn (SearchMode $mode, string $field) => Str::contains($field, '.')
                     ? $searchQuery->orWhere(
                         static fn (Builder $orQuery) => $orQuery->withWhereHas(

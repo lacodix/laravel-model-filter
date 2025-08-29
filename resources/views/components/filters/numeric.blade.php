@@ -13,7 +13,7 @@
             class="filter-input"
             name="{{ $name }}"
             type="number"
-            id="{{ $varName }}_from"
+            id="{{ $name }}_from"
             onchange="if (this.value && document.getElementById('{{ $name }}_to').value || ! this.value && ! document.getElementById('{{ $name }}_to').value) this.form.submit();"
             value="{{ request()->get($varName, [])[0] ?? '' }}"
         >
@@ -21,7 +21,7 @@
             class="filter-input"
             name="{{ $name }}"
             type="number"
-            id="{{ $varName }}_to"
+            id="{{ $name }}_to"
             onchange="if (this.value && document.getElementById('{{ $name }}_from').value || ! this.value && ! document.getElementById('{{ $name }}_from').value) this.form.submit();"
             value="{{ request()->get($varName, [])[1] ?? '' }}"
         >

@@ -48,6 +48,13 @@ Post::search('test')->get();
 
 This will find all Posts that contains the word test in title OR content.
 
+### Search only in specific fields
+
+```php
+Post::search('test', 'title')->get();
+Post::search('test', ['title', 'content'])->get();
+```
+
 ## Search by a query string
 
 ```php
@@ -61,6 +68,13 @@ https://.../posts?search=test
 ```
 
 You can change the name of query parameter with the config file value model-filter.search_query_value_name
+
+### Search only in specific fields
+
+```
+https://.../posts?search=test&search_for=title
+https://.../posts?search=test&search_for[]=title&search_for[]=content
+```
 
 ## Search mode
 
