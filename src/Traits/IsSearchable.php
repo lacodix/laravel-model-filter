@@ -61,7 +61,7 @@ trait IsSearchable
             fn (Builder $searchQuery) => $this->searchableFields(is_null($searchable) ? null : Arr::wrap($searchable))
                 ->each(static fn (SearchMode $mode, string $field) => Str::contains($field, '.')
                     ? $searchQuery->orWhere(
-                        static fn (Builder $orQuery) => $orQuery->withWhereHas(
+                        static fn (Builder $orQuery) => $orQuery->whereHas(
                             Str::beforeLast($field, '.'),
                             static fn ($andQuery) => $andQuery->where( // Only needed to change inner applyQuery to and from or
                                 static fn ($subquery) => $mode
