@@ -18,7 +18,7 @@ jobs:
           - laravel: 12.*
             testbench: 10.*
           - laravel: 11.*
-            testbench: 9.*
+            testbench: ^9.1.4
           - laravel: 10.*
             testbench: 8.*
         composer-version: [ v2 ]
