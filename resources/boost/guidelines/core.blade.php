@@ -1,402 +1,197 @@
 @php
     /** @var \Laravel\Boost\Install\GuidelineAssist $assist */
 @endphp
-## Resourcerer
+## Laravel Model Filter (lacodix/laravel-model-filter)
 
-Resourcerer is a Laravel + Livewire resource-driven admin toolkit. It provides resources, fields, filters, actions, forms, and relation helpers to rapidly build CRUD-style backoffice UIs using TailwindCSS, Alpine, and Livewire.
-Use Resourcerer instead of hand-written CRUD controllers and ad-hoc Livewire components when working on the admin/backoffice.
+This package adds **filtering, searching, and sorting scopes** for your Eloquent models and optional
+**Blade-based visualisation** of filters. It is framework-native, works via scopes and traits, and can
+also interpret **query strings** automatically.
 
-### Installation and Frontend Setup
-- PHP package and JS dependencies
+Use it whenever you want reusable, declarative filtering logic instead of hand-writing `where` / `orderBy`
+conditions in controllers.
 
-@verbatim
-    <code-snippet name="Package and JS dependencies" lang="bash">
-        composer require lacodix/resourcerer
+---
 
-        npm install trix
-        npm install @alpinejs/ui
-    </code-snippet>
-@endverbatim
+#### Installation
 
-- Bundle Livewire + Alpine and initialize Resourcerer in your app entry (e.g. `resources/js/app.js`):
+```bash
+composer require lacodix/laravel-model-filter
+# Optional: publish views/translations
+php artisan vendor:publish --tag="lacodix-filter-views"
+php artisan vendor:publish --tag="model-filter-translations"
+```
 
-@verbatim
-    <code-snippet name="Initialize Resourcerer in JS" lang="js">
-        import { Livewire, Alpine } from '../../vendor/livewire/livewire/dist/livewire.esm'
-        import initResourcerer from '../../vendor/lacodix/resourcerer/resources/js/resourcerer.js'
+---
 
-        initResourcerer(Alpine)
-        // Optional: Alpine.plugin(otherPlugins)
+### Core concepts
 
-        Livewire.start()
-    </code-snippet>
-@endverbatim
+The package provides:
+1. **Filters** – query logic encapsulated in classes (usually in `App\Models\Filters`).
+2. **Search** – simple full-text search across configured columns.
+3. **Sort** – multi-column sorting via scopes and query string.
 
-- Blade layout wiring (ensure Livewire assets and your bundle are included):
+Base filters include `DateFilter`, `NumericFilter`, `BooleanFilter`, `EnumFilter`, `SelectFilter`, `StringFilter`.
 
-@verbatim
-    <code-snippet name="Blade layout wiring" lang="blade">
-        <html>
-        <head>
-            <!-- ... -->
-            @livewireStyles
-            @vite(['resources/js/app.js'])
-        </head>
-        <body>
-        {{ $slot }}
+---
 
-        @livewireScriptConfig
-        </body>
-        </html>
-    </code-snippet>
-@endverbatim
+### Enabling filters
 
-- Tailwind and SCSS
-
-Tell Tailwind to scan Resourcerer views in `tailwind.config.js`:
+On a model, use the `HasFilters` trait and a `$filters` property:
 
 @verbatim
-    <code-snippet name="Tailwind configuration" lang="js">
-        module.exports = {
-        // ...
-        content: [
-        // ...
-        './vendor/lacodix/resourcerer/views/*.blade.php',
-        ],
-        }
-    </code-snippet>
-@endverbatim
-
-Include Resourcerer styles in your SCSS (SCSS compilation is required):
-
-@verbatim
-    <code-snippet name="SCSS Include" lang="scss">
-        @use "../../vendor/lacodix/resourcerer/resources/scss/resourcerer";
-    </code-snippet>
-@endverbatim
-
-- Enable Octane support
-
-Add the Resourcerer Octane listener to your `config/octane.php` configuration:
-
-@verbatim
-    <code-snippet name="Octane Configuration" lang="php">
-        use Laravel\Octane\Events\OperationTerminated;
-        use Laravel\Octane\Events\RequestReceived;
-        use Lacodix\Resourcerer\Octane\FlushResourcererState;
-
-        // ...
-            'listeners' => [
-                OperationTerminated::class => [
-                    FlushResourcererState::class,
-                ],
-            ],
-    </code-snippet>
-@endverbatim
-
-### Routing
-
-- Auto-register resource and form routes:
-
-@verbatim
-    <code-snippet name="Auto-register routes" lang="php">
-        use Lacodix\Resourcerer\Resourcerer;
-
-        Resourcerer::routes();
-    </code-snippet>
-@endverbatim
-
-- Manual routes (if you need full control):
-
-@verbatim
-    <code-snippet name="Manual routes" lang="php">
-        use Lacodix\Resourcerer\Http\Controller\FormController;
-        use Lacodix\Resourcerer\Http\Controller\ResourceController;
-
-        Route::get('/form/{form}', [FormController::class, 'show'])->name('form.show');
-
-        Route::get('/resources/{resource}', [ResourceController::class, 'index'])->name('resource.index');
-        Route::get('/resources/{resource}/create', [ResourceController::class, 'create'])->name('resource.create');
-        Route::get('/resources/{resource}/{id}', [ResourceController::class, 'show'])->name('resource.show');
-        Route::get('/resources/{resource}/{id}/edit', [ResourceController::class, 'edit'])->name('resource.edit');
-    </code-snippet>
-@endverbatim
-
-### Resources
-
-- Location: `app/Resources`
-- Purpose: Describe how a model is exposed in the admin UI.
-- Model mapping: by default matched by name. If different, set `public static string $modelClass`.
-- Required method: `fields(): array`
-- Optional methods:
-- `actions(): array` – define available actions
-- `cards(): array` – dashboard-like widgets (often detail/edit)
-- `getIndexQuery()` – customize base query used for index
-- Generator:
-
-@verbatim
-    <code-snippet name="Generate Resource" lang="bash">
-        {!! $assist->artisanCommand('resourcerer:make:resource Vehicle') !!}
-    </code-snippet>
-@endverbatim
-
-Key static configuration flags (inside resource class)
-
-- `public static bool $showInSidebar = true;`
-- `public static bool $importable = false;`
-- `public static bool $exportable = false;`
-- `public static bool $bulkEditable = false;`
-- `public static bool $useDetailMode = true;` (if false, row click jumps directly to edit)
-
-Other useful properties
-
-- `public static string $modelClass` – when the resource name does not match the model
-- `public static string $title` – default title field (e.g. `name` instead of `id`)
-- `public static ?string $tableView` / `$editView` – override default Blade views
-- `public static ?string $clickActionName` – override what happens on row click
-
-### Fields
-
-Define in `fields(): array`. Group related inputs with `Panel::create()` or `Repeater::create()`.
-
-Common field types
-
-- `Text`, `Textarea`, `Password`, `Email`
-- `Number`
-- `Date`, `Datetime`, `Time`
-- `File`
-- `Select`, `Autocomplete`, `Enum`
-- `Icon`, `Link`, `Route`
-- `Panel` (grouping), `Repeater` (repeatable/nested)
-
-Shared field capabilities (fluent API examples)
-
-- `label()`, `name()`, `bindingName()`
-- `required()`, `nullable()`, `rules()`, `createRules()`, `updateRules()`
-- `default()`, `prefill()`
-- `readonly()`, `disabled()`, `editable()`
-- `sortable()` (for table columns)
-- `note()` – helper text
-- `showCondition()` – conditional visibility
-- `valueCallback()` / `fieldHandler()` – customize value/behavior
-
-### Example
-
-@verbatim
-    <code-snippet name="Field definitions example" lang="php">
-        public function fields(): array
+    <code-snippet name="Enable filters" lang="php">
+        class Post extends Model
         {
-        return [
-        Panel::create('main', [
-        Text::create('name')
-        ->label('Name')
-        ->required()
-        ->identifies()
-        ->sortable(),
-        Number::create('price')
-        ->label('Price')
-        ->min(0)
-        ->decimals(2),
-        Select::create('status')
-        ->label('Status')
-        ->options([
-        'draft' => 'Draft',
-        'active' => 'Active',
-        ])
-        ->searchable(),
-        Date::create('published_at')
-        ->label('Published at')
-        ->nullable(),
-        ]),
-        ];
+            use HasFilters;
+            protected array $filters = [CreatedAfterFilter::class];
         }
     </code-snippet>
 @endverbatim
 
-### Filters, Search, and Sorting
+---
 
-Resourcerer integrates with `lacodix/laravel-model-filter`. Filters are defined on the model, not the resource.
+### Creating filters
 
-- Use traits on the Eloquent model:
-- `HasFilters`
-- `IsSearchable`
-- `IsSortable`
+Generate filters via: `php artisan make:filter CreatedAfterFilter -t date -f created_at`.
 
-#### Example model filters
+A typical filter:
 
 @verbatim
-    <code-snippet name="Model filters" lang="php">
-        use Lacodix\LaravelModelFilter\Traits\{HasFilters, IsSearchable, IsSortable};
-        use Lacodix\LaravelModelFilter\Filters\{DateFilter, NumericFilter, StringFilter};
+    <code-snippet name="Filter example" lang="php">
+        class CreatedAfterFilter extends DateFilter
+        {
+            protected string $field = 'created_at';
+        }
+    </code-snippet>
+@endverbatim
+
+Customise via `$title`, `visible()`, `rules()`, `apply()`, or `component()`.
+
+---
+
+### Applying filters in code
+
+On the model, once filters are configured, apply them using:
+
+@verbatim
+    <code-snippet name="Filter usage" lang="php">
+        // Using query string
+        Post::filterByQueryString()->get();
+
+        // Or manually
+        Post::filter(['created_after_filter' => '2023-01-01'])->get();
+    </code-snippet>
+@endverbatim
+
+---
+
+### Filter modes
+
+Filters use a **mode** for comparison (e.g., `FilterMode::BETWEEN`, `FilterMode::GREATER`). Set it on the filter class. `StringFilter` defaults to `LIKE`, others to `EQUAL`.
+
+Available modes: `EQUAL`, `NOT_EQUAL`, `GREATER`, `LOWER`, `GREATER_OR_EQUAL`, `LOWER_OR_EQUAL`, `LIKE`, `STARTS_WITH`, `ENDS_WITH`, `BETWEEN`, `BETWEEN_EXCLUSIVE`, `NOT_BETWEEN`, `NOT_BETWEEN_INCLUSIVE`.
+
+---
+
+### Filter groups
+
+Group filters (e.g., `frontend` vs `backend`) via a multi-dimensional `$filters` array. Apply specific groups using `Post::filter($values, group: 'frontend')`.
+
+---
+
+### Filter visibility
+
+Override `visible()` to conditionally enable filters (e.g., based on permissions).
+
+---
+
+### Filter validation
+
+Base filters include validation (e.g., `DateFilter` validates format, `NumericFilter` validates bounds). Customise via `rules()`, `validationMessages()`, and `validationAttributes()`.
+
+---
+
+### Search
+
+Enable searching using the `IsSearchable` trait and a `$searchable` array:
+
+@verbatim
+    <code-snippet name="Enable search" lang="php">
+        use Lacodix\LaravelModelFilter\Traits\IsSearchable;
 
         class Post extends Model
         {
-        use HasFilters, IsSearchable, IsSortable;
-
-        protected function filters(): array
-        {
-        return [
-        (new DateFilter('created_at'))
-        ->setTitle('Created between')
-        ->setQueryName('created_at_between'),
-
-        (new StringFilter('title'))
-        ->setTitle('Title')
-        ->setQueryName('title_starts_with'),
-
-        (new NumericFilter('views'))
-        ->setTitle('Views max')
-        ->setQueryName('views_max'),
-        ];
-        }
+            use IsSearchable;
+            protected array $searchable = ['title', 'content'];
         }
     </code-snippet>
 @endverbatim
 
-Once configured, Resourcerer automatically renders the filter UI and applies filter/search/sort to the index query.
+Usage: `Post::search('test')->get();` or `Post::searchByQueryString()->get();`.
 
-### Actions
+---
 
-Actions represent operations on records.
+### Sorting
 
-Base types and helpers
-
-- `Action` – base class
-- `DestructiveAction` – visually dangerous (e.g., delete)
-- `GlobalAction` – above the table, no row selection required
-- `SingleAction` – attached to a single row
-
-Common fluent methods: `label()`, `icon()`, `message()`, `confirm()`, `forModels()`, `forResourceClass()`, `canRun()`, `canRunWhen()`, `route()`, `navigate()`, `classes()`, `buttonClasses()`, `order()`, `setContext()`, `updateContext()`
-
-#### Predefined actions
-
-- `DeleteModelAction`, `ForceDeleteModelAction`, `RestoreModelAction`
-- `ImportResourceAction` (requires `static $importable = true`)
-- `ExportResourceAction` (requires `static $exportable = true`)
-- `BulkEditAction` (requires `static $bulkEditable = true`)
-- Relation helpers: `AttachRelationAction`, `DetachRelationAction`, `UpdateRelationAction`
-
-### Forms
-
-Two types:
-
-1. `Form` – standalone logic (e.g., settings/integrations). Implements its own `fields()` and `save()`.
-2. `ResourceForm` – edits a single model instance via an existing resource. Typically reuses the resource’s fields and saving behavior, so you usually do NOT implement `fields()`/`save()` here.
-
-#### Example `Form`
+Enable sorting using the `IsSortable` trait and a `$sortable` array:
 
 @verbatim
-    <code-snippet name="Standalone Form" lang="php">
-        use Lacodix\Resourcerer\Forms\Form;
-        use Lacodix\Resourcerer\Fields\{Panel, Text, Password};
+    <code-snippet name="Enable sorting" lang="php">
+        use Lacodix\LaravelModelFilter\Traits\IsSortable;
 
-        class SettingsForm extends Form
+        class Post extends Model
         {
-        public function fields(): array
-        {
-        return [
-        Panel::create('smtp_settings', [
-        Text::create('smtp_server')->label('SMTP Server')->nullable(),
-        Password::create('smtp_password')->label('SMTP Password')->nullable(),
-        ]),
-        ];
-        }
-
-        public function getInitialValues(): array
-        {
-        return app(GlobalSettings::class)->toArray();
-        }
-
-        public function save(): void
-        {
-        $settings = app(GlobalSettings::class);
-        $values = $this->values;
-        if (empty($values['smtp_password'])) {
-        unset($values['smtp_password']);
-        }
-        $settings->fill($values);
-        $settings->save();
-        }
+            use IsSortable;
+            protected array $sortable = ['title', 'created_at'];
         }
     </code-snippet>
 @endverbatim
 
-#### Example `ResourceForm`
+Usage: `Post::sort(['title' => 'desc'])->get();` or `Post::sortByQueryString()->get();`.
+
+---
+
+### Visualising filters in Blade
+
+Render all filters for a model:
 
 @verbatim
-    <code-snippet name="Resource Form" lang="php">
-        use Lacodix\Resourcerer\Forms\ResourceForm;
-        use Illuminate\Database\Eloquent\Model;
-
-        class PersonForm extends ResourceForm
-        {
-        protected function loadModel(): Model
-        {
-        if (! auth()->check() || ! auth()->user()->person) {
-        abort(403);
-        }
-        return auth()->user()->person;
-        }
-
-        protected function authorizeModel(): void
-        {
-        $this->authorize('update', $this->getModel());
-        }
-        }
+    <code-snippet name="Render all model filters" lang="blade">
+        <x-lacodix-filter::model-filters :model="\App\Models\Post::class" />
     </code-snippet>
 @endverbatim
 
-### Relations
+Options: `method="get"`, `:action="route('posts.index')"` and `:group="'frontend'"` can be passed.
 
-Helpers to manage related models inside a resource:
+Customise filters via `$title` / `title()` or `$component` / `component()` on the filter class.
 
-- `BelongsToMany` – many-to-many with attach/detach, optional pivot fields, sortable, searchable
-- `CustomHasMany` – “virtual” has-many table using a custom query (no Eloquent relation required)
-- `MorphOne` – polymorphic one-to-one
+---
 
-#### Example `CustomHasMany`
+### Extended filters & relations
 
-@verbatim
-    <code-snippet name="CustomHasMany" lang="php">
-        CustomHasMany::create('relatedDocuments', Document::class)
-        ->label(__('documents.documents'))
-        ->query(fn ($query) => $query
-        ->whereHasMorph(...)
-        ->orWhereHasMorph(...)
-        );
-    </code-snippet>
-@endverbatim
+Ships with: `TrashedFilter`, `BelongsToFilter`, `BelongsToManyFilter`, `BelongsToManyTimeframeFilter`.
 
-Common relation helpers: `fields()`, `searchable()`, `searchLive()`/`searchesLive()`, `limit()`, `filterValues()`, `mapTitle()`, `attachRules()`, `rules()`, `singleSelect()`
+Custom relation filters can extend `SelectFilter` and override `apply()`.
 
-### AI Contribution Guidelines (Do/Prefer)
+---
 
-- Prefer adding/updating a Resource in `app/Resources` over writing CRUD controllers/views by hand.
-- Use Resourcerer’s fields, forms, filters, actions, and relation helpers to extend the admin UI.
-- Respect resource configuration flags:
-- If `static::$useDetailMode === false`, clicking a table row should navigate directly to edit, not detail.
-- If `static::$importable`/`$exportable`/`$bulkEditable` are enabled, reuse the associated actions rather than reimplementing functionality.
-- Define filters, searchables, and sortables on models using `HasFilters`, `IsSearchable`, `IsSortable` so Resourcerer can generate UI automatically.
-- Keep naming, locations, and route names consistent:
-- Resources live in `app/Resources`
-- Routes follow the `resource.*` and `form.show` naming patterns
-- Follow existing casing and naming for fields and actions
+### Configuration (high level)
 
-### Common Pitfalls (Avoid)
+- `date_format` – default `'Y-m-d'`.
+- `search_query_value_name` – default `'search'`.
+- `sort_query_value_name` – default `'sort'`.
 
-- Forgetting `@livewireScriptConfig` or to manually bundle Livewire/Alpine when adding plugins.
-- Not adding `./vendor/lacodix/resourcerer/views/*.blade.php` to Tailwind `content` globs, leading to missing styles.
-- Not compiling SCSS (Resourcerer styles require SCSS compilation).
-- Defining filters on the resource instead of the model.
-- Mismatched resource name and model without setting `static $modelClass`.
+---
 
-### References (in this repo)
+### When to use laravel-model-filter (for AI / Boost)
 
-- `resources/boost/guidelines/core.blade.php` – full developer-oriented guide
-- `docs/README_resourcerer_getting_started.md` – getting started
-- `docs/resourcerer_resource_reference.md` – resource configuration reference
-- `docs/resourcerer_filters_reference.md` – filters reference
+When working on a project that uses this package, prefer these patterns:
 
-### When to Use Resourcerer
+- Use `Post::filterByQueryString()`, `Post::searchByQueryString()`, or `Post::sortByQueryString()` for automatic query handling.
+- Reuse existing filter classes instead of manual `where` conditions.
+- Create new filters in `App\Models\Filters` via `php artisan make:filter`.
+- Use the `x-lacodix-filter::model-filters` component for UIs.
 
-Use Resourcerer whenever building or extending admin-style CRUD interfaces so UI, routing, and behavior remain consistent. Prefer it over bespoke controllers/views and raw Livewire components for admin features.
+Use this package any time you need **reusable, composable filtering, searching, or sorting logic**
+for Eloquent models, particularly where you want consistent behaviour across query-string and
+programmatic usage.
