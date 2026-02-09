@@ -49,10 +49,10 @@ jobs:
       - name: Install Composer dependencies
         run: |
           if [ "${{ matrix.php }}" = "8.1" ]; then
-            composer require --dev pestphp/pest:2.2.1 phpunit/phpunit:10.0.18 --no-interaction --no-update
+            composer require --dev pestphp/pest:2.2.1 phpunit/phpunit:10.5.62 --no-interaction --no-update
           fi
           composer require "illuminate/contracts:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-          composer update --${{ matrix.dependency-version }} --no-interaction --prefer-dist --no-suggest
+          composer update --${{ matrix.dependency-version }} --no-interaction --prefer-dist
 
       - name: Unit Tests
         run: composer test
