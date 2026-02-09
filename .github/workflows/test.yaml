@@ -46,6 +46,11 @@ jobs:
           coverage: xdebug
           tools: composer:${{ matrix.composer-version }}
 
+      - name: Pin Pest for PHP 8.1
+        if: matrix.php == '8.1'
+        run: |
+          composer require --dev pestphp/pest:^2.34.7 brianium/paratest:^7.3.1 --no-interaction --no-update
+
       - name: Install Composer dependencies
         run: |
           composer require "illuminate/contracts:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
