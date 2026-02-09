@@ -12,6 +12,6 @@
         name="{{ $name }}"
         type="text"
         onchange="this.form.submit()"
-        value="{{ request()->get($name, '') }}"
+        value="{{ request()->input($name, '') }}"
     >
 </x-lacodix-filter::filters.layout>
