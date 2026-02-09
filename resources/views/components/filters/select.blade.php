@@ -21,8 +21,8 @@
             <option
                 value="{{ $option }}"
                 @selected($multiple
-                    ? in_array($option, is_array(request()->get($name)) ? request()->get($name) : [],)
-                    : request()->get($name) == $option)
+                    ? in_array($option, is_array(request()->input($name)) ? request()->input($name) : [],)
+                    : request()->input($name) == $option)
             >
                 {{ is_numeric($key) ? $option : $key }}
             </option>

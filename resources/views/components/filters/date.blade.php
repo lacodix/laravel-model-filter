@@ -15,7 +15,7 @@
             type="date"
             id="{{ $name }}_from"
             onchange="if (this.value && document.getElementById('{{ $name }}_to').value || ! this.value && ! document.getElementById('{{ $name }}_to').value) this.form.submit();"
-            value="{{ request()->get($varName, [])[0] ?? '' }}"
+            value="{{ request()->input($varName, [])[0] ?? '' }}"
         >
         <input
             class="filter-input"
@@ -23,7 +23,7 @@
             type="date"
             id="{{ $name }}_to"
             onchange="if (this.value && document.getElementById('{{ $name }}_from').value || ! this.value && ! document.getElementById('{{ $name }}_from').value) this.form.submit();"
-            value="{{ request()->get($varName, [])[1] ?? '' }}"
+            value="{{ request()->input($varName, [])[1] ?? '' }}"
         >
     @else
         <input
@@ -31,7 +31,7 @@
             name="{{ $name }}"
             type="date"
             onchange="this.form.submit()"
-            value="{{ request()->get($varName, '') }}"
+            value="{{ request()->input($varName, '') }}"
         >
     @endif
 </x-lacodix-filter::filters.layout>

@@ -48,8 +48,12 @@ jobs:
 
       - name: Install Composer dependencies
         run: |
-          composer require "illuminate/contracts:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-          composer update --${{ matrix.dependency-version }} --no-interaction --prefer-dist --no-suggest
+          if [ "${{ matrix.php }}" = "8.1" ]; then
+            composer config audit.block-insecure false
+          fi
+          composer require --dev "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer require "illuminate/contracts:${{ matrix.laravel }}" --no-interaction --no-update
+          composer update --${{ matrix.dependency-version }} --no-interaction --prefer-dist
 
       - name: Unit Tests
         run: composer test

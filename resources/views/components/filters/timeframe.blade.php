@@ -20,7 +20,7 @@
             <option value="">&mdash;</option>
         @endif
         @foreach ($filter->options() as $key => $option)
-            <option value="{{ $option }}"{{ request()->get($name, [])['values'] ?? '' === $option ? ' selected' : '' }}>
+            <option value="{{ $option }}"{{ request()->input($name, [])['values'] ?? '' === $option ? ' selected' : '' }}>
                 {{ is_numeric($key) ? $option : $key }}
             </option>
         @endforeach
@@ -35,7 +35,7 @@
                     type="radio"
                     value="{{ $mode->value }}"
                     onchange="this.form.submit()"
-                    {{ (request()->get($name, [])['mode'] ?? '') === $mode->value ?? '' ? 'checked' : '' }}
+                    {{ (request()->input($name, [])['mode'] ?? '') === $mode->value ?? '' ? 'checked' : '' }}
                 >
                 {{ $filter->getTimeframeModeLabel($mode) }}
             </label>
@@ -48,7 +48,7 @@
             name="{{ $name }}[from]"
             type="{{ $filter->getDateInputType() }}"
             id="{{ $name }}_from"
-            value="{{ request()->get($name, [])['from'] ?? '' }}"
+            value="{{ request()->input($name, [])['from'] ?? '' }}"
             onchange="this.form.submit()"
         >
         <input
@@ -56,7 +56,7 @@
             name="{{ $name }}[to]"
             type="{{ $filter->getDateInputType() }}"
             id="{{ $name }}_to"
-            value="{{ request()->get($name, [])['to'] ?? '' }}"
+            value="{{ request()->input($name, [])['to'] ?? '' }}"
             onchange="this.form.submit()"
         >
     </div>
