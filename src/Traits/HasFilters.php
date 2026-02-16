@@ -70,10 +70,10 @@ trait HasFilters
         $filters = $this->filters();
 
         if (! Arr::isAssoc($filters)) {
-            $filters = ['__default' => $filters];
+            return collect($filters); // just return the filters as default
         }
 
-        return collect($filters[$group] ?? []);
+        return collect($filters[$group] ?? $filters['__default'] ?? []);
     }
 
     protected function getAllFilterQueryNames(string $group)
