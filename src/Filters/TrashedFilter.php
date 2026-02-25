@@ -3,6 +3,7 @@
 namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class TrashedFilter extends SelectFilter
 {
@@ -11,6 +12,12 @@ class TrashedFilter extends SelectFilter
         return trans('model-filter::filters.trashed');
     }
 
+    /**
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel> $query
+     * @return Builder<TModel>
+     */
     public function apply(Builder $query): Builder
     {
         return match (current($this->values)) {

@@ -66,6 +66,25 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             $table->timestamp('end')->nullable();
         });
 
+        Capsule::schema()->create('shape_posts', function (Blueprint $table) {
+            $table->id();
+            $table->string('title')->nullable();
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('deleted_at')->nullable();
+        });
+
+        Capsule::schema()->create('shape_tags', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->nullable();
+        });
+
+        Capsule::schema()->create('shape_post_tag', function (Blueprint $table) {
+            $table->unsignedBigInteger('shape_post_id');
+            $table->unsignedBigInteger('shape_tag_id');
+            $table->timestamp('start')->nullable();
+            $table->timestamp('end')->nullable();
+        });
+
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'Tests\\Database\\Factories\\'.Str::afterLast($modelName, '\\').'Factory'
         );

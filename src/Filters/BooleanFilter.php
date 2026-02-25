@@ -3,6 +3,7 @@
 namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class BooleanFilter extends Filter
 {
@@ -13,6 +14,12 @@ class BooleanFilter extends Filter
         $this->options = $options ?? $this->options ?? [];
     }
 
+    /**
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel> $query
+     * @return Builder<TModel>
+     */
     public function apply(Builder $query): Builder
     {
         foreach ($this->options() as $key) {

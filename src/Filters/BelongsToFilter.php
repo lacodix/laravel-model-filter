@@ -59,6 +59,9 @@ class BelongsToFilter extends SelectFilter
             ->toArray();
     }
 
+    /**
+     * @return Builder<Model>
+     */
     public function relationQuery(): Builder
     {
         return $this->relationModel::query();

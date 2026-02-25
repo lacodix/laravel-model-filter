@@ -3,11 +3,18 @@
 namespace {{ namespace }};
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Lacodix\LaravelModelFilter\Filters\Filter;
 
 class {{ class }} extends Filter
 {
+    /**
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel> $query
+     * @return Builder<TModel>
+     */
     public function apply(Builder $query): Builder
     {
         $value = is_array($this->values) ? current($this->values) : $this->values;
