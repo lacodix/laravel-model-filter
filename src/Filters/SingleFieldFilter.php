@@ -30,6 +30,13 @@ abstract class SingleFieldFilter extends Filter
         return $this;
     }
 
+    public function field(string $field): static
+    {
+        $this->field = $field;
+
+        return $this;
+    }
+
     public function table(string $table): static
     {
         $this->table = $table;

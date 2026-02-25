@@ -15,7 +15,7 @@ class TagFactory extends Factory
     public function definition()
     {
         return [
-            'title' => $this->faker->words(random_int(1, 3), true),
+            'title' => $this->faker->unique()->words(random_int(1, 3), true),
         ];
     }
 }

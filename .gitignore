@@ -6,6 +6,7 @@
 .phpunit.result.cache
 .DS_Store
 Thumbs.db
+.output.txt
 
 # Project
 /node_modules

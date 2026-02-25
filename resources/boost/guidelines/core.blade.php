@@ -195,3 +195,22 @@ When working on a project that uses this package, prefer these patterns:
 Use this package any time you need **reusable, composable filtering, searching, or sorting logic**
 for Eloquent models, particularly where you want consistent behaviour across query-string and
 programmatic usage.
+
+---
+
+### Testing filters
+Use `Lacodix\LaravelModelFilter\Testing\FilterAssert` to verify filter SQL without a database.
+It provides `shape()` (structural checks: FROM, required/forbidden fragments, bindings, joins) and
+`equals()` (exact SQL + bindings comparison).
+
+@verbatim
+    <code-snippet>
+        $filter = (new DateFilter())->field('created_at');
+        $filter->populate('2023-01-01');
+        $filter->apply($query = Post::query());
+
+        FilterAssert::shape($query, from: 'posts', required: ['where', 'created_at'], bindings: ['2023-01-01']);
+    </code-snippet>
+@endverbatim
+
+See `docs/testing/__index.md` for full parameter docs and more examples.
