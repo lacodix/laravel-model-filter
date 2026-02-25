@@ -3,6 +3,7 @@
 namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
@@ -24,6 +25,12 @@ class NumericFilter extends SingleFieldFilter
         return $this;
     }
 
+    /**
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel> $query
+     * @return Builder<TModel>
+     */
     public function apply(Builder $query): Builder
     {
         return match ($this->mode) {

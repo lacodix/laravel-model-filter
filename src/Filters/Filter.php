@@ -122,6 +122,12 @@ abstract class Filter
         return true;
     }
 
+    /**
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel> $query
+     * @return Builder<TModel>
+     */
     abstract public function apply(Builder $query): Builder;
 
     public function options(): array

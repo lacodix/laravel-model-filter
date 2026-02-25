@@ -4,6 +4,7 @@ namespace Lacodix\LaravelModelFilter\Filters;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 use Lacodix\LaravelModelFilter\Enums\TimeframeFilterMode;
@@ -33,6 +34,12 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
         return $this->precision;
     }
 
+    /**
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel> $query
+     * @return Builder<TModel>
+     */
     public function apply(Builder $query): Builder
     {
         $this->relation = $query->getModel()->{$this->field}();

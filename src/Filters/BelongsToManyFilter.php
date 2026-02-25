@@ -3,16 +3,29 @@
 namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
 class BelongsToManyFilter extends BelongsToFilter
 {
+    /**
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel> $query
+     * @return Builder<TModel>
+     */
     public function apply(Builder $query): Builder
     {
         return $query
             ->has($this->field, callback: fn (Builder $query) => $this->getFilterQuery($query));
     }
 
+    /**
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel> $query
+     * @return Builder<TModel>
+     */
     protected function getFilterQuery(Builder $query): Builder
     {
         return match ($this->mode) {
@@ -21,6 +34,12 @@ class BelongsToManyFilter extends BelongsToFilter
         };
     }
 
+    /**
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel> $query
+     * @return Builder<TModel>
+     */
     protected function relationContainsQuery(Builder $query): Builder
     {
         return $query->whereIn(
@@ -29,6 +48,12 @@ class BelongsToManyFilter extends BelongsToFilter
         );
     }
 
+    /**
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel> $query
+     * @return Builder<TModel>
+     */
     protected function relationEqualQuery(Builder $query): Builder
     {
         return $query
