@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
+/**
+ * @template TModel of Model
+ */
 class SelectFilter extends SingleFieldFilter
 {
     protected string $component = 'select';
 
     /**
-     * @template TModel of Model
-     *
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */

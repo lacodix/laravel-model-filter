@@ -11,6 +11,9 @@ use Lacodix\LaravelModelFilter\Enums\TimeframeFilterMode;
 use Lacodix\LaravelModelFilter\Enums\TimeframeFilterPrecision;
 use ValueError;
 
+/**
+ * @template TModel of Model
+ */
 class BelongsToManyTimeframeFilter extends BelongsToManyFilter
 {
     protected string $component = 'timeframe';
@@ -35,8 +38,6 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
     }
 
     /**
-     * @template TModel of Model
-     *
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */

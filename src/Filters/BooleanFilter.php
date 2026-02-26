@@ -5,6 +5,9 @@ namespace Lacodix\LaravelModelFilter\Filters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @template TModel of Model
+ */
 class BooleanFilter extends Filter
 {
     protected string $component = 'boolean';
@@ -15,8 +18,6 @@ class BooleanFilter extends Filter
     }
 
     /**
-     * @template TModel of Model
-     *
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */

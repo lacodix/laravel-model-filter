@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Lacodix\LaravelModelFilter\Exceptions\InvalidArgumentException;
 
+/**
+ * @template TModel of Model
+ *
+ * @extends SelectFilter<TModel>
+ */
 class BelongsToFilter extends SelectFilter
 {
     protected string $component = 'select';
