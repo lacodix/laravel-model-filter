@@ -14,6 +14,9 @@ use Lacodix\LaravelModelFilter\Enums\FilterMode;
 use Lacodix\LaravelModelFilter\Enums\ValidationMode;
 use Lacodix\LaravelModelFilter\Traits\Makeable;
 
+/**
+ * @template TModel of Model
+ */
 abstract class Filter
 {
     use Macroable;
