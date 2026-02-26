@@ -19,7 +19,7 @@ class EnumFilter extends SelectFilter
     {
         $field = $this->useNameForTranslation ? 'name' : 'value';
 
-        return collect($this->enum::cases())
+        return $this->options ??= collect($this->enum::cases())
             ->mapWithKeys(fn ($case) => [trans($this->translationPrefix . $case->{$field}) => $case->value])
             ->all();
     }

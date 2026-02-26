@@ -54,7 +54,7 @@ class BelongsToFilter extends SelectFilter
             throw new InvalidArgumentException("The relation model {$this->relationModel} is not an eloquent model.");
         }
 
-        return $this->relationQuery()
+        return $this->options ??= $this->relationQuery()
             ->pluck($this->idColumn, $this->titleColumn)
             ->sortKeys()
             ->when(
