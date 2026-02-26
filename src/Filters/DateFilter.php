@@ -8,6 +8,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
+/**
+ * @template TModel of Model
+ */
 class DateFilter extends SingleFieldFilter
 {
     protected string $component = 'date';
@@ -24,8 +27,6 @@ class DateFilter extends SingleFieldFilter
     }
 
     /**
-     * @template TModel of Model
-     *
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */

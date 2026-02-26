@@ -5,6 +5,9 @@ namespace Lacodix\LaravelModelFilter\Filters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @template TModel of Model
+ */
 class TrashedFilter extends SelectFilter
 {
     public function title(): string
@@ -13,8 +16,6 @@ class TrashedFilter extends SelectFilter
     }
 
     /**
-     * @template TModel of Model
-     *
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */

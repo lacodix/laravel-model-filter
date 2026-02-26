@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
+/**
+ * @template TModel of Model
+ */
 class NumericFilter extends SingleFieldFilter
 {
     protected string $component = 'numeric';
@@ -26,8 +29,6 @@ class NumericFilter extends SingleFieldFilter
     }
 
     /**
-     * @template TModel of Model
-     *
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */

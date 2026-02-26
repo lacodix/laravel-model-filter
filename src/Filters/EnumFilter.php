@@ -2,6 +2,13 @@
 
 namespace Lacodix\LaravelModelFilter\Filters;
 
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * @template TModel of Model
+ *
+ * @extends SelectFilter<TModel>
+ */
 class EnumFilter extends SelectFilter
 {
     protected string $enum;

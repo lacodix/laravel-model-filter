@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
+/**
+ * @template TModel of Model
+ */
 class BelongsToManyFilter extends BelongsToFilter
 {
     /**
-     * @template TModel of Model
-     *
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */
@@ -21,8 +22,6 @@ class BelongsToManyFilter extends BelongsToFilter
     }
 
     /**
-     * @template TModel of Model
-     *
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */
@@ -35,8 +34,6 @@ class BelongsToManyFilter extends BelongsToFilter
     }
 
     /**
-     * @template TModel of Model
-     *
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */
@@ -49,8 +46,6 @@ class BelongsToManyFilter extends BelongsToFilter
     }
 
     /**
-     * @template TModel of Model
-     *
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */
