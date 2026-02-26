@@ -13,6 +13,8 @@ use ValueError;
 
 /**
  * @template TModel of Model
+ *
+ * @extends BelongsToManyFilter<TModel>
  */
 class BelongsToManyTimeframeFilter extends BelongsToManyFilter
 {
