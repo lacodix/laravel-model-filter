@@ -4,10 +4,13 @@ namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
 /**
  * @template TModel of Model
+ *
+ * @extends BelongsToFilter<TModel>
  */
 class BelongsToManyFilter extends BelongsToFilter
 {
@@ -41,7 +44,7 @@ class BelongsToManyFilter extends BelongsToFilter
     {
         return $query->whereIn(
             $this->relationQuery()->qualifyColumn($this->idColumn),
-            array_intersect($this->filterValues(), $this->options())
+            array_intersect(Arr::wrap($this->filterValues()), $this->options())
         );
     }
 

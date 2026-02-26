@@ -34,9 +34,15 @@ class SqlAssert
             return null;
         }
 
-        // Match: from ["schema".]"table" [as "alias"]
-        // Supports: from "users", from users, from "public"."users", from public.users, from users as u
-        if (preg_match('/\bfrom\s+(?:"?[a-z0-9_]+"?\.)?"?([a-z0-9_]+)"?(?:\s+as\s+"?[a-z0-9_]+"?)?/i', $normalized, $m)) {
+        // Match: from [`"schema"`.]`"table"` [as `"alias"`]
+        // Supports: from `users`, from "users", from users,
+        //           from `public`.`users`, from "public"."users", from public.users,
+        //           from users as u, from `users` as `u`, from "users" as "u"
+        if (preg_match(
+            '/\bfrom\s+(?:(?:`|")?[a-z0-9_]+(?:`|")?\.)?(?:`|")?([a-z0-9_]+)(?:`|")?(?:\s+as\s+(?:`|")?[a-z0-9_]+(?:`|")?)?/i',
+            $normalized,
+            $m
+        )) {
             return $m[1];
         }
 
@@ -48,6 +54,8 @@ class SqlAssert
         $sql = static::normalizeSql($builder->toSql());
 
         if (isset($shape['from'])) {
+            $shape['from'] = str($shape['from'])->trim('`')->toString();
+
             $from = static::extractFromTable($sql);
             Assert::assertSame($shape['from'], $from, "Expected FROM table '{$shape['from']}', got '" . ($from ?? 'null') . "'.");
         }

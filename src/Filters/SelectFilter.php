@@ -4,6 +4,7 @@ namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
 /**
@@ -22,7 +23,7 @@ class SelectFilter extends SingleFieldFilter
         return match ($this->mode) {
             FilterMode::CONTAINS => $query->whereIn(
                 $this->getQualifiedField(),
-                array_intersect($this->values[$this->field], $this->options())
+                array_intersect(Arr::wrap($this->values[$this->field]), $this->options())
             ),
             default => $query
                 ->when(
