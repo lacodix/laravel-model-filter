@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 use Lacodix\LaravelModelFilter\Enums\TimeframeFilterPrecision;
 use Lacodix\LaravelModelFilter\Enums\ValidationMode;
-use Lacodix\LaravelModelFilter\Filters\BooleanFilter;
 use Lacodix\LaravelModelFilter\Filters\DateFilter;
 use Lacodix\LaravelModelFilter\Filters\NumericFilter;
+use Lacodix\LaravelModelFilter\Filters\OptionFilter;
 use Lacodix\LaravelModelFilter\Filters\StringFilter;
 use Lacodix\LaravelModelFilter\Traits\HasFilters;
 use Lacodix\LaravelModelFilter\Traits\IsSearchable;
@@ -101,6 +101,11 @@ class Post extends Model
                 ->setQueryName('type_multi')
                 ->setMode(FilterMode::CONTAINS),
 
+            (new TypeFilter())
+                ->setTitle(ucwords(str_replace('_', ' ', 'type_not_contains')))
+                ->setQueryName('type_not_contains')
+                ->setMode(FilterMode::NOT_CONTAINS),
+
             (new StringFilter('title'))
                 ->setTitle(ucwords(str_replace('_', ' ', 'starts_with')))
                 ->setQueryName('starts_with')
@@ -121,7 +126,7 @@ class Post extends Model
                 ->setQueryName('equals')
                 ->setMode(FilterMode::EQUAL),
 
-            (new BooleanFilter(['published']))
+            (new OptionFilter(['published']))
                 ->setTitle(ucwords(str_replace('_', ' ', 'boolfilter')))
                 ->setQueryName('boolfilter'),
 
@@ -182,12 +187,22 @@ class Post extends Model
                 ->setQueryName('tag_filter_contains')
                 ->setMode(FilterMode::CONTAINS),
 
+            (new TagFilter())
+                ->setTitle(ucwords(str_replace('_', ' ', 'tag_filter_not_contains')))
+                ->setQueryName('tag_filter_not_contains')
+                ->setMode(FilterMode::NOT_CONTAINS),
+
             new TagTimeframeFilter(),
 
             (new TagTimeframeFilter())
                 ->setTitle(ucwords(str_replace('_', ' ', 'tag_timeframe_filter_contains')))
                 ->setQueryName('tag_timeframe_filter_contains')
                 ->setMode(FilterMode::CONTAINS),
+
+            (new TagTimeframeFilter())
+                ->setTitle(ucwords(str_replace('_', ' ', 'tag_timeframe_filter_not_contains')))
+                ->setQueryName('tag_timeframe_filter_not_contains')
+                ->setMode(FilterMode::NOT_CONTAINS),
 
             (new TagTimeframeFilter())
                 ->setTitle(ucwords(str_replace('_', ' ', 'tag_timeframe_filter_day')))

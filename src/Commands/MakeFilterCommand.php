@@ -15,6 +15,7 @@ class MakeFilterCommand extends GeneratorCommand
     protected ?string $filtertype = null;
     protected array $allowedTypes = [
         'filter' => 'Individual Filter',
+        'option' => 'Option',
         'boolean' => 'Boolean',
         'string' => 'String',
         'select' => 'Select',
@@ -28,6 +29,7 @@ class MakeFilterCommand extends GeneratorCommand
 
     protected ?string $fieldId = null;
     protected array $fitersWithField = [
+        'boolean',
         'string',
         'select',
         'enum',
@@ -125,6 +127,7 @@ class MakeFilterCommand extends GeneratorCommand
     protected function getStub(): string
     {
         return __DIR__ . '/stubs/' . match ($this->filtertype) {
+            'option' => 'option_filter',
             'boolean' => 'boolean_filter',
             'string' => 'string_filter',
             'select' => 'select_filter',

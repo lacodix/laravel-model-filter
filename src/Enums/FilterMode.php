@@ -18,6 +18,7 @@ enum FilterMode
     case NOT_BETWEEN;
     case NOT_BETWEEN_INCLUSIVE;
     case CONTAINS;
+    case NOT_CONTAINS;
 
     public function needsMultipleValues(): bool
     {
@@ -26,7 +27,8 @@ enum FilterMode
             self::BETWEEN_EXCLUSIVE,
             self::NOT_BETWEEN,
             self::NOT_BETWEEN_INCLUSIVE,
-            self::CONTAINS => true,
+            self::CONTAINS,
+            self::NOT_CONTAINS => true,
             default => false,
         };
     }

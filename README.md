@@ -18,6 +18,8 @@ Additionally you can use the visualisation functionality of filters.
 
 You can find the entire documentation for this package on [our documentation site](https://www.lacodix.de/docs/laravel-model-filter)
 
+See our [Upgrade Guide](docs/upgrade.md) for information on how to upgrade from older versions.
+
 ## Installation
 
 ```bash

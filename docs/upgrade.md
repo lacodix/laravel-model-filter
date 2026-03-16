@@ -3,6 +3,88 @@ title: Upgrade guide
 weight: 4
 ---
 
+## from v3 to v4
+
+With v4 the `BooleanFilter` was renamed to `OptionFilter`. This was done to clarify its purpose
+and to make room for a new `BooleanFilter` that handles single boolean database fields.
+
+### Renaming BooleanFilter to OptionFilter
+
+The old `BooleanFilter` which allowed multiple checkbox selections in one filter class is now
+named `OptionFilter`.
+
+To migrate your existing boolean filters, just rename the extended class and the import:
+
+```php
+// old
+use Lacodix\LaravelModelFilter\Filters\BooleanFilter;
+class MyFilter extends BooleanFilter { ... }
+
+// new
+use Lacodix\LaravelModelFilter\Filters\OptionFilter;
+class MyFilter extends OptionFilter { ... }
+```
+
+Also if you used the `$component` property in your filter classes, it should be changed from `boolean` to `option`.
+
+### Accessing filter values
+
+In v4 we introduced a new way to access filter values in your `apply` method. Instead of accessing `$this->values[$this->queryName()]` directly, you should now use the `getValue()` method.
+
+This is especially useful if you want to create custom filters that extend `SingleFieldFilter`.
+
+This is a breaking change if you use Filters where queryName and field are not the same.
+
+```php
+// old
+public function apply(Builder $query): Builder
+{
+    return $query->where('field', $this->values[$this->queryName()]);
+    # or even
+    return $query->where('field', $this->values[$this->field]);
+}
+
+// new
+public function apply(Builder $query): Builder
+{
+    return $query->where('field', $this->getValue());
+}
+```
+
+If you need all values (e.g. in `OptionFilter`), you can use `getValues()`.
+
+```php
+// old
+foreach ($this->options() as $key) {
+    $query->when(
+        ! is_null($this->values[$key] ?? null),
+        fn ($query) => $query->where($key, $this->values[$key])
+    );
+}
+
+// new
+foreach ($this->options() as $key) {
+    $query->when(
+        ! is_null($this->getValue($key)),
+        fn ($query) => $query->where($key, $this->getValue($key))
+    );
+}
+```
+
+### New BooleanFilter
+
+The new `BooleanFilter` is now a single field filter. It is used to filter for a single boolean
+database field.
+
+```php
+use Lacodix\LaravelModelFilter\Filters\BooleanFilter;
+
+class PublishedFilter extends BooleanFilter
+{
+    protected string $field = 'published';
+}
+```
+
 ## from v2 to v3
 
 ### (Breaking) Introduction of filters(), searchable() and sortable() methods.

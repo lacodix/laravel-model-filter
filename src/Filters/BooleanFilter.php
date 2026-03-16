@@ -3,38 +3,17 @@
 namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 
-/**
- * @template TModel of Model
- */
-class BooleanFilter extends Filter
+class BooleanFilter extends SingleFieldFilter
 {
     protected string $component = 'boolean';
 
-    public function __construct(?array $options = null)
-    {
-        $this->options = $options ?? $this->options ?? [];
-    }
-
-    /**
-     * @param  Builder<TModel> $query
-     * @return Builder<TModel>
-     */
     public function apply(Builder $query): Builder
     {
-        foreach ($this->options() as $key) {
-            $query->when(
-                ! is_null($this->values[$key] ?? null),
-                fn ($query) => $query->where($key, $this->getValueForFilter($this->values[$key]))
-            );
+        if (is_null($this->getValue())) {
+            return $query;
         }
 
-        return $query;
-    }
-
-    protected function getValueForFilter(string $value): bool
-    {
-        return (bool) $value;
+        return $query->where($this->getQualifiedField(), (bool) ($this->getValue()));
     }
 }

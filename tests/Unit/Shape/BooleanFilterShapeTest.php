@@ -1,6 +1,6 @@
 <?php
 
-use Lacodix\LaravelModelFilter\Filters\BooleanFilter;
+use Lacodix\LaravelModelFilter\Filters\OptionFilter;
 use Tests\Models\Shape\ShapePost;
 
 it('base_query', function () {
@@ -16,7 +16,7 @@ it('base_query', function () {
 it('applies_with_true_value', function () {
     $q = ShapePost::query();
 
-    $filter = new BooleanFilter(['title']);
+    $filter = new OptionFilter(['title']);
     $filter->populate(['title' => '1']);
     $filter->apply($q);
 
@@ -31,7 +31,7 @@ it('applies_with_true_value', function () {
 it('applies_with_false_value', function () {
     $q = ShapePost::query();
 
-    $filter = new BooleanFilter(['title']);
+    $filter = new OptionFilter(['title']);
     $filter->populate(['title' => '0']);
     $filter->apply($q);
 
@@ -46,7 +46,7 @@ it('applies_with_false_value', function () {
 it('handles_null_value', function () {
     $q = ShapePost::query();
 
-    $filter = new BooleanFilter(['title']);
+    $filter = new OptionFilter(['title']);
     $filter->populate(['title' => null]);
     $filter->apply($q);
 

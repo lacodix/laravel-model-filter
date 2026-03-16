@@ -37,6 +37,8 @@ class TestSelectFilter extends SelectFilter
 A fieldname must be set, this will apply a where query to the model-query
 where fieldname equals the given value.
 
+You can also use dot-notation for JSON fields, which will be converted to arrow-fields (e.g. `meta->field`).
+
 The options function must be implemented, given values for the filter will be
 removed if not contained in this array.
 
@@ -76,7 +78,7 @@ with this mode you can filter for multiple values. All models that fit to one of
 is still comparing the model column against the given filter values. To get it working in your views, you have to 
 name the input element as an array, see select.blade.php for an example when using the multiple option.
 
-## Filter Modes
-
+Allowed modes are
 - FilterMode::EQUAL
 - FilterMode::CONTAINS
+- FilterMode::NOT_CONTAINS

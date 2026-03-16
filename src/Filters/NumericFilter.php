@@ -17,7 +17,7 @@ class NumericFilter extends SingleFieldFilter
     protected int $min;
     protected int $max;
 
-    public function populate(string|array $values): static
+    public function populate(string|array|null $values): static
     {
         parent::populate($values);
 
@@ -35,31 +35,31 @@ class NumericFilter extends SingleFieldFilter
     public function apply(Builder $query): Builder
     {
         return match ($this->mode) {
-            FilterMode::LOWER => $query->where($this->getQualifiedField(), '<', $this->values[$this->field]),
-            FilterMode::LOWER_OR_EQUAL => $query->where($this->getQualifiedField(), '<=', $this->values[$this->field]),
-            FilterMode::GREATER => $query->where($this->getQualifiedField(), '>', $this->values[$this->field]),
-            FilterMode::GREATER_OR_EQUAL => $query->where($this->getQualifiedField(), '>=', $this->values[$this->field]),
+            FilterMode::LOWER => $query->where($this->getQualifiedField(), '<', $this->getValue()),
+            FilterMode::LOWER_OR_EQUAL => $query->where($this->getQualifiedField(), '<=', $this->getValue()),
+            FilterMode::GREATER => $query->where($this->getQualifiedField(), '>', $this->getValue()),
+            FilterMode::GREATER_OR_EQUAL => $query->where($this->getQualifiedField(), '>=', $this->getValue()),
             FilterMode::BETWEEN => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
-                    ->when(is_numeric($this->values[$this->field][0]), fn ($q) => $q->where($this->getQualifiedField(), '>=', $this->values[$this->field][0]))
-                    ->when(is_numeric($this->values[$this->field][1]), fn ($q) => $q->where($this->getQualifiedField(), '<=', $this->values[$this->field][1]))
+                    ->when(is_numeric($this->getValue()[0] ?? null), fn ($q) => $q->where($this->getQualifiedField(), '>=', $this->getValue()[0]))
+                    ->when(is_numeric($this->getValue()[1] ?? null), fn ($q) => $q->where($this->getQualifiedField(), '<=', $this->getValue()[1]))
             ),
             FilterMode::BETWEEN_EXCLUSIVE => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
-                    ->when(is_numeric($this->values[$this->field][0]), fn ($q) => $q->where($this->getQualifiedField(), '>', $this->values[$this->field][0]))
-                    ->when(is_numeric($this->values[$this->field][1]), fn ($q) => $q->where($this->getQualifiedField(), '<', $this->values[$this->field][1]))
+                    ->when(is_numeric($this->getValue()[0] ?? null), fn ($q) => $q->where($this->getQualifiedField(), '>', $this->getValue()[0]))
+                    ->when(is_numeric($this->getValue()[1] ?? null), fn ($q) => $q->where($this->getQualifiedField(), '<', $this->getValue()[1]))
             ),
             FilterMode::NOT_BETWEEN => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
-                    ->when(is_numeric($this->values[$this->field][0]), fn ($q) => $q->orWhere($this->getQualifiedField(), '<', $this->values[$this->field][0]))
-                    ->when(is_numeric($this->values[$this->field][1]), fn ($q) => $q->orWhere($this->getQualifiedField(), '>', $this->values[$this->field][1]))
+                    ->when(is_numeric($this->getValue()[0] ?? null), fn ($q) => $q->orWhere($this->getQualifiedField(), '<', $this->getValue()[0]))
+                    ->when(is_numeric($this->getValue()[1] ?? null), fn ($q) => $q->orWhere($this->getQualifiedField(), '>', $this->getValue()[1]))
             ),
             FilterMode::NOT_BETWEEN_INCLUSIVE => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
-                    ->when(is_numeric($this->values[$this->field][0]), fn ($q) => $q->orWhere($this->getQualifiedField(), '<=', $this->values[$this->field][0]))
-                    ->when(is_numeric($this->values[$this->field][1]), fn ($q) => $q->orWhere($this->getQualifiedField(), '>=', $this->values[$this->field][1]))
+                    ->when(is_numeric($this->getValue()[0] ?? null), fn ($q) => $q->orWhere($this->getQualifiedField(), '<=', $this->getValue()[0]))
+                    ->when(is_numeric($this->getValue()[1] ?? null), fn ($q) => $q->orWhere($this->getQualifiedField(), '>=', $this->getValue()[1]))
             ),
-            default => $query->where($this->getQualifiedField(), $this->values[$this->field]),
+            default => $query->where($this->getQualifiedField(), $this->getValue()),
         };
     }
 
@@ -67,11 +67,11 @@ class NumericFilter extends SingleFieldFilter
     {
         return match ($this->mode->needsMultipleValues()) {
             true => [
-                $this->field => 'required|array|size:2',
-                $this->field . '.*' => 'numeric' . $this->getMinRule() . $this->getMaxRule(),
+                $this->queryName() => 'required|array|size:2',
+                $this->queryName() . '.*' => 'numeric' . $this->getMinRule() . $this->getMaxRule(),
             ],
             false => [
-                $this->field => 'required|numeric' . $this->getMinRule() . $this->getMaxRule(),
+                $this->queryName() => 'required|numeric' . $this->getMinRule() . $this->getMaxRule(),
             ],
         };
     }

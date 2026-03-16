@@ -47,6 +47,11 @@ class Comment extends Model
                     ->setTitle(ucwords(str_replace('_', ' ', 'post_filter_multi')))
                     ->setQueryName('post_filter_multi')
                     ->setMode(FilterMode::CONTAINS),
+
+                (new PostFilter())
+                    ->setTitle(ucwords(str_replace('_', ' ', 'post_filter_not_contains')))
+                    ->setQueryName('post_filter_not_contains')
+                    ->setMode(FilterMode::NOT_CONTAINS),
             ],
         ];
     }

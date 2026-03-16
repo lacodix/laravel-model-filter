@@ -49,6 +49,8 @@ where fieldname equals the given value. The possible values are automatically ex
 out of the enum - in this case it will be 'active' and 'inactive'. The database field
 state should contain one of this both values.
 
+You can also use dot-notation for JSON fields, which will be converted to arrow-fields (e.g. `meta->field`).
+
 ## Visualisation
 
 For Visualisation of the select values you can set a translation string prefix. If you

@@ -42,6 +42,10 @@ it('can be filtered by multiselect', function () {
     expect(Post::filter(['tag_filter_contains' => [$this->tag1->id, $this->tag3->id]])->count())->toEqual(7);
 });
 
+it('can be filtered by not contains', function () {
+    expect(Post::filter(['tag_filter_not_contains' => [$this->tag1->id, $this->tag3->id]])->count())->toEqual(5);
+});
+
 it('is doesn\'t apply if single value is invalid', function () {
     expect(Post::filter([
         'tag_filter' => 'asdf',

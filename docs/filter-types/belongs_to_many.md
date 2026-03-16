@@ -80,3 +80,4 @@ situations you can overwrite the method `relationQuery`
 
 - FilterMode::EQUAL
 - FilterMode::CONTAINS
+- FilterMode::NOT_CONTAINS
