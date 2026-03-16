@@ -1,6 +1,6 @@
 @php
     $name = $filter->queryName();
-    $classes = 'boolean ' . $name;
+    $classes = 'option ' . $name;
 @endphp
 
 <x-lacodix-filter::filters.layout
