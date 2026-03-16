@@ -42,3 +42,5 @@ All available modes are:
 - FilterMode::BETWEEN_EXCLUSIVE;
 - FilterMode::NOT_BETWEEN;
 - FilterMode::NOT_BETWEEN_INCLUSIVE;
+- FilterMode::CONTAINS;
+- FilterMode::NOT_CONTAINS;
