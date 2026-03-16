@@ -7,14 +7,15 @@
     :filter="$filter"
     :class="$classes"
 >
-    <label class="filter-input">
-        <input
+    @foreach ($filter->options() as $key => $option)
+        <label class="filter-input">
+            <input
             class="filter-checkbox"
-            name="{{ $name }}"
+            name="{{ $name }}[{{ is_numeric($key) ? $option : $key }}]"
             type="checkbox"
             onchange="this.form.submit()"
             value="1"
-            {{ request()->input($name, false) ? 'checked' : '' }}
-        >
-    </label>
+            {{ request()->input($name . '.' . $option, false) ? 'checked' : '' }}
+        > {{ $option }}</label>
+    @endforeach
 </x-lacodix-filter::filters.layout>

@@ -1,15 +1,15 @@
 <?php
 
-namespace Tests\Filters;
+namespace {{ namespace }};
 
 use Lacodix\LaravelModelFilter\Filters\OptionFilter;
 
-class PublishedFilter extends OptionFilter
+class {{ class }} extends OptionFilter
 {
     public function options(): array
     {
         return [
-            'published',
+            //
         ];
     }
 }

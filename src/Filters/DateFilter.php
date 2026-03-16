@@ -15,7 +15,7 @@ class DateFilter extends SingleFieldFilter
 {
     protected string $component = 'date';
 
-    public function populate(string|array $values): static
+    public function populate(string|array|null $values): static
     {
         parent::populate($values);
 
@@ -35,55 +35,55 @@ class DateFilter extends SingleFieldFilter
         $qualifiedField = $this->getQualifiedField();
 
         return match ($this->mode) {
-            FilterMode::LOWER => $query->whereDate($qualifiedField, '<', $this->values[$this->queryName()]),
-            FilterMode::LOWER_OR_EQUAL => $query->whereDate($qualifiedField, '<=', $this->values[$this->queryName()]),
-            FilterMode::GREATER => $query->whereDate($qualifiedField, '>', $this->values[$this->queryName()]),
-            FilterMode::GREATER_OR_EQUAL => $query->whereDate($qualifiedField, '>=', $this->values[$this->queryName()]),
+            FilterMode::LOWER => $query->whereDate($qualifiedField, '<', $this->getValue()),
+            FilterMode::LOWER_OR_EQUAL => $query->whereDate($qualifiedField, '<=', $this->getValue()),
+            FilterMode::GREATER => $query->whereDate($qualifiedField, '>', $this->getValue()),
+            FilterMode::GREATER_OR_EQUAL => $query->whereDate($qualifiedField, '>=', $this->getValue()),
             FilterMode::BETWEEN => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
                     ->when(
-                        ! empty($this->values[$this->queryName()][0]),
-                        fn ($q) => $q->whereDate($qualifiedField, '>=', $this->values[$this->queryName()][0])
+                        ! empty($this->getValue()[0] ?? null),
+                        fn ($q) => $q->whereDate($qualifiedField, '>=', $this->getValue()[0])
                     )
                     ->when(
-                        ! empty($this->values[$this->queryName()][1]),
-                        fn ($q) => $q->whereDate($qualifiedField, '<=', $this->values[$this->queryName()][1])
+                        ! empty($this->getValue()[1] ?? null),
+                        fn ($q) => $q->whereDate($qualifiedField, '<=', $this->getValue()[1])
                     )
             ),
             FilterMode::BETWEEN_EXCLUSIVE => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
                     ->when(
-                        ! empty($this->values[$this->queryName()][0]),
-                        fn ($q) => $q->whereDate($qualifiedField, '>', $this->values[$this->queryName()][0])
+                        ! empty($this->getValue()[0] ?? null),
+                        fn ($q) => $q->whereDate($qualifiedField, '>', $this->getValue()[0])
                     )
                     ->when(
-                        ! empty($this->values[$this->queryName()][1]),
-                        fn ($q) => $q->whereDate($qualifiedField, '<', $this->values[$this->queryName()][1])
+                        ! empty($this->getValue()[1] ?? null),
+                        fn ($q) => $q->whereDate($qualifiedField, '<', $this->getValue()[1])
                     )
             ),
             FilterMode::NOT_BETWEEN => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
                     ->when(
-                        ! empty($this->values[$this->queryName()][0]),
-                        fn ($q) => $q->orWhereDate($qualifiedField, '<', $this->values[$this->queryName()][0])
+                        ! empty($this->getValue()[0] ?? null),
+                        fn ($q) => $q->orWhereDate($qualifiedField, '<', $this->getValue()[0])
                     )
                     ->when(
-                        ! empty($this->values[$this->queryName()][1]),
-                        fn ($q) => $q->orWhereDate($qualifiedField, '>', $this->values[$this->queryName()][1])
+                        ! empty($this->getValue()[1] ?? null),
+                        fn ($q) => $q->orWhereDate($qualifiedField, '>', $this->getValue()[1])
                     )
             ),
             FilterMode::NOT_BETWEEN_INCLUSIVE => $query->where(
                 fn (Builder $betweenQuery) => $betweenQuery
                     ->when(
-                        ! empty($this->values[$this->queryName()][0]),
-                        fn ($q) => $q->orWhereDate($qualifiedField, '<=', $this->values[$this->queryName()][0])
+                        ! empty($this->getValue()[0] ?? null),
+                        fn ($q) => $q->orWhereDate($qualifiedField, '<=', $this->getValue()[0])
                     )
                     ->when(
-                        ! empty($this->values[$this->queryName()][1]),
-                        fn ($q) => $q->orWhereDate($qualifiedField, '>=', $this->values[$this->queryName()][1])
+                        ! empty($this->getValue()[1] ?? null),
+                        fn ($q) => $q->orWhereDate($qualifiedField, '>=', $this->getValue()[1])
                     )
             ),
-            default => $query->whereDate($qualifiedField, $this->values[$this->queryName()]),
+            default => $query->whereDate($qualifiedField, $this->getValue()),
         };
     }
 

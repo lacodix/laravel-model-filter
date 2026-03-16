@@ -23,16 +23,16 @@ class SelectFilter extends SingleFieldFilter
         return match ($this->mode) {
             FilterMode::CONTAINS => $query->whereIn(
                 $this->getQualifiedField(),
-                array_intersect(Arr::wrap($this->values[$this->queryName()]), $this->options())
+                array_intersect(Arr::wrap($this->getValue()), $this->options())
             ),
             FilterMode::NOT_CONTAINS => $query->whereNotIn(
                 $this->getQualifiedField(),
-                array_intersect(Arr::wrap($this->values[$this->queryName()]), $this->options())
+                array_intersect(Arr::wrap($this->getValue()), $this->options())
             ),
             default => $query
                 ->when(
-                    in_array($this->values[$this->queryName()], $this->options()),
-                    fn ($query) => $query->where($this->getQualifiedField(), $this->values[$this->queryName()])
+                    in_array($this->getValue(), $this->options()),
+                    fn ($query) => $query->where($this->getQualifiedField(), $this->getValue())
                 ),
         };
     }

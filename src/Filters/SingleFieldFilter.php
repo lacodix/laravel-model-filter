@@ -17,8 +17,14 @@ abstract class SingleFieldFilter extends Filter
         }
     }
 
-    public function populate(string|array $values): static
+    public function populate(string|array|null $values): static
     {
+        if (is_null($values)) {
+            $this->values = [];
+
+            return $this;
+        }
+
         if (! is_array($values) || ! Arr::isAssoc($values) || ! Arr::has($values, $this->queryName())) {
             $values = [
                 $this->queryName() => $values,
@@ -70,7 +76,7 @@ abstract class SingleFieldFilter extends Filter
         }
 
         // special case - take field, when we are anonymouse and query_name not set
-        if (str_contains($this::class, '@anonymous')) {
+        if (str_contains(static::class, '@anonymous')) {
             $this->queryName = Str::snake($this->field);
         }
 

@@ -33,6 +33,8 @@ class TestBelongsToFilter extends BelongsToFilter
 ```
 
 This will prepopulate a select filter with all the users in your users table, represended by the colum username.
+You can also use dot-notation for JSON fields, which will be converted to arrow-fields (e.g. `meta->field`).
+
 You can additionaly configure the id-table, if you use another column as key.
 ```php
     protected string $relationModel = \App\Models\User::class;

@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 use Lacodix\LaravelModelFilter\Enums\TimeframeFilterPrecision;
 use Lacodix\LaravelModelFilter\Enums\ValidationMode;
-use Lacodix\LaravelModelFilter\Filters\BooleanFilter;
 use Lacodix\LaravelModelFilter\Filters\DateFilter;
 use Lacodix\LaravelModelFilter\Filters\NumericFilter;
+use Lacodix\LaravelModelFilter\Filters\OptionFilter;
 use Lacodix\LaravelModelFilter\Filters\StringFilter;
 use Lacodix\LaravelModelFilter\Traits\HasFilters;
 use Lacodix\LaravelModelFilter\Traits\IsSearchable;
@@ -126,7 +126,7 @@ class Post extends Model
                 ->setQueryName('equals')
                 ->setMode(FilterMode::EQUAL),
 
-            (new BooleanFilter(['published']))
+            (new OptionFilter(['published']))
                 ->setTitle(ucwords(str_replace('_', ' ', 'boolfilter')))
                 ->setQueryName('boolfilter'),
 

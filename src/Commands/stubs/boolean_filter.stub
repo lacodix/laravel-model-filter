@@ -6,10 +6,5 @@ use Lacodix\LaravelModelFilter\Filters\BooleanFilter;
 
 class {{ class }} extends BooleanFilter
 {
-    public function options(): array
-    {
-        return [
-            //
-        ];
-    }
+    protected string $field = '{{ field }}';
 }

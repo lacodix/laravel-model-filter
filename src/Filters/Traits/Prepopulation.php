@@ -2,14 +2,13 @@
 
 namespace Lacodix\LaravelModelFilter\Filters\Traits;
 
-use Illuminate\Support\Collection;
 use Lacodix\LaravelModelFilter\Filters\SingleFieldFilter;
 
 trait Prepopulation
 {
     public function options(): array
     {
-        if (isset ($this->options)) {
+        if (isset($this->options)) {
             return $this->options;
         }
 

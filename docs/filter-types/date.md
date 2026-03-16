@@ -27,6 +27,8 @@ class TestDateFilter extends DateFilter
 A fieldname must be set, this will apply a where query to the model-query
 where fieldname equals the given value.
 
+You can also use dot-notation for JSON fields, which will be converted to arrow-fields (e.g. `meta->field`).
+
 ## Filter Modes
 
 Default mode is EQUAL

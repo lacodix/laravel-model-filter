@@ -103,6 +103,16 @@ abstract class Filter
         return $this->queryName;
     }
 
+    public function getValue(?string $key = null): mixed
+    {
+        return $this->values[$key ?? $this->queryName()] ?? null;
+    }
+
+    public function getValues(): array
+    {
+        return $this->values;
+    }
+
     public function component(): string
     {
         return config('model-filter.filter_component_prefix') . $this->component;

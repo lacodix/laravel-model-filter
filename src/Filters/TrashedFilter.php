@@ -21,7 +21,7 @@ class TrashedFilter extends SelectFilter
      */
     public function apply(Builder $query): Builder
     {
-        return match (current($this->values)) {
+        return match ($this->getValue()) {
             'with_trashed' => $query->withTrashed(), // @phpstan-ignore-line
             'only_trashed' => $query->onlyTrashed(), // @phpstan-ignore-line
             default => $query,
@@ -43,9 +43,9 @@ class TrashedFilter extends SelectFilter
         ];
     }
 
-    public function populate(string|array $values): static
+    public function populate(string|array|null $values): static
     {
-        $this->values = [$values];
+        $this->values = [$this->queryName() => $values];
 
         return $this;
     }

@@ -83,7 +83,7 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
     public function timeframeFilterMode(): TimeframeFilterMode
     {
         try {
-            return TimeframeFilterMode::from($this->values[$this->queryName()]['mode'] ?? 'ever');
+            return TimeframeFilterMode::from($this->getValue()['mode'] ?? 'ever');
         } catch (ValueError) {
             return TimeframeFilterMode::EVER;
         }
@@ -174,20 +174,20 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
 
     protected function filterValues(): mixed
     {
-        return $this->values[$this->queryName()]['values'] ?? null;
+        return $this->getValue()['values'] ?? null;
     }
 
     protected function getTimeframeFromOrigin(): Carbon
     {
         return $this->timeframeFilterMode()->needsDateValues()
-            ? $this->parseInputDate($this->values[$this->queryName()]['from'] ?? null)
+            ? $this->parseInputDate($this->getValue()['from'] ?? null)
             : now();
     }
 
     protected function getTimeframeToOrigin(): Carbon
     {
         return $this->timeframeFilterMode()->needsDateValues()
-            ? $this->parseInputDate($this->values[$this->queryName()]['to'] ?? null)
+            ? $this->parseInputDate($this->getValue()['to'] ?? null)
             : now();
     }
 
