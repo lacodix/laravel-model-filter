@@ -15,7 +15,7 @@ beforeEach(function () {
 
 it('it prepopulates the filters options', function () {
     expect((new TestPost)->filterInstances()->first()->options())->toHaveCount(4)
-        ->toEqual(['post', 'page', 'comment', 'image']);
+        ->toEqual(['post' => 'post', 'page' => 'page', 'comment' => 'comment', 'image' => 'image']);
 });
 
 class TestTypeFilter extends SelectFilter

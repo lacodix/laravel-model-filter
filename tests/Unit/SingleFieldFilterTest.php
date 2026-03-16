@@ -23,7 +23,7 @@ it('field affects getQualifiedField without table', function () {
 
 it('field affects getQualifiedField with table', function () {
     $filter = new class extends DateFilter {};
-    $filter->field('created_at')->table('posts');
+    $filter->field('created_at')->setModel(new \Tests\Models\Post());
 
     expect($filter->getQualifiedField())->toBe('posts.created_at');
 });
