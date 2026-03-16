@@ -83,6 +83,6 @@ class BelongsToManyFilter extends BelongsToFilter
 
     protected function filterValues(): mixed
     {
-        return $this->values[$this->field];
+        return $this->values[$this->queryName()];
     }
 }

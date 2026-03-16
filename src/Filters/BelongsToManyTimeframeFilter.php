@@ -75,15 +75,15 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
         return [
             ...$this->mode === FilterMode::EQUAL ? $this->singleRules() : $this->multiRules(),
 
-            $this->field . '.from' => 'nullable|' . $this->getDateRule(),
-            $this->field . '.to' => 'nullable|' . $this->getDateRule(),
+            $this->queryName() . '.from' => 'nullable|' . $this->getDateRule(),
+            $this->queryName() . '.to' => 'nullable|' . $this->getDateRule(),
         ];
     }
 
     public function timeframeFilterMode(): TimeframeFilterMode
     {
         try {
-            return TimeframeFilterMode::from($this->values[$this->field]['mode'] ?? 'ever');
+            return TimeframeFilterMode::from($this->values[$this->queryName()]['mode'] ?? 'ever');
         } catch (ValueError) {
             return TimeframeFilterMode::EVER;
         }
@@ -146,15 +146,15 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
     protected function singleRules(): array
     {
         return [
-            $this->field . '.values' => 'in:' . implode(',', $this->options()),
+            $this->queryName() . '.values' => 'in:' . implode(',', $this->options()),
         ];
     }
 
     protected function multiRules(): array
     {
         return [
-            $this->field . '.values' => 'array',
-            $this->field . '.values.*' => 'in:' . implode(',', $this->options()),
+            $this->queryName() . '.values' => 'array',
+            $this->queryName() . '.values.*' => 'in:' . implode(',', $this->options()),
         ];
     }
 
@@ -174,20 +174,20 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
 
     protected function filterValues(): mixed
     {
-        return $this->values[$this->field]['values'] ?? null;
+        return $this->values[$this->queryName()]['values'] ?? null;
     }
 
     protected function getTimeframeFromOrigin(): Carbon
     {
         return $this->timeframeFilterMode()->needsDateValues()
-            ? $this->parseInputDate($this->values[$this->field]['from'] ?? null)
+            ? $this->parseInputDate($this->values[$this->queryName()]['from'] ?? null)
             : now();
     }
 
     protected function getTimeframeToOrigin(): Carbon
     {
         return $this->timeframeFilterMode()->needsDateValues()
-            ? $this->parseInputDate($this->values[$this->field]['to'] ?? null)
+            ? $this->parseInputDate($this->values[$this->queryName()]['to'] ?? null)
             : now();
     }
 

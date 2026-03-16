@@ -20,10 +20,10 @@ class StringFilter extends SingleFieldFilter
     public function apply(Builder $query): Builder
     {
         return match ($this->mode) {
-            FilterMode::EQUAL => $query->where($this->getQualifiedField(), $this->values[$this->field]),
-            FilterMode::STARTS_WITH => $query->where($this->getQualifiedField(), 'LIKE', $this->values[$this->field] . '%'),
-            FilterMode::ENDS_WITH => $query->where($this->getQualifiedField(), 'LIKE', '%' . $this->values[$this->field]),
-            default => $query->where($this->getQualifiedField(), 'LIKE', '%' . $this->values[$this->field] . '%'),
+            FilterMode::EQUAL => $query->where($this->getQualifiedField(), $this->values[$this->queryName()]),
+            FilterMode::STARTS_WITH => $query->where($this->getQualifiedField(), 'LIKE', $this->values[$this->queryName()] . '%'),
+            FilterMode::ENDS_WITH => $query->where($this->getQualifiedField(), 'LIKE', '%' . $this->values[$this->queryName()]),
+            default => $query->where($this->getQualifiedField(), 'LIKE', '%' . $this->values[$this->queryName()] . '%'),
         };
     }
 }

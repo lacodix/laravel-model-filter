@@ -23,16 +23,16 @@ class SelectFilter extends SingleFieldFilter
         return match ($this->mode) {
             FilterMode::CONTAINS => $query->whereIn(
                 $this->getQualifiedField(),
-                array_intersect(Arr::wrap($this->values[$this->field]), $this->options())
+                array_intersect(Arr::wrap($this->values[$this->queryName()]), $this->options())
             ),
             FilterMode::NOT_CONTAINS => $query->whereNotIn(
                 $this->getQualifiedField(),
-                array_intersect(Arr::wrap($this->values[$this->field]), $this->options())
+                array_intersect(Arr::wrap($this->values[$this->queryName()]), $this->options())
             ),
             default => $query
                 ->when(
-                    in_array($this->values[$this->field], $this->options()),
-                    fn ($query) => $query->where($this->getQualifiedField(), $this->values[$this->field])
+                    in_array($this->values[$this->queryName()], $this->options()),
+                    fn ($query) => $query->where($this->getQualifiedField(), $this->values[$this->queryName()])
                 ),
         };
     }
@@ -47,15 +47,15 @@ class SelectFilter extends SingleFieldFilter
     protected function singleRules(): array
     {
         return [
-            $this->field => 'in:' . implode(',', $this->options()),
+            $this->queryName() => 'in:' . implode(',', $this->options()),
         ];
     }
 
     protected function multiRules(): array
     {
         return [
-            $this->field => 'array',
-            $this->field . '.*' => 'in:' . implode(',', $this->options()),
+            $this->queryName() => 'array',
+            $this->queryName() . '.*' => 'in:' . implode(',', $this->options()),
         ];
     }
 }

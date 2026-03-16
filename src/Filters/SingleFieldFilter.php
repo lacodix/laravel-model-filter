@@ -19,9 +19,9 @@ abstract class SingleFieldFilter extends Filter
 
     public function populate(string|array $values): static
     {
-        if (! is_array($values) || ! Arr::isAssoc($values) || ! Arr::has($values, $this->field)) {
+        if (! is_array($values) || ! Arr::isAssoc($values) || ! Arr::has($values, $this->queryName())) {
             $values = [
-                $this->field => $values,
+                $this->queryName() => $values,
             ];
         }
 
@@ -46,10 +46,43 @@ abstract class SingleFieldFilter extends Filter
 
     public function getQualifiedField(): string
     {
-        if (Str::contains($this->field, '.') || is_null($this->table)) {
-            return $this->field;
+        $field = $this->field;
+
+        if (Str::contains($field, '.') && ! is_null($this->table) && Str::startsWith($field, $this->table . '.')) {
+            $field = Str::after($field, $this->table . '.');
         }
 
-        return $this->table . '.' . $this->field;
+        if (Str::contains($field, '.')) {
+            $field = str_replace('.', '->', $field);
+        }
+
+        $qualifiedField = is_null($this->table)
+            ? $field
+            : $this->table . '.' . $field;
+
+        return $qualifiedField;
+    }
+
+    public function getField(): string
+    {
+        if (Str::contains($this->field, '.')) {
+            return str_replace('.', '->', $this->field);
+        }
+
+        return $this->field;
+    }
+
+    public function queryName(): string
+    {
+        if (isset($this->queryName)) {
+            return $this->queryName;
+        }
+
+        // special case - take field, when we are anonymouse and query_name not set
+        if (str_contains($this::class, '@anonymous')) {
+            $this->queryName = Str::snake($this->field);
+        }
+
+        return parent::queryName();
     }
 }
