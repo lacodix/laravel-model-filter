@@ -9,6 +9,10 @@ trait Prepopulation
 {
     public function options(): array
     {
+        if (isset ($this->options)) {
+            return $this->options;
+        }
+
         if (! $this instanceof SingleFieldFilter) {
             return [];
         }
