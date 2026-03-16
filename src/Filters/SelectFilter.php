@@ -25,6 +25,10 @@ class SelectFilter extends SingleFieldFilter
                 $this->getQualifiedField(),
                 array_intersect(Arr::wrap($this->values[$this->field]), $this->options())
             ),
+            FilterMode::NOT_CONTAINS => $query->whereNotIn(
+                $this->getQualifiedField(),
+                array_intersect(Arr::wrap($this->values[$this->field]), $this->options())
+            ),
             default => $query
                 ->when(
                     in_array($this->values[$this->field], $this->options()),
@@ -35,7 +39,9 @@ class SelectFilter extends SingleFieldFilter
 
     public function rules(): array
     {
-        return $this->mode === FilterMode::CONTAINS ? $this->multiRules() : $this->singleRules();
+        return $this->mode === FilterMode::CONTAINS || $this->mode === FilterMode::NOT_CONTAINS
+            ? $this->multiRules()
+            : $this->singleRules();
     }
 
     protected function singleRules(): array

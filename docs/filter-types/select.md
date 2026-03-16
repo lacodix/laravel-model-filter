@@ -80,3 +80,4 @@ name the input element as an array, see select.blade.php for an example when usi
 
 - FilterMode::EQUAL
 - FilterMode::CONTAINS
+- FilterMode::NOT_ONTAINS

@@ -29,6 +29,10 @@ it('can be filtered by select', function () {
     expect(Post::filter(['type_multi' => ['post', 'page']])->count())->toEqual(25);
 });
 
+it('can be filtered by not contains', function () {
+    expect(Post::filter(['type_not_contains' => ['post', 'page']])->count())->toEqual(5);
+});
+
 it('doesn\'t apply if invalid values are there', function () {
     expect(Post::filter([
         'type_multi' => ['post', 'asdf'],

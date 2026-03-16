@@ -73,7 +73,7 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
     public function rules(): array
     {
         return [
-            ...$this->mode === FilterMode::CONTAINS ? $this->multiRules() : $this->singleRules(),
+            ...$this->mode === FilterMode::EQUAL ? $this->singleRules() : $this->multiRules(),
 
             $this->field . '.from' => 'nullable|' . $this->getDateRule(),
             $this->field . '.to' => 'nullable|' . $this->getDateRule(),

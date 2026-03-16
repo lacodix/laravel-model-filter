@@ -47,6 +47,10 @@ it('can be filtered by multi select', function () {
     expect(Comment::filter(['post_filter_multi' => [$this->post1->id, $this->post2->id]])->count())->toEqual(12);
 });
 
+it('can be filtered by not contains', function () {
+    expect(Comment::filter(['post_filter_not_contains' => [$this->post1->id, $this->post2->id]])->count())->toEqual(15);
+});
+
 it('contains the correct values', function () {
     expect(array_keys((new \Tests\Filters\PostFilter())->options()))->toHaveCount(5)
         ->toContain($this->post1->title)

@@ -21,7 +21,11 @@ class BelongsToManyFilter extends BelongsToFilter
     public function apply(Builder $query): Builder
     {
         return $query
-            ->has($this->field, callback: fn (Builder $query) => $this->getFilterQuery($query));
+            ->when(
+                $this->mode === FilterMode::NOT_CONTAINS,
+                fn (Builder $query) => $query->whereDoesntHave($this->field, callback: fn (Builder $query) => $this->relationContainsQuery($query)),
+                fn (Builder $query) => $query->has($this->field, callback: fn (Builder $query) => $this->getFilterQuery($query))
+            );
     }
 
     /**
@@ -32,6 +36,7 @@ class BelongsToManyFilter extends BelongsToFilter
     {
         return match ($this->mode) {
             FilterMode::CONTAINS => $this->relationContainsQuery($query),
+            FilterMode::NOT_CONTAINS => $this->relationNotContainsQuery($query),
             default => $this->relationEqualQuery($query),
         };
     }
@@ -43,6 +48,18 @@ class BelongsToManyFilter extends BelongsToFilter
     protected function relationContainsQuery(Builder $query): Builder
     {
         return $query->whereIn(
+            $this->relationQuery()->qualifyColumn($this->idColumn),
+            array_intersect(Arr::wrap($this->filterValues()), $this->options())
+        );
+    }
+
+    /**
+     * @param  Builder<TModel> $query
+     * @return Builder<TModel>
+     */
+    protected function relationNotContainsQuery(Builder $query): Builder
+    {
+        return $query->whereNotIn(
             $this->relationQuery()->qualifyColumn($this->idColumn),
             array_intersect(Arr::wrap($this->filterValues()), $this->options())
         );
