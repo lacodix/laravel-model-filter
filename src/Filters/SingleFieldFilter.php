@@ -46,23 +46,14 @@ abstract class SingleFieldFilter extends Filter
 
     public function getQualifiedField(): string
     {
-        $field = $this->field;
-
-        if (Str::contains($field, '.') && ! is_null($this->table) && Str::startsWith($field, $this->table . '.')) {
-            $field = Str::after($field, $this->table . '.');
+        $query = $this->model?->query();
+        if (! $query) {
+            return $this->field;
         }
 
-        if (Str::contains($field, '.')) {
-            $field = str_replace('.', '->', $field);
-        }
-
-        $qualifiedField = is_null($this->table)
-            ? $field
-            : $this->table . '.' . $field;
-
-        return $qualifiedField;
+        return $query->qualifyColumn($this->getField());
     }
-
+    
     public function getField(): string
     {
         if (Str::contains($this->field, '.')) {
