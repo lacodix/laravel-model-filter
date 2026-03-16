@@ -85,6 +85,19 @@ class PublishedFilter extends BooleanFilter
 }
 ```
 
+### Signature of populate method
+
+The `populate` method in the base `Filter` class and all its subclasses has been updated to accept `null` as a value. 
+If you have custom filter classes that override the `populate` method, you must update the method signature.
+
+```php
+// old
+public function populate(string|array $values): static
+
+// new
+public function populate(string|array|null $values): static
+```
+
 ## from v2 to v3
 
 ### (Breaking) Introduction of filters(), searchable() and sortable() methods.

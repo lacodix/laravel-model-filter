@@ -89,7 +89,7 @@ abstract class Filter
         return $this;
     }
 
-    public function populate(string|array $values): static
+    public function populate(string|array|null $values): static
     {
         $this->values = Arr::wrap($values);
 
