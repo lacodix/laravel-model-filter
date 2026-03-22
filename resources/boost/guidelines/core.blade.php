@@ -109,6 +109,8 @@ Override `visible()` to conditionally enable filters (e.g., based on permissions
 
 Base filters include validation (e.g., `DateFilter` validates format, `NumericFilter` validates bounds). Customise via `rules()`, `validationMessages()`, and `validationAttributes()`.
 
+`EnumFilter` options are sorted by translated label by default (`$sortedOptions = true`). Use `setSortedOptions(false)` if enum declaration order should be preserved.
+
 ---
 
 ### Search

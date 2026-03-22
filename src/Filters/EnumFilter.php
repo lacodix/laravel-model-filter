@@ -14,6 +14,7 @@ class EnumFilter extends SelectFilter
     protected string $enum;
     protected string $translationPrefix = '';
     protected bool $useNameForTranslation = false;
+    protected bool $sortedOptions = true;
 
     public function options(): array
     {
@@ -21,6 +22,7 @@ class EnumFilter extends SelectFilter
 
         return $this->options ??= collect($this->enum::cases())
             ->mapWithKeys(fn ($case) => [trans($this->translationPrefix . $case->{$field}) => $case->value])
+            ->when($this->sortedOptions, fn ($options) => $options->sort())
             ->all();
     }
 
@@ -37,5 +39,17 @@ class EnumFilter extends SelectFilter
         $this->useNameForTranslation = $useNameForTranslation;
 
         return $this;
+    }
+
+    public function setSortedOptions(bool $sortedOptions = true): static
+    {
+        $this->sortedOptions = $sortedOptions;
+
+        return $this;
+    }
+
+    public function hasSortedOptions(): bool
+    {
+        return $this->sortedOptions;
     }
 }

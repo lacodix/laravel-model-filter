@@ -89,9 +89,26 @@ the enum keys as translation keys, set the $useNameForTranslation property to tr
         return [
             EnumFilter::make('state')
                 ->setEnum(ActiveState::class)
+                ->setSortedOptions(false)
                 ->setTranslationPrefix('enums.' . ActiveState::class . '.', true),
         ];
     }
+```
+
+## Option sorting
+
+By default, enum options are sorted alphabetically by their translated label.
+
+- Property: `$sortedOptions = true`
+- Setter: `setSortedOptions(bool $sortedOptions = true): static`
+- Getter: `hasSortedOptions(): bool`
+
+If you want to keep enum declaration order, disable sorting:
+
+```php
+EnumFilter::make('state')
+    ->setEnum(ActiveState::class)
+    ->setSortedOptions(false);
 ```
 
 ## Filter Modes
