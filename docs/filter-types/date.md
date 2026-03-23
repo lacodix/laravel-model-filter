@@ -3,6 +3,8 @@ title: Date Filter
 weight: 2
 ---
 
+General setup (creation, fluent definition, `queryName`, `title`, `mode`, validation, visibility) is documented in [Creating filters](../basic-usage/create-filters.md).
+
 ## Create the filter
 
 ```bash
@@ -29,9 +31,9 @@ where fieldname equals the given value.
 
 You can also use dot-notation for JSON fields, which will be converted to arrow-fields (e.g. `meta->field`).
 
-## Filter Modes
+## Allowed modes
 
-Default mode is EQUAL
+Default mode is `FilterMode::EQUAL`.
 
 ```php
 <?php
@@ -49,7 +51,7 @@ class TestDateFilter extends DateFilter
 }
 ```
 
-Allowed modes are
+Allowed modes:
 - FilterMode::LOWER
 - FilterMode::GREATER
 - FilterMode::LOWER_OR_EQUAL
@@ -60,7 +62,7 @@ Allowed modes are
 - FilterMode::NOT_BETWEEN
 - FilterMode::NOT_BETWEEN_INCLUSIVE
 
-## Modes with two values
+## Between / not-between with two values
 
 For using the between and not between filters you have to provide two values to the filter. You can
 omit one of the values, if it shall not be applied. You can offer a between filter and

@@ -3,7 +3,11 @@ title: Filter Parameters
 weight: 3
 ---
 
-When adding filters to models you usually use the $filters property
+For core filter creation and shared filter options (`queryName`, `title`, `mode`, `component`, validation, visibility), see [Creating filters](../basic-usage/create-filters.md).
+
+This page focuses on parameterizing filter instances directly in the model.
+
+When adding filters to models you usually use the `$filters` property:
 
 ```php
     protected array $filters = [
@@ -11,7 +15,7 @@ When adding filters to models you usually use the $filters property
     ];
 ```
 
-With this solution you are not able to set properties of the filter. But sometimes you need multiple almost
+With this solution you are not able to set properties on a filter instance. But sometimes you need multiple almost
 identical filters, or you just want to use different headlines for the same filter when using it in different
 models. It would be kind of waste to create multiple filter classes for that.
 
@@ -40,8 +44,7 @@ class Post extends Model
 }
 ```
 
-With that solution you can instantiate the filter and use methods on it.
-For convenience there are already some methods available on all filter classes.
+With that solution you can instantiate filters and call fluent setters on them.
 
 ```php
     public function filters(): array
@@ -57,12 +60,13 @@ For convenience there are already some methods available on all filter classes.
     }
 ```
 
-All this methods should be self explaining. In your own filter classes you can create more methods
-like this and you just need to return itself.
+In your own filter classes you can add custom fluent setters by returning `static`.
 
-All Filters are "makeable" - so you can always use Filter::make($arguments...) instead of new Filter($arguments) 
+All filters are makeable, so you can use `Filter::make($arguments...)` instead of `new Filter($arguments)`.
 
-## Use Base Filters Immediate
+For typed factory-based fluent creation (`forModel(...)->make(...)`) and PHPStan/Larastan context, see [Typed fluent filters (PHPStan / Larastan)](./typed-fluent-filters.md).
+
+## Use base filters inline
 
 With this option you can just use some available base filters without creating your
 own classes. For the date, string and boolean-filter you don't need to create dedicated
