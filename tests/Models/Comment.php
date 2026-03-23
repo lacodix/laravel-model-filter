@@ -8,6 +8,7 @@ use Lacodix\LaravelModelFilter\Enums\FilterMode;
 use Lacodix\LaravelModelFilter\Enums\ValidationMode;
 use Lacodix\LaravelModelFilter\Traits\HasFilters;
 use Lacodix\LaravelModelFilter\Traits\IsSortable;
+use Tests\Filters\CommentAuthorNameFilter;
 use Tests\Filters\CounterFilter;
 use Tests\Filters\PostFilter;
 use Tests\Filters\PublishedFilter;
@@ -36,6 +37,7 @@ class Comment extends Model
                 new CounterFilter(),
             ],
             '__default' => [
+                new CommentAuthorNameFilter(),
                 new PostFilter(),
 
                 (new PostFilter())

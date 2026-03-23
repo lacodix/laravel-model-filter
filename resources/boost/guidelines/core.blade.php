@@ -173,7 +173,21 @@ Customise filters via `$title` / `title()` or `$component` / `component()` on th
 
 Ships with: `TrashedFilter`, `BelongsToFilter`, `BelongsToManyFilter`, `BelongsToManyTimeframeFilter`.
 
-Custom relation filters can extend `SelectFilter` and override `apply()`.
+You can easily run any existing filter on a relation by using the `RunsOnRelation` trait:
+
+@verbatim
+    <code-snippet name="Relation Filter example" lang="php">
+        class PostTitleFilter extends StringFilter
+        {
+            use RunsOnRelation;
+
+            protected string $relation = 'post';
+            protected string $field = 'title';
+        }
+    </code-snippet>
+@endverbatim
+
+For custom filters running on relations, you should override the `applyFilter()` method instead of `apply()` to maintain compatibility with the trait.
 
 ---
 

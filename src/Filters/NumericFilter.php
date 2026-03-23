@@ -34,7 +34,7 @@ class NumericFilter extends SingleFieldFilter
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */
-    public function apply(Builder $query): Builder
+    public function applyFilter(Builder $query): Builder
     {
         return match ($this->mode) {
             FilterMode::LOWER => $query->where($this->getQualifiedField(), '<', $this->getValue()),

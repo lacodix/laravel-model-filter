@@ -20,7 +20,7 @@ class SelectFilter extends SingleFieldFilter
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */
-    public function apply(Builder $query): Builder
+    public function applyFilter(Builder $query): Builder
     {
         return match ($this->mode) {
             FilterMode::CONTAINS => $query->whereIn(

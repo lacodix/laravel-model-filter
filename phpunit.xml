@@ -1,32 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.1/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
-         executionOrder="depends,defects"
-         beStrictAboutOutputDuringTests="true"
-         failOnWarning="true"
-         stopOnFailure="false"
-         colors="true"
+<phpunit
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.5/phpunit.xsd"
+  bootstrap="vendor/autoload.php"
+  executionOrder="depends,defects"
+  beStrictAboutOutputDuringTests="true"
+  failOnWarning="true"
+  stopOnFailure="false"
+  colors="true"
 >
-    <testsuites>
-        <testsuite name="Lacodix Test Suite">
-            <directory>./tests/</directory>
-        </testsuite>
-    </testsuites>
-
-    <coverage />
-
-    <source restrictDeprecations="true" restrictNotices="true" restrictWarnings="true">
-        <include>
-            <directory suffix=".php">src/</directory>
-        </include>
-    </source>
-
-    <logging>
-        <junit outputFile="build/report.junit.xml"/>
-    </logging>
-    <php>
-        <env name="DB_CONNECTION" value="sqlite"/>
-        <env name="DB_DATABASE" value=":memory:"/>
-    </php>
+  <testsuites>
+    <testsuite name="Lacodix Test Suite">
+      <directory>./tests/</directory>
+    </testsuite>
+  </testsuites>
+  <coverage/>
+  <source restrictNotices="true" restrictWarnings="true" ignoreIndirectDeprecations="true">
+    <include>
+      <directory suffix=".php">src/</directory>
+    </include>
+  </source>
+  <logging>
+    <junit outputFile="build/report.junit.xml"/>
+  </logging>
+  <php>
+    <env name="DB_CONNECTION" value="sqlite"/>
+    <env name="DB_DATABASE" value=":memory:"/>
+  </php>
 </phpunit>

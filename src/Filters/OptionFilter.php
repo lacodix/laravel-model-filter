@@ -23,7 +23,7 @@ class OptionFilter extends Filter
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */
-    public function apply(Builder $query): Builder
+    public function applyFilter(Builder $query): Builder
     {
         foreach ($this->options() as $key) {
             $query->when(

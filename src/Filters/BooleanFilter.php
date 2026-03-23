@@ -14,7 +14,7 @@ class BooleanFilter extends SingleFieldFilter
 {
     protected string $component = 'boolean';
 
-    public function apply(Builder $query): Builder
+    public function applyFilter(Builder $query): Builder
     {
         if (is_null($this->getValue())) {
             return $query;

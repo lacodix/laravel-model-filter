@@ -43,11 +43,11 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */
-    public function apply(Builder $query): Builder
+    public function applyFilter(Builder $query): Builder
     {
         $this->relation = $query->getModel()->{$this->field}();
 
-        return parent::apply($query);
+        return parent::applyFilter($query);
     }
 
     public function getTimeframeModeLabel(TimeframeFilterMode $mode): string

@@ -8,9 +8,9 @@
 This package allows you to filter, search and sort models while fetching from database with ease.
 It contains additional functionality to use query strings to filter, search and sort.
 
-Once installed you can filter, search and sort Models.
-You can create own filters based on our base filters, create individual filters, or use
-one of the extended filters, that are ready to use with less or even without configuration like TrashedFilter.
+With this package you can easily filter, search and sort your Eloquent models. 
+It supports various filter types like strings, dates, numbers, and enums out of the box. 
+You can also create complex custom filters to handle any specific database logic.
 
 Additionally you can use the visualisation functionality of filters.
 
@@ -35,6 +35,10 @@ Create your first filter
 ```bash 
 php artisan make:filter CreatedAfterFilter --type=date --field=created_at
 ```
+
+Filters can be applied directly to models, but they can also be easily applied to relations and nested relations 
+using the `RunsOnRelation` trait. This automatically wraps the filter logic in a `whereHas` closure and correctly 
+qualifies the field names using the related table.
 
 ```php
 // Set the filter mode

@@ -18,7 +18,7 @@ class BelongsToManyFilter extends BelongsToFilter
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */
-    public function apply(Builder $query): Builder
+    public function applyFilter(Builder $query): Builder
     {
         return $query
             ->when(

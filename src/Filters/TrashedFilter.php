@@ -21,7 +21,7 @@ class TrashedFilter extends SelectFilter
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */
-    public function apply(Builder $query): Builder
+    public function applyFilter(Builder $query): Builder
     {
         return match ($this->getValue()) {
             'with_trashed' => $query->withTrashed(), // @phpstan-ignore-line
