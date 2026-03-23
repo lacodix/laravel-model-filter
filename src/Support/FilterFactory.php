@@ -11,19 +11,14 @@ use Lacodix\LaravelModelFilter\Filters\Filter;
  */
 class FilterFactory
 {
-    /** @var class-string<TModel> */
-    private string $modelClass;
-
     /** @var class-string<TFilter> */
     private string $filterClass;
 
     /**
-     * @param class-string<TModel> $modelClass
      * @param class-string<TFilter> $filterClass
      */
-    public function __construct(string $modelClass, string $filterClass)
+    public function __construct(string $filterClass)
     {
-        $this->modelClass = $modelClass;
         $this->filterClass = $filterClass;
     }
 

@@ -17,7 +17,10 @@ trait Makeable
         /** @var class-string<static<TConcreteModel>> $filterClass */
         $filterClass = static::class;
 
-        return new FilterFactory($filterClass, $modelClass);
+        /** @var FilterFactory<TConcreteModel, static<TConcreteModel>> $factory */
+        $factory = new FilterFactory($filterClass);
+
+        return $factory;
     }
 
     /**
