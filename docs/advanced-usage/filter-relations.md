@@ -3,37 +3,59 @@ title: Filter for Relations
 weight: 4
 ---
 
-You can create a simple Relation filter by extending the base SelectFilter. In the following example we create
-a Tag-Filter that can be applied to all models that have a tag relation.
+In the simple cases, you can use the [RunsOnRelation trait](../extended-filters/runs-on-relation.md) to run any existing filter on a relation.
 
-Thanks to [hfmiguel](https://github.com/hfmiguel) for this example.
+However, if you have more complex requirements, like nested relations, you can manually use Laravel's `whereHas` method or use the `RunsOnRelation` trait with a dot-notated relation name.
+
+## Basic Relation Filter
+
+For most cases, just using the trait is enough.
 
 ```php
-class TagsFilter extends SelectFilter
+class PostTitleFilter extends StringFilter
 {
-    public FilterMode $mode = FilterMode::EQUAL;
+    use RunsOnRelation;
 
-    protected string $field = 'tag_id';  /**  column of the relation */ 
-    protected string $relation = 'tags';  /** relation name : where the search will be applied */
+    protected string $relation = 'post';
+    protected string $field = 'title';
+}
+```
 
-    public function title(): string
-    {
-        return __('Tags');
-    }
+## Nested Relations
 
-    public function options(): array
+You can also filter through nested relations by using a dot-notated relation name:
+
+```php
+class AuthorPostTitleFilter extends StringFilter
+{
+    use RunsOnRelation;
+
+    protected string $relation = 'author.posts';
+    protected string $field = 'title';
+}
+```
+
+This will automatically wrap the logic in `whereHas('author.posts', ...)` and correctly qualify the `title` column using the `posts` table name.
+
+## Complex Custom Relation Filters
+
+If you need more control, such as adding additional constraints to the `whereHas` query, you can manually override the `applyFilter` method while still using the trait:
+
+```php
+class CustomRelationFilter extends StringFilter
+{
+    use RunsOnRelation;
+
+    protected string $relation = 'posts';
+    protected string $field = 'title';
+
+    public function applyFilter(Builder $query): Builder
     {
-        return Tag::query()
-            ->orderBy('name')
-            ->pluck('id', 'name')
-            ->toArray();
-    }
-    
-    public function apply(Builder $query): Builder
-    {
-        return $query->whereHas($this->relation, function (Builder $query) {
-            $query->whereIn($this->field, $this->values);
-        });
+        // Add custom constraints inside the whereHas closure
+        $query->where('published', true);
+
+        // Call parent logic to apply the string filter on the title field
+        return parent::applyFilter($query);
     }
 }
 ```

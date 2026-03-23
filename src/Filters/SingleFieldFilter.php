@@ -58,7 +58,8 @@ abstract class SingleFieldFilter extends Filter
 
     public function getQualifiedField(): string
     {
-        $query = $this->model?->query();
+        $query = $this->relationQuery ?? $this->model?->query();
+
         if (! $query) {
             return $this->field;
         }

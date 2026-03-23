@@ -40,6 +40,8 @@ abstract class Filter
 
     protected ?Model $model = null;
 
+    protected ?Builder $relationQuery = null;
+
     public function setQueryName(string $queryName): static
     {
         $this->queryName = $queryName;
@@ -139,7 +141,19 @@ abstract class Filter
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */
-    abstract public function apply(Builder $query): Builder;
+    public function apply(Builder $query): Builder
+    {
+        return $this->applyFilter($query);
+    }
+
+    /**
+     * @param  Builder<TModel> $query
+     * @return Builder<TModel>
+     */
+    public function applyFilter(Builder $query): Builder
+    {
+        return $query;
+    }
 
     public function options(): array
     {
