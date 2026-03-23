@@ -3,7 +3,13 @@
 namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @template TModel of Model
+ *
+ * @extends SingleFieldFilter<TModel>
+ */
 class BooleanFilter extends SingleFieldFilter
 {
     protected string $component = 'boolean';

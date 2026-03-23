@@ -2,9 +2,15 @@
 
 namespace Lacodix\LaravelModelFilter\Filters;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
+/**
+ * @template TModel of Model
+ *
+ * @extends Filter<TModel>
+ */
 abstract class SingleFieldFilter extends Filter
 {
     protected string $field;
@@ -59,7 +65,7 @@ abstract class SingleFieldFilter extends Filter
 
         return $query->qualifyColumn($this->getField());
     }
-    
+
     public function getField(): string
     {
         if (Str::contains($this->field, '.')) {

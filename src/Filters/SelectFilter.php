@@ -9,6 +9,8 @@ use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
 /**
  * @template TModel of Model
+ *
+ * @extends SingleFieldFilter<TModel>
  */
 class SelectFilter extends SingleFieldFilter
 {
