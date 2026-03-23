@@ -8,6 +8,8 @@ use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
 /**
  * @template TModel of Model
+ *
+ * @extends SingleFieldFilter<TModel>
  */
 class StringFilter extends SingleFieldFilter
 {

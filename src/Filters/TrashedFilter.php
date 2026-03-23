@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @template TModel of Model
+ *
+ * @extends SelectFilter<TModel>
  */
 class TrashedFilter extends SelectFilter
 {

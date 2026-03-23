@@ -6,6 +6,8 @@ weight: 5
 The EnumFilter is a special variation of the SelectFilter that automatically offers all
 cases out of an PHP Enum.
 
+General setup (creation, fluent definition, `queryName`, `title`, `mode`, validation, visibility) is documented in [Creating filters](../basic-usage/create-filters.md).
+
 ## Create the filter
 
 ```bash
@@ -81,13 +83,14 @@ class TestEnumFilter extends EnumFilter
 Per default the enum filter uses the enum values for translations. If you want to use
 the enum keys as translation keys, set the $useNameForTranslation property to true.
 
-## Instant usage
+## Fluent filter definition
 
 ```php
-    public function filters(): array 
+    public function filters(): array
     {
         return [
-            EnumFilter::make('state')
+            EnumFilter::forModel(static::class)
+                ->make('state')
                 ->setEnum(ActiveState::class)
                 ->setSortedOptions(false)
                 ->setTranslationPrefix('enums.' . ActiveState::class . '.', true),

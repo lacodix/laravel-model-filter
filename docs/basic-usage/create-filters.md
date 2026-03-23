@@ -1,56 +1,240 @@
 ---
-title: Create and apply filters
+title: Creating filters
 weight: 1
 ---
 
-Filters are class based. This means each filter is located in its own class file and will
-be located in \App\Models\Filters. Filters can be applied to multiple models.
-Filters can use one of the existing base filters or can be set up individually.
+There are two recommended ways to create filters:
 
-For filter creation we added an artisan comman
-```
-php artisan make:filter
-```
-You can call this command without any parameters to get prompted for your settings. You get asked which
-kind of filter you want to create and finally will get asked for needed parameters and options. In our
-examples we will use parameters and options to create the filter in one shot.
+- `Filter class` / `dedicated filter class` (reusable, project-wide)
+- `Fluent filter definition` / `inline filter definition` (local per model)
 
-## Create your first filter
+## Variant A: dedicated filter class
+
+Use a dedicated class when you want to reuse the filter in multiple models or places.
+
+### Create class
 
 ```bash
 php artisan make:filter CreatedAfterFilter -t date -f created_at
 ```
 
-This filter will be created as the class CreatedAfterFilter.php in the folder app/Models/Filters.
-It is a filter of type 'date' and will be bound to database field 'created_at'. It can be used in
-all Models, that have a created_at datetime field.
-
-All filters have a mode for filtering, that can change the behaviour of the filter.
-The default mode of almost all filters is filtering for "equal" values. The default mode
-for a string filter is "like". Since CreatedAfterFilter shall find all models that are
-created AFTER a given date, the mode must be changed.
-
-Open up the CreatedAfterFilter file and add the correct mode
-
-```php 
+```php
 <?php
 
 namespace App\Models\Filters;
 
+use Lacodix\LaravelModelFilter\Enums\FilterMode;
 use Lacodix\LaravelModelFilter\Filters\DateFilter;
 
 class CreatedAfterFilter extends DateFilter
 {
-    public FilterMode $mode = FilterMode::GREATER_OR_EQUAL;
-
     protected string $field = 'created_at';
+
+    public FilterMode $mode = FilterMode::GREATER_OR_EQUAL;
+}
+```
+
+### Register on model
+
+```php
+<?php
+
+namespace App\Models;
+
+use App\Models\Filters\CreatedAfterFilter;
+use Illuminate\Database\Eloquent\Model;
+use Lacodix\LaravelModelFilter\Traits\HasFilters;
+
+class Post extends Model
+{
+    use HasFilters;
+
+    protected array $filters = [
+        CreatedAfterFilter::class,
+    ];
+}
+```
+
+### When to use this approach
+
+- Reusable filter logic across multiple models.
+- Shared defaults (mode, title, validation, visibility).
+- Team-wide consistency in larger projects.
+
+## Variant B: Fluent / inline filter definition
+
+Use an inline definition when the filter is simple and only relevant for one model.
+
+```php
+<?php
+
+namespace App\Models;
+
+use App\Enums\PostStatus;
+use Illuminate\Database\Eloquent\Model;
+use Lacodix\LaravelModelFilter\Enums\FilterMode;
+use Lacodix\LaravelModelFilter\Filters\EnumFilter;
+use Lacodix\LaravelModelFilter\Traits\HasFilters;
+
+class Post extends Model
+{
+    use HasFilters;
+
+    public function filters(): array
+    {
+        return [
+            EnumFilter::forModel(static::class)
+                ->make('status')
+                ->setTitle('Status')
+                ->setQueryName('post_status')
+                ->setEnum(PostStatus::class)
+                ->setMode(FilterMode::EQUAL),
+        ];
+    }
+}
+```
+`Factory-based creation` via `forModel(...)->make(...)` is especially useful for typed creation and static analysis. See [Typed fluent filters (PHPStan / Larastan)](../advanced-usage/typed-fluent-filters.md) for details.
+
+You can also use the `make` method without `forModel` if you don't need type-safety.
+
+```php
+    public function filters(): array
+    {
+        return [
+            EnumFilter::make('status')
+                ->setTitle('Status')
+                ->setQueryName('post_status')
+                ->setEnum(PostStatus::class)
+                ->setMode(FilterMode::EQUAL),
+        ];
+    }
+```
+
+### When to use this approach
+
+- Small, model-local filter definitions.
+- Fast customization without creating extra class files.
+- Good fit for simple, explicit model configuration.
+
+## Common filter options
+
+This section documents options that are shared across base filters. Filter-specific options are documented in each filter type page.
+
+### `field` / `field()`
+
+- What it does: sets the database field used by single-field filters.
+- Availability: single-field filters (for example `DateFilter`, `EnumFilter`, `SelectFilter`, `StringFilter`, `NumericFilter`, `BooleanFilter`).
+
+```php
+DateFilter::make('created_at');
+// or
+DateFilter::make()->field('created_at');
+```
+
+### `queryName` / `setQueryName()` / `queryName()`
+
+- What it does: defines the request/query key used for this filter.
+- Availability: all filters.
+- Default: snake_case class name (or field name for anonymous single-field filters).
+
+```php
+DateFilter::make('created_at')->setQueryName('created_after');
+Post::filter(['created_after' => '2026-01-01'])->get();
+```
+
+### `title` / `setTitle()` / `title()`
+
+- What it does: display title for filter visualisation.
+- Availability: all filters.
+
+```php
+EnumFilter::make('status')->setTitle('Publication status');
+```
+
+### `component` / `setComponent()` / `component()`
+
+- What it does: overrides the filter UI component name.
+- Availability: all filters.
+
+```php
+DateFilter::make('created_at')->setComponent('date-range');
+```
+
+### `mode` / `setMode()`
+
+- What it does: controls comparison behavior (for example `EQUAL`, `BETWEEN`, `CONTAINS`).
+- Availability: all filters, but allowed values depend on filter type.
+
+```php
+DateFilter::make('created_at')->setMode(FilterMode::BETWEEN);
+```
+
+### `visible()`
+
+- What it does: controls whether a filter is visible in the UI.
+- Availability: all filters (override method in class-based filters).
+
+```php
+public function visible(): bool
+{
+    return auth()->user()?->can('see-internal-filters') ?? false;
+}
+```
+
+### `rules()`
+
+- What it does: adds validation rules for incoming filter values.
+- Availability: all filters (can be overridden).
+
+```php
+public function rules(): array
+{
+    return [
+        $this->queryName() => ['nullable', 'date'],
+    ];
+}
+```
+
+### Validation messages & attributes
+
+- What it does: custom validation text and attribute names.
+- Availability: all filters.
+- API: use property arrays (`$messages`, `$validationAttributes`) or methods (`messages()`, `validationAttributes()`).
+
+```php
+public array $messages = [
+    'created_after.date' => 'Please provide a valid date.',
+];
+
+public array $validationAttributes = [
+    'created_after' => 'created after',
+];
+```
+
+### `table()`
+
+- What it does: overrides the table used when qualifying columns.
+- Availability: single-field filters.
+
+```php
+StringFilter::make('title')->table('archived_posts');
+```
+
+### `populate()`
+
+- What it does: maps incoming values into the filter's internal value structure.
+- Availability: all filters (default implementation is usually enough; override for custom behavior).
+
+```php
+public function populate(string|array|null $values): static
+{
+    return parent::populate($values);
 }
 ```
 
 ## Add filter to model
 
-To make this filter usable in a model just add a $filters property to the model and use the 
-HasFilters Trait
+To make a filter usable in a model, add it through `$filters` or the `filters()` method and use the `HasFilters` trait.
 
 ```php
 <?php
@@ -81,11 +265,11 @@ class Post extends Model
 
 ## Use the filter
 
-Now you can apply values to the filter and filter models from the database using this filter.
-The key for applying the filter defaults to the filters class basename in snake case.<br />
+Now you can apply values to the filter and fetch matching models.
+The filter key defaults to the class basename in snake case.<br />
 CreatedAfterFilter => created_after_filter
 
-To filter programmatically use the filter-scope
+To filter programmatically use the `filter` scope.
 
 ```php 
 Post::filter(['created_after_filter' => '2023-01-01'])->get();
@@ -93,13 +277,13 @@ Post::filter(['created_after_filter' => '2023-01-01'])->get();
 
 ## Filter by query string
 
-To filter by query string use the filterByQueryString scope.
+To filter by query string use the `filterByQueryString` scope.
 
 ```php
 Post::filterByQueryString()->get();
 ```
 
-and call the corresponding url like this
+and call the corresponding URL like this
 
 ```
 https://.../posts?created_after_filter=2023-01-01
@@ -107,8 +291,7 @@ https://.../posts?created_after_filter=2023-01-01
 
 ## Multiple Filters
 
-Filtering for multiple values is always an and-condition. If a filter value
-doesn't matter it must be omitted.
+Filtering with multiple filters is always an `AND` condition. Omit filters that should not be applied.
 
 ```php 
 Post::filter([
