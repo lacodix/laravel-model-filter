@@ -16,33 +16,54 @@ class BelongsToManyFilter extends BelongsToFilter
 {
     /**
      * @param  Builder<TModel> $query
+     *
      * @return Builder<TModel>
      */
     public function applyFilter(Builder $query): Builder
     {
         return $query
             ->when(
-                $this->mode === FilterMode::NOT_CONTAINS,
-                fn (Builder $query) => $query->whereDoesntHave($this->field, callback: fn (Builder $query) => $this->relationContainsQuery($query)),
+                $this->isInverted(),
+                fn (Builder $query) => $this->applyInvertedFilter($query),
                 fn (Builder $query) => $query->has($this->field, callback: fn (Builder $query) => $this->getFilterQuery($query))
             );
     }
 
+    protected function isInverted(): bool
+    {
+        return $this->mode === FilterMode::NOT_CONTAINS;
+    }
+
     /**
      * @param  Builder<TModel> $query
+     *
+     * @return Builder<TModel>
+     */
+    protected function applyInvertedFilter(Builder $query): Builder
+    {
+        return $query->whereDoesntHave(
+            $this->field,
+            callback: fn (Builder $query) => $this->getFilterQuery($query)
+        );
+    }
+
+    /**
+     * @param  Builder<TModel> $query
+     *
      * @return Builder<TModel>
      */
     protected function getFilterQuery(Builder $query): Builder
     {
         return match ($this->mode) {
-            FilterMode::CONTAINS => $this->relationContainsQuery($query),
-            FilterMode::NOT_CONTAINS => $this->relationNotContainsQuery($query),
+            FilterMode::CONTAINS,
+            FilterMode::NOT_CONTAINS => $this->relationContainsQuery($query),
             default => $this->relationEqualQuery($query),
         };
     }
 
     /**
      * @param  Builder<TModel> $query
+     *
      * @return Builder<TModel>
      */
     protected function relationContainsQuery(Builder $query): Builder
@@ -55,6 +76,7 @@ class BelongsToManyFilter extends BelongsToFilter
 
     /**
      * @param  Builder<TModel> $query
+     *
      * @return Builder<TModel>
      */
     protected function relationNotContainsQuery(Builder $query): Builder
@@ -67,6 +89,7 @@ class BelongsToManyFilter extends BelongsToFilter
 
     /**
      * @param  Builder<TModel> $query
+     *
      * @return Builder<TModel>
      */
     protected function relationEqualQuery(Builder $query): Builder

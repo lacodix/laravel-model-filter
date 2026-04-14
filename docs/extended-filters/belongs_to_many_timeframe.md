@@ -75,7 +75,7 @@ https://.../posts?test_belongs_to_many_timeframe_filter[values]=...
 ## Timeframe Filter Mode
 
 Additionally to the normal filter mode, this filter has a second mode to specify how the filter
-calculates its result in combination with the pivot date values. The filter has five possible
+calculates its result in combination with the pivot date values. The filter has seven possible
 timeframe modes:
 
 - TimeframeFilterMode::CURRENT (current)
@@ -83,6 +83,8 @@ timeframe modes:
 - TimeframeFilterMode::TIMEFRAME (timeframe)
 - TimeframeFilterMode::START_IN_TIMEFRAME (start_in_timeframe)
 - TimeframeFilterMode::END_IN_TIMEFRAME (end_in_timeframe)
+- TimeframeFilterMode::NEVER (never)
+- TimeframeFilterMode::NOT_CURRENT (not_current)
 
 This modes are selectable over the ui component and by parameter to the filter method.
 
@@ -148,6 +150,40 @@ https://.../posts?test_belongs_to_many_timeframe_filter[values]=...
 This modes don't filter for the existence of the relation in a given timeframe, but the filter just for the start
 or the end date. So you can find relations that started or ended in the given timeframe.
 
+### TimeframeFilterMode::NEVER
+
+This mode finds all entries that have **never** been related to the selected values. It uses `whereDoesntHave`
+internally. If no values are selected, it finds entries that have no relation at all.
+
+```php
+// Find all posts that never had tag 1
+Post::filter(['test_belongs_to_many_timeframe_filter' => ['values' => [1], 'mode' => 'never']])->get();
+
+// Find all posts that have no tags at all
+Post::filter(['test_belongs_to_many_timeframe_filter' => ['values' => [], 'mode' => 'never']])->get();
+```
+
+No date values are needed for this mode.
+
+### TimeframeFilterMode::NOT_CURRENT
+
+This mode finds all entries where the relation is **not currently active**. It checks that no related entry
+exists where the start date is in the past (or null) and the end date is in the future (or null).
+This is essentially the inverse of the CURRENT mode.
+
+If values are selected, only those specific relations are checked. If no values are selected, it checks
+whether any relation is currently active.
+
+```php
+// Find all posts where tag 1 is not currently active
+Post::filter(['test_belongs_to_many_timeframe_filter' => ['values' => [1], 'mode' => 'not_current']])->get();
+
+// Find all posts where no tag is currently active
+Post::filter(['test_belongs_to_many_timeframe_filter' => ['values' => [], 'mode' => 'not_current']])->get();
+```
+
+No date values are needed for this mode.
+
 ## Filter precision
 
 The precision can be set programmatically but not over the UI. Nevertheless you can create your own component
@@ -184,6 +220,8 @@ files and overwrite it in general, or do it for each filter by overwriting the `
             TimeframeFilterMode::TIMEFRAME => trans('model-filter::filters.in_timeframe'),
             TimeframeFilterMode::START_IN_TIMEFRAME => trans('model-filter::filters.start_in_timeframe'),
             TimeframeFilterMode::END_IN_TIMEFRAME => trans('model-filter::filters.end_in_timeframe'),
+            TimeframeFilterMode::NEVER => trans('model-filter::filters.never'),
+            TimeframeFilterMode::NOT_CURRENT => trans('model-filter::filters.not_current'),
         };
     }
 ```

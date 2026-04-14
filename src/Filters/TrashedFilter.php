@@ -19,6 +19,7 @@ class TrashedFilter extends SelectFilter
 
     /**
      * @param  Builder<TModel> $query
+     *
      * @return Builder<TModel>
      */
     public function applyFilter(Builder $query): Builder

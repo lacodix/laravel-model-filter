@@ -41,6 +41,7 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
 
     /**
      * @param  Builder<TModel> $query
+     *
      * @return Builder<TModel>
      */
     public function applyFilter(Builder $query): Builder
@@ -58,6 +59,8 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
             TimeframeFilterMode::TIMEFRAME => trans('model-filter::filters.in_timeframe'),
             TimeframeFilterMode::START_IN_TIMEFRAME => trans('model-filter::filters.start_in_timeframe'),
             TimeframeFilterMode::END_IN_TIMEFRAME => trans('model-filter::filters.end_in_timeframe'),
+            TimeframeFilterMode::NEVER => trans('model-filter::filters.never'),
+            TimeframeFilterMode::NOT_CURRENT => trans('model-filter::filters.not_current'),
         };
     }
 
@@ -72,6 +75,14 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
 
     public function rules(): array
     {
+        if ($this->timeframeFilterMode()->isInverted()) {
+            return [
+                $this->queryName() . '.values' => 'nullable',
+                $this->queryName() . '.from' => 'nullable|' . $this->getDateRule(),
+                $this->queryName() . '.to' => 'nullable|' . $this->getDateRule(),
+            ];
+        }
+
         return [
             ...$this->mode === FilterMode::EQUAL ? $this->singleRules() : $this->multiRules(),
 
@@ -89,6 +100,32 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
         }
     }
 
+    protected function isInverted(): bool
+    {
+        return $this->timeframeFilterMode()->isInverted() || parent::isInverted();
+    }
+
+    /**
+     * @param  Builder<TModel> $query
+     *
+     * @return Builder<TModel>
+     */
+    protected function applyInvertedFilter(Builder $query): Builder
+    {
+        if ($this->timeframeFilterMode() === TimeframeFilterMode::NEVER && empty($this->filterValues())) {
+            return $query->whereDoesntHave($this->field);
+        }
+
+        if ($this->timeframeFilterMode() === TimeframeFilterMode::NOT_CURRENT && empty($this->filterValues())) {
+            return $query->whereDoesntHave(
+                $this->field,
+                fn (Builder $query) => $this->getNotCurrentTimeframeQuery($query)
+            );
+        }
+
+        return parent::applyInvertedFilter($query);
+    }
+
     protected function getFilterQuery(Builder $query): Builder
     {
         return parent::getFilterQuery($query)
@@ -103,6 +140,10 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
             ->when(
                 $this->timeframeFilterMode() === TimeframeFilterMode::END_IN_TIMEFRAME,
                 fn ($query) => $this->getTimeframeEndFilterQuery($query)
+            )
+            ->when(
+                $this->timeframeFilterMode() === TimeframeFilterMode::NOT_CURRENT,
+                fn ($query) => $this->getNotCurrentTimeframeQuery($query)
             );
     }
 
@@ -126,6 +167,21 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
                         '>=',
                         $this->getTimeframeStart()
                     )
+            );
+    }
+
+    protected function getNotCurrentTimeframeQuery(Builder $query): Builder
+    {
+        return $query
+            ->where(
+                fn ($query) => $query
+                    ->whereNull($this->qualifyPivotColumn($this->startField))
+                    ->orWhere($this->qualifyPivotColumn($this->startField), '<=', now()->format('Y-m-d H:i:s'))
+            )
+            ->where(
+                fn ($query) => $query
+                    ->whereNull($this->qualifyPivotColumn($this->endField))
+                    ->orWhere($this->qualifyPivotColumn($this->endField), '>=', now()->format('Y-m-d H:i:s'))
             );
     }
 

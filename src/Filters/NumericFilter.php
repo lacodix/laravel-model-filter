@@ -32,6 +32,7 @@ class NumericFilter extends SingleFieldFilter
 
     /**
      * @param  Builder<TModel> $query
+     *
      * @return Builder<TModel>
      */
     public function applyFilter(Builder $query): Builder

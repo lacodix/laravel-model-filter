@@ -20,4 +20,6 @@ return [
     'in_timeframe' => 'In timeframe',
     'end_in_timeframe' => 'End in timeframe',
     'start_in_timeframe' => 'Start in timeframe',
+    'never' => 'Never',
+    'not_current' => 'Not current',
 ];

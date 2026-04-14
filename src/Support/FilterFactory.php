@@ -26,8 +26,6 @@ class FilterFactory
         $class = $this->filterClass;
 
         /** @var TFilter $filter */
-        $filter = $class::make($field);
-
-        return $filter;
+        return $class::make($field);
     }
 }

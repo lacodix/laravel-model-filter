@@ -135,6 +135,9 @@ beforeEach(function () {
 
     // Fake Post
     $this->post17 = Post::factory()->hasAttached($this->fakeTag)->create();
+
+    // Post without any tags
+    $this->post18 = Post::factory()->create();
 });
 
 it('can see all posts with tag1 when selected ever', function () {
@@ -233,4 +236,32 @@ it('can see all posts with tag1 and ends in year timeframe', function () {
         'to' => '2022',
         'values' => $this->tag1->id,
     ]])->count())->toEqual(10);
+});
+
+it('can see posts that never had any tag', function () {
+    expect(Post::filter(['tag_timeframe_filter' => ['mode' => 'never', 'values' => []]])->count())->toEqual(1)
+        ->and(Post::filter(['tag_timeframe_filter' => ['mode' => 'never', 'values' => []]])->first()->id)->toEqual($this->post18->id);
+});
+
+it('can see posts that never had tag1', function () {
+    $result = Post::filter(['tag_timeframe_filter' => ['mode' => 'never', 'values' => $this->tag1->id]])->get();
+
+    expect($result->count())->toEqual(2)
+        ->and($result->pluck('id')->sort()->values()->all())->toEqual(
+            collect([$this->post17->id, $this->post18->id])->sort()->values()->all()
+        );
+});
+
+it('can see posts where tag1 is not current', function () {
+    // Posts where no currently valid tag1 entry exists
+    // Current (start <= now or null, AND end >= now or null): post1,2,2a,3,4a,4,9b,10,11,12,14 = 11
+    // Not current for tag1: 24-11=13, plus post17+post18 = 15
+    expect(Post::filter(['tag_timeframe_filter' => ['mode' => 'not_current', 'values' => $this->tag1->id]])->count())->toEqual(15);
+});
+
+it('can see posts where no tag is currently valid', function () {
+    // Posts where no tag attachment at all is currently valid
+    // post17 has fakeTag with null/null -> currently valid, so excluded
+    // 12 posts have at least one current tag, 26-12=14 don't
+    expect(Post::filter(['tag_timeframe_filter' => ['mode' => 'not_current', 'values' => []]])->count())->toEqual(14);
 });
