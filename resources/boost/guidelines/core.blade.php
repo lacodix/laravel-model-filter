@@ -173,6 +173,13 @@ Customise filters via `$title` / `title()` or `$component` / `component()` on th
 
 Ships with: `TrashedFilter`, `BelongsToFilter`, `BelongsToManyFilter`, `BelongsToManyTimeframeFilter`.
 
+The `BelongsToManyTimeframeFilter` supports seven timeframe modes: `EVER`, `CURRENT`, `TIMEFRAME`, `START_IN_TIMEFRAME`, `END_IN_TIMEFRAME`, `NEVER`, and `NOT_CURRENT`.
+
+- `NEVER` finds entries that have **never** been related (uses `whereDoesntHave`). Without values: no relation at all. With values: never had those specific relations.
+- `NOT_CURRENT` finds entries where the relation is **not currently active** (inverse of `CURRENT`). Checks that no related entry has `start <= now` (or null) and `end >= now` (or null).
+
+Both `NEVER` and `NOT_CURRENT` are "inverted" modes — they use `whereDoesntHave` instead of `has`. The `BelongsToManyFilter` base class provides an `isInverted()` / `applyInvertedFilter()` pattern that subclasses can override to add custom inversion logic.
+
 You can easily run any existing filter on a relation by using the `RunsOnRelation` trait:
 
 @verbatim

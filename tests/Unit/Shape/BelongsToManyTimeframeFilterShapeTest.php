@@ -81,3 +81,63 @@ it('does_not_add_unexpected_joins', function () {
         'enforceExactJoinCount' => true,
     ]);
 });
+
+it('applies_never_mode_without_values', function () {
+    $q = ShapePostWithPivot::query();
+
+    $filter = makeTimeframeFilter();
+    $filter->field('tags');
+    $filter->populate(['values' => [], 'mode' => 'never']);
+    $filter->apply($q);
+
+    expect($q)->toHaveSqlShape([
+        'from' => 'shape_posts',
+        'required' => ['not exists', 'shape_post_tag'],
+        'forbidden' => ['in (?)'],
+        'bindings' => [],
+    ]);
+});
+
+it('applies_never_mode_with_values', function () {
+    $q = ShapePostWithPivot::query();
+
+    $filter = makeTimeframeFilter();
+    $filter->field('tags');
+    $filter->populate(['values' => '1', 'mode' => 'never']);
+    $filter->apply($q);
+
+    expect($q)->toHaveSqlShape([
+        'from' => 'shape_posts',
+        'required' => ['not exists', 'shape_tags', 'shape_post_tag'],
+        'bindings' => ['1'],
+    ]);
+});
+
+it('applies_not_current_mode_with_values', function () {
+    $q = ShapePostWithPivot::query();
+
+    $filter = makeTimeframeFilter();
+    $filter->field('tags');
+    $filter->populate(['values' => '1', 'mode' => 'not_current']);
+    $filter->apply($q);
+
+    expect($q)->toHaveSqlShape([
+        'from' => 'shape_posts',
+        'required' => ['not exists', 'shape_tags', 'shape_post_tag', '"shape_post_tag"."start"', '"shape_post_tag"."end"'],
+    ]);
+});
+
+it('applies_not_current_mode_without_values', function () {
+    $q = ShapePostWithPivot::query();
+
+    $filter = makeTimeframeFilter();
+    $filter->field('tags');
+    $filter->populate(['values' => [], 'mode' => 'not_current']);
+    $filter->apply($q);
+
+    expect($q)->toHaveSqlShape([
+        'from' => 'shape_posts',
+        'required' => ['not exists', 'shape_post_tag', '"shape_post_tag"."start"', '"shape_post_tag"."end"'],
+        'forbidden' => ['in (?)'],
+    ]);
+});

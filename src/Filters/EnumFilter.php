@@ -22,7 +22,7 @@ class EnumFilter extends SelectFilter
 
         return $this->options ??= collect($this->enum::cases())
             ->mapWithKeys(fn ($case) => [trans($this->translationPrefix . $case->{$field}) => $case->value])
-            ->when($this->sortedOptions, fn ($options) => $options->sort())
+            ->when($this->sortedOptions, static fn ($options) => $options->sort())
             ->all();
     }
 

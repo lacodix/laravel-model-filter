@@ -9,7 +9,9 @@ trait Makeable
 {
     /**
      * @template TConcreteModel of Model
+     *
      * @param class-string<TConcreteModel> $modelClass
+     *
      * @return FilterFactory<TConcreteModel, static<TConcreteModel>>
      */
     public static function forModel(string $modelClass): FilterFactory

@@ -139,6 +139,7 @@ abstract class Filter
 
     /**
      * @param  Builder<TModel> $query
+     *
      * @return Builder<TModel>
      */
     public function apply(Builder $query): Builder
@@ -148,6 +149,7 @@ abstract class Filter
 
     /**
      * @param  Builder<TModel> $query
+     *
      * @return Builder<TModel>
      */
     public function applyFilter(Builder $query): Builder

@@ -20,4 +20,6 @@ return [
     'in_timeframe' => 'Innerhalb des Zeitraums',
     'end_in_timeframe' => 'Ende innerhalb des Zeitraums',
     'start_in_timeframe' => 'Start innerhalb des Zeitraums',
+    'never' => 'Niemals',
+    'not_current' => 'Zur Zeit nicht',
 ];

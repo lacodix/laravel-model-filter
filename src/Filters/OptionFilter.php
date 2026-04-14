@@ -21,6 +21,7 @@ class OptionFilter extends Filter
 
     /**
      * @param  Builder<TModel> $query
+     *
      * @return Builder<TModel>
      */
     public function applyFilter(Builder $query): Builder
