@@ -13,6 +13,16 @@ class SqlAssert
         return preg_replace('/\s+/', ' ', trim($sql));
     }
 
+    /**
+     * Remove identifier quoting so shape assertions are grammar-agnostic:
+     * backticks (MySQL/MariaDB) and double quotes (SQLite/Postgres) are
+     * stripped, letting a fragment like `payment_method_id` match "payment_method_id".
+     */
+    public static function stripIdentifierQuotes(string $sql): string
+    {
+        return str_replace(['`', '"'], '', $sql);
+    }
+
     public static function assertSqlEquals(Builder|EloquentBuilder $builder, string $expectedSql, array $expectedBindings = []): void
     {
         $actualSql = static::normalizeSql($builder->toSql());
@@ -51,10 +61,12 @@ class SqlAssert
 
     public static function assertSqlShape(Builder|EloquentBuilder $builder, array $shape): void
     {
-        $sql = static::normalizeSql($builder->toSql());
+        // Strip identifier quoting so assertions hold across grammars (backticks vs
+        // double quotes). extractFromTable() already returns the bare table name.
+        $sql = static::stripIdentifierQuotes(static::normalizeSql($builder->toSql()));
 
         if (isset($shape['from'])) {
-            $shape['from'] = str($shape['from'])->trim('`')->toString();
+            $shape['from'] = str($shape['from'])->trim('`"')->toString();
 
             $from = static::extractFromTable($sql);
             Assert::assertSame($shape['from'], $from, "Expected FROM table '{$shape['from']}', got '" . ($from ?? 'null') . "'.");
@@ -63,7 +75,7 @@ class SqlAssert
         if (isset($shape['required'])) {
             foreach ($shape['required'] as $fragment) {
                 Assert::assertStringContainsString(
-                    static::normalizeSql($fragment),
+                    static::stripIdentifierQuotes(static::normalizeSql($fragment)),
                     $sql,
                     "Required fragment '{$fragment}' not found in SQL: {$sql}"
                 );
@@ -73,7 +85,7 @@ class SqlAssert
         if (isset($shape['forbidden'])) {
             foreach ($shape['forbidden'] as $fragment) {
                 Assert::assertStringNotContainsString(
-                    static::normalizeSql($fragment),
+                    static::stripIdentifierQuotes(static::normalizeSql($fragment)),
                     $sql,
                     "Forbidden fragment '{$fragment}' found in SQL: {$sql}"
                 );
