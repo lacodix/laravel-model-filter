@@ -17,7 +17,7 @@
         @endif
     >
         <option value="">&mdash;</option>
-        @foreach ($filter->options() as $key => $option)
+        @foreach ($filter->optionsWithNull() as $key => $option)
             <option
                 value="{{ $option }}"
                 @selected($multiple

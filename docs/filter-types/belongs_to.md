@@ -72,6 +72,25 @@ situations you can overwrite the method `relationQuery`
     }
 ```
 
+## Filtering for NULL values
+
+Because a `belongsTo` foreign key is usually nullable, you often want to find records that
+are not related to anything. Like every select-based filter, the `BelongsToFilter` supports
+the `nullable()` option for this, which adds a dedicated "no relation" entry:
+
+```php
+protected bool $nullable = true;
+```
+
+or fluently when registering the filter:
+
+```php
+(new TestBelongsToFilter())->nullable(label: 'Without user');
+```
+
+See [Filtering for NULL values](select.md#filtering-for-null-values) on the select filter
+for the full details.
+
 ## Filter Modes
 
 - FilterMode::EQUAL
