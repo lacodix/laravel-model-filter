@@ -114,6 +114,19 @@ EnumFilter::make('state')
     ->setSortedOptions(false);
 ```
 
+## Filtering for NULL values
+
+If the enum column is nullable, enable the `nullable()` option to add a dedicated entry that
+filters for records where the field is `NULL`:
+
+```php
+protected bool $nullable = true;
+```
+
+See [Filtering for NULL values](select.md#filtering-for-null-values) on the select filter
+for the full details. Note that when option sorting is enabled, the "none" entry is sorted
+together with the translated enum labels.
+
 ## Filter Modes
 
 Enum filters only have the EQUAL mode like SelectFilters.

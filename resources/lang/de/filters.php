@@ -22,4 +22,6 @@ return [
     'start_in_timeframe' => 'Start innerhalb des Zeitraums',
     'never' => 'Niemals',
     'not_current' => 'Zur Zeit nicht',
+
+    'none' => 'Keine',
 ];

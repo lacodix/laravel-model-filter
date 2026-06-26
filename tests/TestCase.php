@@ -13,8 +13,8 @@ use Lacodix\LaravelModelFilter\LaravelModelFilterServiceProvider;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
-    use LazilyRefreshDatabase;
     use InteractsWithViews;
+    use LazilyRefreshDatabase;
     use WithFaker;
 
     protected function setUp(): void
@@ -36,7 +36,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         Capsule::schema()->create('posts', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('type');
+            $table->string('type')->nullable();
             $table->boolean('published');
             $table->text('content');
             $table->integer('counter');

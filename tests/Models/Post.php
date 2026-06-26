@@ -89,22 +89,39 @@ class Post extends Model
                 ->setMode(FilterMode::BETWEEN)
                 ->setValidationMode(ValidationMode::THROW),
 
-            new TypeFilter(),
+            new TypeFilter,
 
-            (new TypeFilter())
+            (new TypeFilter)
                 ->setTitle(ucwords(str_replace('_', ' ', 'type_filter_throws')))
                 ->setQueryName('type_filter_throws')
                 ->setValidationMode(ValidationMode::THROW),
 
-            (new TypeFilter())
+            (new TypeFilter)
                 ->setTitle(ucwords(str_replace('_', ' ', 'type_multi')))
                 ->setQueryName('type_multi')
                 ->setMode(FilterMode::CONTAINS),
 
-            (new TypeFilter())
+            (new TypeFilter)
                 ->setTitle(ucwords(str_replace('_', ' ', 'type_not_contains')))
                 ->setQueryName('type_not_contains')
                 ->setMode(FilterMode::NOT_CONTAINS),
+
+            (new TypeFilter)
+                ->setTitle(ucwords(str_replace('_', ' ', 'type_nullable')))
+                ->setQueryName('type_nullable')
+                ->nullable(),
+
+            (new TypeFilter)
+                ->setTitle(ucwords(str_replace('_', ' ', 'type_nullable_multi')))
+                ->setQueryName('type_nullable_multi')
+                ->setMode(FilterMode::CONTAINS)
+                ->nullable(),
+
+            (new TypeFilter)
+                ->setTitle(ucwords(str_replace('_', ' ', 'type_nullable_not_contains')))
+                ->setQueryName('type_nullable_not_contains')
+                ->setMode(FilterMode::NOT_CONTAINS)
+                ->nullable(),
 
             (new StringFilter('title'))
                 ->setTitle(ucwords(str_replace('_', ' ', 'starts_with')))
@@ -130,7 +147,7 @@ class Post extends Model
                 ->setTitle(ucwords(str_replace('_', ' ', 'boolfilter')))
                 ->setQueryName('boolfilter'),
 
-            new IndividualFilter(),
+            new IndividualFilter,
 
             (new NumericFilter('counter'))
                 ->setTitle(ucwords(str_replace('_', ' ', 'counter_lower_filter')))
@@ -178,38 +195,38 @@ class Post extends Model
                 ->setMode(FilterMode::BETWEEN)
                 ->setValidationMode(ValidationMode::THROW),
 
-            new CounterFilter(),
+            new CounterFilter,
 
-            new TagFilter(),
+            new TagFilter,
 
-            (new TagFilter())
+            (new TagFilter)
                 ->setTitle(ucwords(str_replace('_', ' ', 'tag_filter_contains')))
                 ->setQueryName('tag_filter_contains')
                 ->setMode(FilterMode::CONTAINS),
 
-            (new TagFilter())
+            (new TagFilter)
                 ->setTitle(ucwords(str_replace('_', ' ', 'tag_filter_not_contains')))
                 ->setQueryName('tag_filter_not_contains')
                 ->setMode(FilterMode::NOT_CONTAINS),
 
-            new TagTimeframeFilter(),
+            new TagTimeframeFilter,
 
-            (new TagTimeframeFilter())
+            (new TagTimeframeFilter)
                 ->setTitle(ucwords(str_replace('_', ' ', 'tag_timeframe_filter_contains')))
                 ->setQueryName('tag_timeframe_filter_contains')
                 ->setMode(FilterMode::CONTAINS),
 
-            (new TagTimeframeFilter())
+            (new TagTimeframeFilter)
                 ->setTitle(ucwords(str_replace('_', ' ', 'tag_timeframe_filter_not_contains')))
                 ->setQueryName('tag_timeframe_filter_not_contains')
                 ->setMode(FilterMode::NOT_CONTAINS),
 
-            (new TagTimeframeFilter())
+            (new TagTimeframeFilter)
                 ->setTitle(ucwords(str_replace('_', ' ', 'tag_timeframe_filter_day')))
                 ->setQueryName('tag_timeframe_filter_day')
                 ->setPrecision(TimeframeFilterPrecision::DAY),
 
-            (new TagTimeframeFilter())
+            (new TagTimeframeFilter)
                 ->setTitle(ucwords(str_replace('_', ' ', 'tag_timeframe_filter_year')))
                 ->setQueryName('tag_timeframe_filter_year')
                 ->setPrecision(TimeframeFilterPrecision::YEAR),
