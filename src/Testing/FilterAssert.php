@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Lacodix\LaravelModelFilter\Testing;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
