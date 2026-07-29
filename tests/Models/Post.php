@@ -165,6 +165,24 @@ class Post extends Model
                 ->setMode(FilterMode::BETWEEN),
 
             (new NumericFilter('counter'))
+                ->setTitle(ucwords(str_replace('_', ' ', 'counter_presets')))
+                ->setQueryName('counter_presets')
+                ->setMode(FilterMode::BETWEEN)
+                ->setPresets([
+                    ['label' => 'Preset Low Counter', 'values' => ['', 5000]],
+                    ['label' => 'Preset Mid Counter', 'values' => [5001, 10000]],
+                    ['label' => 'Preset High Counter', 'values' => [10001, '']],
+                ]),
+
+            (new NumericFilter('counter'))
+                ->setTitle(ucwords(str_replace('_', ' ', 'counter_presets_single')))
+                ->setQueryName('counter_presets_single')
+                ->setMode(FilterMode::LOWER_OR_EQUAL)
+                ->setPresets([
+                    ['label' => 'Preset Single Counter', 'values' => 5000],
+                ]),
+
+            (new NumericFilter('counter'))
                 ->setTitle(ucwords(str_replace('_', ' ', 'counter_between_exclusive')))
                 ->setQueryName('counter_between_exclusive')
                 ->setMode(FilterMode::BETWEEN_EXCLUSIVE),

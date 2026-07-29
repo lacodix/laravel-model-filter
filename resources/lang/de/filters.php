@@ -24,4 +24,7 @@ return [
     'not_current' => 'Zur Zeit nicht',
 
     'none' => 'Keine',
+
+    'all' => 'Alle',
+    'custom' => 'Individuell',
 ];

@@ -95,3 +95,17 @@ FilterMode::BETWEEN will include both values, FilterMode::BETWEEN_EXCLUSIVE will
 FilterMode::NOT_BETWEEN will also exclude posts, that have one of the both values in the selected field,
 
 FilterMode::NOT_BETWEEN_INCLUSIVE will include posts that have these values.
+
+## Presets
+
+Instead of typing values by hand, a numeric filter can offer pre-configured values -
+like "up to 18" next to a free from/to input. See [Filter Presets](../advanced-usage/filter-presets.md).
+
+```php
+(new NumericFilter('age'))
+    ->setMode(FilterMode::BETWEEN)
+    ->setPresets([
+        ['label' => 'Up to 18', 'values' => ['', 18]],
+        ['label' => '19 and older', 'values' => [19, '']],
+    ]);
+```
