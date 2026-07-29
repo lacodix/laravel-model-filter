@@ -24,4 +24,7 @@ return [
     'not_current' => 'Not current',
 
     'none' => 'None',
+
+    'all' => 'All',
+    'custom' => 'Custom',
 ];

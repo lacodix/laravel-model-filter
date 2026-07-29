@@ -12,6 +12,7 @@ use Illuminate\Support\Traits\Macroable;
 use Illuminate\Validation\Validator;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 use Lacodix\LaravelModelFilter\Enums\ValidationMode;
+use Lacodix\LaravelModelFilter\Filters\Traits\HasPresets;
 use Lacodix\LaravelModelFilter\Traits\Makeable;
 
 /**
@@ -21,6 +22,7 @@ abstract class Filter
 {
     use Macroable;
     use Conditionable;
+    use HasPresets;
     use Makeable;
 
     public array $messages = [];
