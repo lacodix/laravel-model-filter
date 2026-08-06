@@ -55,6 +55,64 @@ Post::search('test', 'title')->get();
 Post::search('test', ['title', 'content'])->get();
 ```
 
+### Treat wildcard characters literally
+
+The existing `search()` scope keeps SQL wildcard support for backwards compatibility. If the search term comes from
+an ordinary text input and `%`, `_` (or SQLite `GLOB` characters in case-sensitive modes) should be treated as normal
+characters, use the opt-in literal scope:
+
+```php
+Post::searchLiteral('100%_complete')->get();
+Post::searchLiteral('100%_complete', ['title', 'content'])->get();
+```
+
+`searchLiteral()` supports the same fields, relations, and search modes as `search()`. It also keeps all search values
+in query bindings.
+
+Applications that only expose ordinary text inputs can enable this behavior for every `search()` call, including
+query-string and relation searches, without changing their calling code:
+
+```php
+// config/model-filter.php
+'search_wildcards_as_literals' => true,
+```
+
+The option defaults to `false`, so upgrading the package does not change existing wildcard searches.
+
+For historical compatibility, `search('0')` still skips the search because the original scope used Laravel's truthy
+`when()` condition. The new `searchLiteral('0')` scope searches for the digit normally.
+
+### Limit user-provided search input
+
+Search scopes can create several predicates per field, especially with the `CONTAINS_ANY` and `CONTAINS_ALL` modes.
+Applications that pass user input to a search scope can set character and term limits:
+
+```php
+// config/model-filter.php
+'search_max_characters' => 320,
+'search_max_terms' => 16,
+'search_limit_exceeded_behavior' => 'empty',
+```
+
+Input above either limit deliberately produces no results. Both options default to `null`, so package upgrades remain
+backwards compatible and **do not enable any protection by themselves**. Use positive integers to opt into limits.
+
+Set `search_limit_exceeded_behavior` to `throw` when the caller must distinguish rejected input from a genuine empty
+result:
+
+```php
+use Lacodix\LaravelModelFilter\Exceptions\SearchInputException;
+
+try {
+    $posts = Post::searchLiteral($search)->get();
+} catch (SearchInputException) {
+    // Convert this to an application-specific validation response.
+}
+```
+
+The default behavior is `empty` for backwards compatibility. Any value other than `empty` or `throw` raises an
+`InvalidArgumentException` when a configured limit is exceeded, so configuration mistakes do not fail silently.
+
 ## Search by a query string
 
 ```php
@@ -113,6 +171,12 @@ for multiple terms, it behaves different. searching for "test name" will find on
 "test name" with like modes, but it will find "test" and "name" in the contains modes. Please keep in mind
 that the contains searches are very expensive in the database, since it splits up your search terms and will
 perform multiple like comparisons.
+
+Contains modes normalize whitespace before splitting, so spaces, tabs, and newlines all separate terms.
+
+SQLite does not provide Unicode-aware `LIKE` case folding. The package therefore builds bound `GLOB` patterns with
+single-character Unicode case variants. Full multi-character folds cannot be represented by a `GLOB` character class:
+for example, `straße` matches `STRAẞE`, but `STRASSE` is not considered equivalent.
 
 ## More flexibility
 
