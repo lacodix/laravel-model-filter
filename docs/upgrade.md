@@ -3,6 +3,47 @@ title: Upgrade guide
 weight: 4
 ---
 
+## from v4.6 to v4.7
+
+Version 4.7 keeps all existing public method signatures and adds literal-search functionality. It is a minor release
+because it also fixes search behavior that can change result sets.
+
+### Security fix for SQLite case-sensitive search
+
+All five `*_CASE_SENSITIVE` modes now bind SQLite `GLOB` values instead of interpolating search input into raw SQL.
+This closes an SQL-injection vulnerability and is active for both `search()` and `searchLiteral()`; no opt-in is
+required.
+
+### Published configuration
+
+Applications with an already published `config/model-filter.php` should add these keys:
+
+```php
+'search_wildcards_as_literals' => false,
+'search_max_characters' => null,
+'search_max_terms' => null,
+'search_limit_exceeded_behavior' => 'empty',
+```
+
+The first option can opt existing `search()` and `searchByQueryString()` calls into literal wildcard handling. The two
+limits are disabled by default, so upgrading alone does not limit abusive input. Positive integers enable them. The
+default `empty` behavior preserves the existing query contract; use `throw` to receive a
+`Lacodix\LaravelModelFilter\Exceptions\SearchInputException` instead. Any other behavior value raises an
+`InvalidArgumentException` when a configured limit is exceeded.
+
+### Search-result changes
+
+- MySQL and PostgreSQL case-insensitive modes now use multibyte lowercase normalization, so uppercase Unicode input
+  such as `MÜLLER` can find `Müller`.
+- SQLite case-insensitive modes use bound `GLOB` patterns with Unicode character variants instead of ASCII-only
+  `LIKE`, so some Unicode case variants now produce additional matches. Multi-character folds remain unsupported:
+  `straße` can match `STRAẞE`, but not `STRASSE`.
+- `CONTAINS_ANY` and `CONTAINS_ALL` now split on normalized whitespace. Tabs and newlines therefore separate terms in
+  addition to ordinary spaces.
+
+The historical `search('0')` behavior is unchanged and still skips the search. The new `searchLiteral('0')` scope
+searches for `0` normally.
+
 ## from v3 to v4
 
 With v4 the `BooleanFilter` was renamed to `OptionFilter`. This was done to clarify its purpose

@@ -74,6 +74,9 @@ protected array $searchable = [
 // Somewhere in controller, find all posts that contain "test" in title or content
 Post::search('test')->get();
 
+// Treat %, _ and database-specific wildcard characters as ordinary input
+Post::searchLiteral('100%_complete')->get();
+
 // Do the same via query string by calling
 // this url: https://.../posts?search=test
 Post::searchByQueryString()->get();

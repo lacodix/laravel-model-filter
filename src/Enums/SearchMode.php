@@ -5,8 +5,8 @@ namespace Lacodix\LaravelModelFilter\Enums;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Grammars\PostgresGrammar;
 use Illuminate\Database\Query\Grammars\SQLiteGrammar;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Lacodix\LaravelModelFilter\Support\SearchInput;
+use Lacodix\LaravelModelFilter\Support\SqliteCaseFolding;
 
 enum SearchMode
 {
@@ -41,134 +41,168 @@ enum SearchMode
 
     public function applyQuery(Builder $query, string $field, string $search): Builder
     {
-        // if there is no space, it's all just a like
-        if (! str_contains($search, ' ') && in_array($this, [
-            self::CONTAINS_ANY,
-            self::CONTAINS_ANY_CASE_SENSITIVE,
-            self::CONTAINS_ALL,
-            self::CONTAINS_ALL_CASE_SENSITIVE,
-        ])) {
-            return match ($this) {
-                self::CONTAINS_ANY,
-                self::CONTAINS_ALL => self::LIKE->applyQuery($query, $field, $search),
-                self::CONTAINS_ANY_CASE_SENSITIVE,
-                self::CONTAINS_ALL_CASE_SENSITIVE => self::LIKE_CASE_SENSITIVE->applyQuery($query, $field, $search),
-            };
+        return $this->apply($query, $field, $search, false);
+    }
+
+    /**
+     * Apply the search while treating database wildcard characters as ordinary input.
+     */
+    public function applyLiteralQuery(Builder $query, string $field, string $search): Builder
+    {
+        return $this->apply($query, $field, $search, true);
+    }
+
+    private function apply(Builder $query, string $field, string $search, bool $literal): Builder
+    {
+        $terms = SearchInput::terms($search);
+        $mode = $this->normalizedFor($terms);
+
+        if ($mode === self::EQUAL) {
+            return $query->orWhere($field, $search);
         }
 
+        if (in_array($mode, [self::CONTAINS_ANY, self::CONTAINS_ANY_CASE_SENSITIVE], true)) {
+            foreach ($terms as $part) {
+                self::addLike($query, $field, $part, 'contains', $mode->isCaseSensitive(), $literal, 'or');
+            }
+
+            return $query;
+        }
+
+        if (in_array($mode, [self::CONTAINS_ALL, self::CONTAINS_ALL_CASE_SENSITIVE], true)) {
+            $query->orWhere(static function (Builder $innerQuery) use ($field, $terms, $mode, $literal): void {
+                foreach ($terms as $part) {
+                    self::addLike($innerQuery, $field, $part, 'contains', $mode->isCaseSensitive(), $literal, 'and');
+                }
+            });
+
+            return $query;
+        }
+
+        self::addLike(
+            $query,
+            $field,
+            $search,
+            $mode->position(),
+            $mode->isCaseSensitive(),
+            $literal,
+            'or'
+        );
+
+        return $query;
+    }
+
+    /** @param list<string> $terms */
+    private function normalizedFor(array $terms): self
+    {
+        if (count($terms) > 1) {
+            return $this;
+        }
+
+        return match ($this) {
+            self::CONTAINS_ANY,
+            self::CONTAINS_ALL => self::LIKE,
+            self::CONTAINS_ANY_CASE_SENSITIVE,
+            self::CONTAINS_ALL_CASE_SENSITIVE => self::LIKE_CASE_SENSITIVE,
+            default => $this,
+        };
+    }
+
+    /**
+     * @param  'contains'|'starts_with'|'ends_with'  $position
+     * @param  'and'|'or'  $boolean
+     */
+    private static function addLike(
+        Builder $query,
+        string $field,
+        string $search,
+        string $position,
+        bool $caseSensitive,
+        bool $literal,
+        string $boolean
+    ): void {
         $grammar = $query->getGrammar();
+        $wrappedField = $grammar->wrap($field);
 
-        return match (true) {
-            $grammar instanceof PostgresGrammar => $this->applyQueryPostgres($query, $field, $search),
-            $grammar instanceof SQLiteGrammar => $this->applyQuerySQLite($query, $field, $search),
-            default => $this->applyQueryMySql($query, $field, $search),
+        if ($grammar instanceof SQLiteGrammar) {
+            $value = $caseSensitive
+                ? ($literal ? SqliteCaseFolding::escapeGlob($search) : $search)
+                : SqliteCaseFolding::globPattern($search, $literal);
+
+            $query->whereRaw(
+                $wrappedField.' GLOB ?',
+                [self::pattern($value, $position, '*')],
+                $boolean
+            );
+
+            return;
+        }
+
+        $operator = match (true) {
+            $grammar instanceof PostgresGrammar && ! $caseSensitive => 'ILIKE',
+            $grammar instanceof PostgresGrammar => 'LIKE',
+            $caseSensitive => 'LIKE BINARY',
+            default => 'LIKE',
+        };
+        $foldCase = ! $caseSensitive && ! $grammar instanceof PostgresGrammar;
+        $column = $foldCase ? 'LOWER('.$wrappedField.')' : $wrappedField;
+        $value = $caseSensitive ? $search : mb_strtolower($search);
+
+        // Laravel's PostgreSQL grammar adds this cast for LIKE operators used via
+        // where(). Raw predicates must preserve it explicitly for non-text fields.
+        if ($grammar instanceof PostgresGrammar) {
+            $column .= '::text';
+        }
+
+        if ($literal) {
+            $value = self::escapeLike($value);
+        }
+
+        $escapeClause = $literal ? " ESCAPE '!'" : '';
+
+        $query->whereRaw(
+            $column.' '.$operator.' ?'.$escapeClause,
+            [self::pattern($value, $position, '%')],
+            $boolean
+        );
+    }
+
+    private function position(): string
+    {
+        return match ($this) {
+            self::STARTS_WITH,
+            self::STARTS_WITH_CASE_SENSITIVE => 'starts_with',
+            self::ENDS_WITH,
+            self::ENDS_WITH_CASE_SENSITIVE => 'ends_with',
+            default => 'contains',
         };
     }
 
-    // Postgres -> always Case Sensitive, ILike switches
-    private function applyQueryPostgres(Builder $query, string $field, string $search): Builder
+    private function isCaseSensitive(): bool
     {
-        match ($this) {
-            self::EQUAL => $query->orWhere($field, $search),
-            self::STARTS_WITH => $query->orWhere($field, 'ILIKE', strtolower($search) . '%'),
-            self::STARTS_WITH_CASE_SENSITIVE => $query->orWhere($field, 'LIKE', $search . '%'),
-            self::ENDS_WITH => $query->orWhere($field, 'ILIKE', '%' . strtolower($search)),
-            self::ENDS_WITH_CASE_SENSITIVE => $query->orWhere($field, 'LIKE', '%' . $search),
-            self::LIKE_CASE_SENSITIVE => $query->orWhere($field, 'LIKE', '%' . $search . '%'),
-            self::CONTAINS_ANY => collect(explode(' ', Str::squish($search)))
-                ->each(static fn ($part) => $query->orWhere($field, 'ILIKE', '%' . strtolower($part) . '%')),
-            self::CONTAINS_ANY_CASE_SENSITIVE => collect(explode(' ', Str::squish($search)))
-                ->each(static fn ($part) => $query->orWhere($field, 'LIKE', '%' . $part . '%')),
-            self::CONTAINS_ALL => $query->orWhere(static function (Builder $innerQuery) use ($search, $field): void {
-                collect(explode(' ', Str::squish($search)))
-                    ->each(static fn ($part) => $innerQuery->where($field, 'ILIKE', '%' . strtolower($part) . '%'));
-            }),
-            self::CONTAINS_ALL_CASE_SENSITIVE => $query->orWhere(static function (Builder $innerQuery) use ($search, $field): void {
-                collect(explode(' ', Str::squish($search)))
-                    ->each(static fn ($part) => $innerQuery->where($field, 'LIKE', '%' . $part . '%'));
-            }),
-            default => $query->orWhere($field, 'ILIKE', '%' . strtolower($search) . '%'),
-        };
-
-        return $query;
+        return in_array($this, [
+            self::LIKE_CASE_SENSITIVE,
+            self::STARTS_WITH_CASE_SENSITIVE,
+            self::ENDS_WITH_CASE_SENSITIVE,
+            self::CONTAINS_ANY_CASE_SENSITIVE,
+            self::CONTAINS_ALL_CASE_SENSITIVE,
+        ], true);
     }
 
-    // SQLite -> Like never Case Sensitive, Glob is it
-    private function applyQuerySQLite(Builder $query, string $field, string $search): Builder
+    private static function escapeLike(string $value): string
     {
-        match ($this) {
-            self::EQUAL => $query->orWhere($field, $search),
-            self::STARTS_WITH => $query->orWhere($field, 'LIKE', strtolower($search) . '%'),
-            self::STARTS_WITH_CASE_SENSITIVE => $query->getQuery()->orWhereRaw($query->qualifyColumn($field) . ' GLOB "' . $search . '*"'),
-            self::ENDS_WITH => $query->orWhere($field, 'LIKE', '%' . strtolower($search)),
-            self::ENDS_WITH_CASE_SENSITIVE => $query->getQuery()->orWhereRaw($query->qualifyColumn($field) . ' GLOB "*' . $search . '"'),
-            self::LIKE_CASE_SENSITIVE => $query->getQuery()->orWhereRaw($query->qualifyColumn($field) . ' GLOB "*' . $search . '*"'),
-            self::CONTAINS_ANY => collect(explode(' ', Str::squish($search)))
-                ->each(static fn ($part) => $query->orWhere($field, 'LIKE', '%' . strtolower($part) . '%')),
-            self::CONTAINS_ANY_CASE_SENSITIVE => collect(explode(' ', Str::squish($search)))
-                ->each(static fn ($part) => $query->getQuery()->orWhereRaw($query->qualifyColumn($field) . ' GLOB "*' . $part . '*"')),
-            self::CONTAINS_ALL => $query->orWhere(static function (Builder $innerQuery) use ($search, $field): void {
-                collect(explode(' ', Str::squish($search)))
-                    ->each(static fn ($part) => $innerQuery->where($field, 'LIKE', '%' . strtolower($part) . '%'));
-            }),
-            self::CONTAINS_ALL_CASE_SENSITIVE => $query->orWhere(static function (Builder $innerQuery) use ($search, $field): void {
-                collect(explode(' ', Str::squish($search)))
-                    ->each(static fn ($part) => $innerQuery->getQuery()->whereRaw($innerQuery->qualifyColumn($field) . ' GLOB "*' . $part . '*"'));
-            }),
-            default => $query->orWhere($field, 'LIKE', '%' . strtolower($search) . '%'),
-        };
-
-        return $query;
+        return str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $value);
     }
 
-    private function applyQueryMySql(Builder $query, string $field, string $search): Builder
+    /**
+     * @param  'contains'|'starts_with'|'ends_with'  $position
+     */
+    private static function pattern(string $value, string $position, string $wildcard): string
     {
-        match ($this) {
-            self::EQUAL => $query->orWhere($field, $search),
-            self::STARTS_WITH => $query->orWhere(
-                DB::raw('LOWER('.$query->qualifyColumn($field).')'),
-                'LIKE',
-                strtolower($search) . '%'
-            ),
-            self::STARTS_WITH_CASE_SENSITIVE => $query->orWhere($field, 'LIKE BINARY', $search . '%'),
-            self::ENDS_WITH => $query->orWhere(
-                DB::raw('LOWER('.$query->qualifyColumn($field).')'),
-                'LIKE',
-                '%' . strtolower($search)
-            ),
-            self::ENDS_WITH_CASE_SENSITIVE => $query->orWhere($field, 'LIKE BINARY', '%' . $search),
-            self::LIKE_CASE_SENSITIVE => $query->orWhere($field, 'LIKE BINARY', '%' . $search . '%'),
-            self::CONTAINS_ANY => collect(explode(' ', Str::squish($search)))
-                ->each(
-                    static fn ($part) => $query->orWhere(
-                        DB::raw('LOWER('.$query->qualifyColumn($field).')'),
-                        'LIKE',
-                        '%' . strtolower($part) . '%'
-                    )
-                ),
-            self::CONTAINS_ANY_CASE_SENSITIVE => collect(explode(' ', Str::squish($search)))
-                ->each(static fn ($part) => $query->orWhere($field, 'LIKE BINARY', '%' . $part . '%')),
-            self::CONTAINS_ALL => $query->orWhere(static function (Builder $innerQuery) use ($search, $field): void {
-                collect(explode(' ', Str::squish($search)))
-                    ->each(
-                        static fn ($part) => $innerQuery->where(
-                            DB::raw('LOWER('.$innerQuery->qualifyColumn($field).')'),
-                            'LIKE',
-                            '%' . strtolower($part) . '%'
-                        )
-                    );
-            }),
-            self::CONTAINS_ALL_CASE_SENSITIVE => $query->orWhere(static function (Builder $innerQuery) use ($search, $field): void {
-                collect(explode(' ', Str::squish($search)))
-                    ->each(static fn ($part) => $innerQuery->where($field, 'LIKE BINARY', '%' . $part . '%'));
-            }),
-            default => $query->orWhere(
-                DB::raw('LOWER('.$query->qualifyColumn($field).')'),
-                'LIKE',
-                '%' . strtolower($search) . '%'
-            ),
+        return match ($position) {
+            'starts_with' => $value.$wildcard,
+            'ends_with' => $wildcard.$value,
+            'contains' => $wildcard.$value.$wildcard,
         };
-
-        return $query;
     }
 }
