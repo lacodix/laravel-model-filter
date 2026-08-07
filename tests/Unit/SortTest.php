@@ -6,12 +6,14 @@ use Lacodix\LaravelModelFilter\Traits\IsSortable;
 use Tests\Models\Post;
 
 beforeEach(function () {
+    $now = Carbon::now();
+
     Post::factory()
         ->state([
             'title' => 'b filler the first',
             'counter' => 50,
             'type' => 'post',
-            'created_at' => Carbon::now()->subDay(),
+            'created_at' => $now->copy()->subDay(),
         ])
         ->create();
 
@@ -20,7 +22,7 @@ beforeEach(function () {
             'title' => 'b filler '.$this->faker->words(2, true),
             'counter' => 50,
             'type' => 'post',
-            'created_at' => Carbon::now()->subDay(),
+            'created_at' => $now->copy()->subDay(),
         ])
         ->count(10)
         ->create();
@@ -30,7 +32,7 @@ beforeEach(function () {
             'title' => 'a the first',
             'counter' => 100,
             'type' => 'post',
-            'created_at' => Carbon::now(),
+            'created_at' => $now->copy(),
         ])
         ->create();
 
@@ -39,7 +41,7 @@ beforeEach(function () {
             'title' => 'c the middle',
             'counter' => 1,
             'type' => 'post',
-            'created_at' => Carbon::now(),
+            'created_at' => $now->copy()->subHour(),
         ])
         ->create();
 
@@ -48,7 +50,7 @@ beforeEach(function () {
             'title' => 'd the end',
             'counter' => 50,
             'type' => 'page',
-            'created_at' => Carbon::now()->subWeek(),
+            'created_at' => $now->copy()->subWeek(),
         ])
         ->create();
 });
@@ -82,6 +84,7 @@ class SortableMethodPost extends Model
     use IsSortable;
 
     protected $table = 'posts';
+
     protected $guarded = [];
 
     public function sortable(): array
