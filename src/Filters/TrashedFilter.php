@@ -48,7 +48,7 @@ class TrashedFilter extends SelectFilter
 
     public function populate(string|array|null $values): static
     {
-        $this->values = [$this->queryName() => $values];
+        $this->setValues([$this->queryName() => $values]);
 
         return $this;
     }

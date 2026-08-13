@@ -37,7 +37,7 @@ class UserVerifiedFilter extends SelectFilter
         ];
     }
 
-    public function apply(Builder $query): Builder
+    public function applyFilter(Builder $query): Builder
     {
         return match($this->values[$this->field]) {
             'verified' => $query->whereNotNull($this->field),

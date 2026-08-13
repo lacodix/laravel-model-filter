@@ -67,7 +67,7 @@ Sometimes you need an option filter but you don't have a boolean database-field.
 if you want to filter for all open transactions, but you have debit and credit columns. As long this both
 columns differ, your transaction is open, as soon as it is the same, it is finished.
 
-To achive such an option filter, you can overwrite the apply-method of the option filter.
+To achive such an option filter, you can overwrite the `applyFilter()` method of the option filter.
 
 ```php
 <?php
@@ -87,7 +87,7 @@ class TransactionStatus extends OptionFilter
         ];
     }
 
-    public function apply(Builder $query): Builder
+    public function applyFilter(Builder $query): Builder
     {
         if ($this->values['open'] ?? false) {
             $query->whereColumn('debit','<>', 'credit');

@@ -82,7 +82,7 @@ class PublishedAtFilter extends DateFilter
 }
 ```
 
-For custom filters that directly extend `Filter`, type the builder in `apply()` as well:
+For custom filters that directly extend `Filter`, type the builder in `applyFilter()` as well:
 
 ```php
 <?php
@@ -102,7 +102,7 @@ class PublishedFilter extends Filter
      * @param Builder<Post> $query
      * @return Builder<Post>
      */
-    public function apply(Builder $query): Builder
+    public function applyFilter(Builder $query): Builder
     {
         return $query->whereNotNull('published_at');
     }
@@ -112,5 +112,5 @@ class PublishedFilter extends Filter
 ## When to still prefer a dedicated filter class
 
 - Reusable filter logic across multiple models.
-- Complex `apply()` or `populate()` behavior.
+- Complex `applyFilter()` or `populate()` behavior.
 - Team-wide shared defaults and conventions.

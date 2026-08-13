@@ -25,7 +25,7 @@ trait HasFilters
             )
             ->each(
                 static fn (Filter $filter) => $filter
-                    ->populate($values->get($filter->queryName()))
+                    ->populateFromScope($values->get($filter->queryName()))
                     ->when(
                         $filter->validationMode === ValidationMode::THROW,
                         static function (Filter $filter): void {

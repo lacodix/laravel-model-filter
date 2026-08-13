@@ -8,6 +8,17 @@ weight: 4
 Version 4.7 keeps all existing public method signatures and adds literal-search functionality. It is a minor release
 because it also fixes search behavior that can change result sets.
 
+### Filter input structure hardening
+
+Built-in filters now reject malformed query-parameter structures through their configured validation mode. In
+`ValidationMode::FILTER` the filter is skipped; in `ValidationMode::THROW` malformed structures now produce a Laravel
+`ValidationException`, including for direct `populate(...)->apply(...)` calls where PHP warnings or query errors could
+previously occur.
+
+Existing custom filters that override `apply()` keep their previous behavior for backward compatibility and therefore
+do not receive the direct-application input guard. Move only their query logic to `applyFilter()` to opt into it; model
+scopes continue to run their normal validation either way.
+
 ### Security fix for SQLite case-sensitive search
 
 All five `*_CASE_SENSITIVE` modes now bind SQLite `GLOB` values instead of interpolating search input into raw SQL.

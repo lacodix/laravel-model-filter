@@ -71,12 +71,10 @@ class MyCustomFilter extends Filter
 If you need more control or want to apply a relation filter only in specific parts of your logic, you can use the `runOnRelation()` helper method provided by the trait:
 
 ```php
-public function apply(Builder $query): Builder
-{
-    // Do some main query stuff
-    return $this->runOnRelation($query, function ($q) {
-        // This closure runs inside a whereHas context
-        return $q->where('related_col', 'some_val');
-    });
-}
+$filter->runOnRelation($query, function ($relationQuery) {
+    return $relationQuery->where('related_col', 'some_val');
+});
 ```
+
+This is a low-level helper for an already controlled query. Normal filter query logic should stay in
+`applyFilter()` so calls to `apply()` pass through the filter's input guard.
