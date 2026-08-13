@@ -4,7 +4,6 @@ namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
 /**
@@ -15,20 +14,10 @@ use Lacodix\LaravelModelFilter\Enums\FilterMode;
 class NumericFilter extends SingleFieldFilter
 {
     protected string $component = 'numeric';
+    protected bool $reindexesArrayInput = true;
 
     protected int $min;
     protected int $max;
-
-    public function populate(string|array|null $values): static
-    {
-        parent::populate($values);
-
-        $this->values = Arr::map($this->values, static fn ($value) => is_array($value)
-            ? array_values($value)
-            : $value);
-
-        return $this;
-    }
 
     /**
      * @param  Builder<TModel> $query
@@ -97,5 +86,10 @@ class NumericFilter extends SingleFieldFilter
     protected function getMaxRule(): string
     {
         return isset($this->max) ? '|max:' . $this->max : '';
+    }
+
+    protected function expectsListInput(): bool
+    {
+        return $this->mode->needsMultipleValues();
     }
 }

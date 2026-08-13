@@ -6,10 +6,10 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Validation\Validator;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 use Lacodix\LaravelModelFilter\Enums\TimeframeFilterMode;
 use Lacodix\LaravelModelFilter\Enums\TimeframeFilterPrecision;
-use ValueError;
 
 /**
  * @template TModel of Model
@@ -75,34 +75,34 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
 
     public function rules(): array
     {
-        if ($this->timeframeFilterMode()->isInverted()) {
-            return [
-                $this->queryName() . '.values' => 'nullable',
-                $this->queryName() . '.from' => 'nullable|' . $this->getDateRule(),
-                $this->queryName() . '.to' => 'nullable|' . $this->getDateRule(),
-            ];
-        }
-
         return [
-            ...$this->mode === FilterMode::EQUAL ? $this->singleRules() : $this->multiRules(),
-
+            $this->queryName() => 'array',
             $this->queryName() . '.from' => 'nullable|' . $this->getDateRule(),
             $this->queryName() . '.to' => 'nullable|' . $this->getDateRule(),
+            ...$this->timeframeFilterMode()->isInverted()
+                ? [$this->queryName() . '.values' => 'nullable']
+                : ($this->mode === FilterMode::EQUAL ? $this->singleRules() : $this->multiRules()),
         ];
     }
 
     public function timeframeFilterMode(): TimeframeFilterMode
     {
-        try {
-            return TimeframeFilterMode::from($this->getValue()['mode'] ?? 'ever');
-        } catch (ValueError) {
-            return TimeframeFilterMode::EVER;
-        }
+        $value = $this->getValue();
+        $mode = is_array($value) ? ($value['mode'] ?? null) : null;
+
+        return is_string($mode)
+            ? TimeframeFilterMode::tryFrom($mode) ?? TimeframeFilterMode::EVER
+            : TimeframeFilterMode::EVER;
     }
 
     protected function isInverted(): bool
     {
         return $this->timeframeFilterMode()->isInverted() || parent::isInverted();
+    }
+
+    protected function expectsListInput(): bool
+    {
+        return $this->mode !== FilterMode::EQUAL;
     }
 
     /**
@@ -271,5 +271,77 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
             TimeframeFilterPrecision::DAY, TimeframeFilterPrecision::MONTH => Carbon::parse($date),
             TimeframeFilterPrecision::YEAR => Carbon::create($date),
         };
+    }
+
+    protected function validateInputShape(Validator $validator): void
+    {
+        $attribute = $this->queryName();
+        $value = $this->getValue();
+
+        if ($this->values === []) {
+            return;
+        }
+
+        if (! is_array($value)) {
+            if (! $validator->errors()->has($attribute)) {
+                $this->addInputShapeError($validator, $attribute);
+            }
+
+            return;
+        }
+
+        if ($value !== [] && array_is_list($value)) {
+            $this->addInputShapeError($validator, $attribute);
+
+            return;
+        }
+
+        foreach (['mode', 'from', 'to'] as $key) {
+            if (array_key_exists($key, $value) && ! $this->isScalarInput($value[$key])) {
+                $this->addInputShapeError($validator, $attribute.'.'.$key);
+            }
+        }
+
+        if (! array_key_exists('values', $value) || is_null($value['values'])) {
+            return;
+        }
+
+        $filterValues = $value['values'];
+
+        if ($this->expectsListInput()) {
+            if (! is_array($filterValues)) {
+                $this->addInputShapeError($validator, $attribute.'.values');
+
+                return;
+            }
+
+            foreach ($filterValues as $key => $item) {
+                if (! $this->isScalarInput($item)) {
+                    $this->addInputShapeError($validator, $attribute.'.values.'.$key);
+                }
+            }
+
+            return;
+        }
+
+        if (is_array($filterValues)) {
+            if (! $this->timeframeFilterMode()->isInverted()) {
+                $this->addInputShapeError($validator, $attribute.'.values');
+
+                return;
+            }
+
+            foreach ($filterValues as $key => $item) {
+                if (! $this->isScalarInput($item)) {
+                    $this->addInputShapeError($validator, $attribute.'.values.'.$key);
+                }
+            }
+
+            return;
+        }
+
+        if (! $this->isScalarInput($filterValues)) {
+            $this->addInputShapeError($validator, $attribute.'.values');
+        }
     }
 }

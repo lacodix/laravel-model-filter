@@ -34,11 +34,13 @@ abstract class Filter
     protected array $options;
 
     protected string $queryName;
-    protected array $values;
+    protected array $values = [];
     protected Validator $validator;
 
     protected string $component = 'text';
     protected string $title;
+
+    protected bool $populatingFromScope = false;
 
     protected ?Model $model = null;
 
@@ -95,9 +97,24 @@ abstract class Filter
 
     public function populate(string|array|null $values): static
     {
-        $this->values = Arr::wrap($values);
+        $this->setValues(Arr::wrap($values));
 
         return $this;
+    }
+
+    /**
+     * @internal Used by the model scopes when the value has already been selected
+     * from the complete filter payload.
+     */
+    public function populateFromScope(string|array|null $values): static
+    {
+        $this->populatingFromScope = true;
+
+        try {
+            return $this->populate($values);
+        } finally {
+            $this->populatingFromScope = false;
+        }
     }
 
     public function queryName(): string
@@ -146,6 +163,10 @@ abstract class Filter
      */
     public function apply(Builder $query): Builder
     {
+        if (! $this->shouldApply()) {
+            return $query;
+        }
+
         return $this->applyFilter($query);
     }
 
@@ -190,12 +211,67 @@ abstract class Filter
 
     protected function createValidator(): Validator
     {
-        return ValidatorFacade::make(
+        return $this->createValidatorForRules($this->rules());
+    }
+
+    protected function hasFilterValue(): bool
+    {
+        return true;
+    }
+
+    protected function shouldApply(): bool
+    {
+        if (! $this->hasFilterValue()) {
+            return false;
+        }
+
+        $validator = $this->createValidatorForRules([]);
+
+        if ($this->validationMode === ValidationMode::THROW) {
+            $validator->validate();
+
+            return true;
+        }
+
+        return ! $validator->fails();
+    }
+
+    protected function setValues(array $values): void
+    {
+        $this->values = $values;
+        unset($this->validator);
+    }
+
+    protected function validateInputShape(Validator $validator): void
+    {
+        //
+    }
+
+    protected function addInputShapeError(Validator $validator, string $attribute): void
+    {
+        $validator->addFailure($attribute, 'InputShape');
+    }
+
+    protected function isScalarInput(mixed $value): bool
+    {
+        return is_null($value) || is_scalar($value);
+    }
+
+    protected function createValidatorForRules(array $rules): Validator
+    {
+        $validator = ValidatorFacade::make(
             $this->values,
-            $this->rules(),
+            $rules,
             $this->getMessages(),
             $this->getValidationAttributes()
         );
+        $validator->setFallbackMessages([
+            'input_shape' => trans('model-filter::validation.input_shape'),
+        ]);
+
+        $validator->after(fn (Validator $validator) => $this->validateInputShape($validator));
+
+        return $validator;
     }
 
     protected function getMessages()

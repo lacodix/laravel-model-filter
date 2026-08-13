@@ -19,3 +19,6 @@ Available filter base types to be used as base of your filters:
 
 Ready to use filters:
 - TrashedFilter
+
+The accepted scalar, list, map, and timeframe parameter structures are documented in the
+[filter input contract](../basic-usage/filter-input-contract.md).

@@ -56,6 +56,10 @@ use all possibilities of Laravels Validator.
 
 Depending on the ValidationMode of your filter, the filter will not be applied (default) or throw an exception.
 
+The validation mode also covers malformed query parameter structures. See the
+[filter input contract](filter-input-contract.md) for the supported scalar, list, option-map,
+and timeframe shapes.
+
 ## Customize Error Messages & Attributes
 
 If you wish to customize the validation messages that are thrown with the ValidationException,

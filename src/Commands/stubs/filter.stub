@@ -4,7 +4,6 @@ namespace {{ namespace }};
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Lacodix\LaravelModelFilter\Filters\Filter;
 
 class {{ class }} extends Filter
@@ -15,17 +14,10 @@ class {{ class }} extends Filter
      * @param  Builder<TModel> $query
      * @return Builder<TModel>
      */
-    public function apply(Builder $query): Builder
+    public function applyFilter(Builder $query): Builder
     {
         $value = is_array($this->values) ? current($this->values) : $this->values;
 
         return $query->where('{{ field }}', $value);
-    }
-
-    public function populate(string|array|null $values): static
-    {
-        $this->values = Arr::wrap($values);
-
-        return $this;
     }
 }

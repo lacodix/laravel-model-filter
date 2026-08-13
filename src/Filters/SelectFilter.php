@@ -131,6 +131,11 @@ class SelectFilter extends SingleFieldFilter
         ];
     }
 
+    protected function expectsListInput(): bool
+    {
+        return $this->mode === FilterMode::CONTAINS || $this->mode === FilterMode::NOT_CONTAINS;
+    }
+
     protected function nullOptionLabel(): string
     {
         return $this->nullLabel ?? trans('model-filter::filters.none');

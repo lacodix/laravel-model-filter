@@ -5,6 +5,7 @@ namespace Lacodix\LaravelModelFilter\Filters;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Validator;
 
 /**
  * @template TModel of Model
@@ -15,6 +16,7 @@ abstract class SingleFieldFilter extends Filter
 {
     protected string $field;
     protected ?string $table = null;
+    protected bool $reindexesArrayInput = false;
 
     public function __construct(?string $field = null)
     {
@@ -26,20 +28,72 @@ abstract class SingleFieldFilter extends Filter
     public function populate(string|array|null $values): static
     {
         if (is_null($values)) {
-            $this->values = [];
+            $this->setValues([]);
 
             return $this;
         }
 
-        if (! is_array($values) || ! Arr::isAssoc($values) || ! Arr::has($values, $this->queryName())) {
+        if (
+            $this->populatingFromScope
+            || ! is_array($values)
+            || ! Arr::isAssoc($values)
+            || ! Arr::has($values, $this->queryName())
+        ) {
             $values = [
                 $this->queryName() => $values,
             ];
         }
 
-        $this->values = $values;
+        if ($this->reindexesArrayInput) {
+            $values = Arr::map(
+                $values,
+                static fn ($value) => is_array($value) ? array_values($value) : $value
+            );
+        }
+
+        $this->setValues($values);
 
         return $this;
+    }
+
+    protected function expectsListInput(): bool
+    {
+        return false;
+    }
+
+    protected function hasFilterValue(): bool
+    {
+        return $this->values !== [];
+    }
+
+    protected function validateInputShape(Validator $validator): void
+    {
+        $attribute = $this->queryName();
+        $value = $this->getValue();
+
+        if (is_null($value)) {
+            return;
+        }
+
+        if (! $this->expectsListInput()) {
+            if (! $this->isScalarInput($value)) {
+                $this->addInputShapeError($validator, $attribute);
+            }
+
+            return;
+        }
+
+        if (! is_array($value)) {
+            $this->addInputShapeError($validator, $attribute);
+
+            return;
+        }
+
+        foreach ($value as $key => $item) {
+            if (! $this->isScalarInput($item)) {
+                $this->addInputShapeError($validator, $attribute.'.'.$key);
+            }
+        }
     }
 
     public function field(string $field): static

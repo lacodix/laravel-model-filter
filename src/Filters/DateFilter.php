@@ -4,7 +4,6 @@ namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 
@@ -16,17 +15,7 @@ use Lacodix\LaravelModelFilter\Enums\FilterMode;
 class DateFilter extends SingleFieldFilter
 {
     protected string $component = 'date';
-
-    public function populate(string|array|null $values): static
-    {
-        parent::populate($values);
-
-        $this->values = Arr::map($this->values, static fn ($value) => is_array($value)
-            ? array_values($value)
-            : $value);
-
-        return $this;
-    }
+    protected bool $reindexesArrayInput = true;
 
     /**
      * @param  Builder<TModel> $query
@@ -106,5 +95,10 @@ class DateFilter extends SingleFieldFilter
     protected function getValueForFilter(string $value): mixed
     {
         return Carbon::parse($value);
+    }
+
+    protected function expectsListInput(): bool
+    {
+        return $this->mode->needsMultipleValues();
     }
 }

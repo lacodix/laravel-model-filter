@@ -184,6 +184,12 @@ Post::filter(['test_belongs_to_many_timeframe_filter' => ['values' => [], 'mode'
 
 No date values are needed for this mode.
 
+## Input shape
+
+The supported filter payload and the behavior for malformed modes, dates, and nested
+values are specified in the
+[filter input contract](../basic-usage/filter-input-contract.md#timeframe-payload).
+
 ## Filter precision
 
 The precision can be set programmatically but not over the UI. Nevertheless you can create your own component

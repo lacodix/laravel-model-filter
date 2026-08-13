@@ -4,6 +4,7 @@ namespace Lacodix\LaravelModelFilter\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Validator;
 
 /**
  * @template TModel of Model
@@ -39,5 +40,32 @@ class OptionFilter extends Filter
     protected function getValueForFilter(string $value): bool
     {
         return (bool) $value;
+    }
+
+    protected function validateInputShape(Validator $validator): void
+    {
+        if ($this->values === []) {
+            return;
+        }
+
+        if (array_is_list($this->values)) {
+            $this->addInputShapeError($validator, $this->queryName());
+
+            return;
+        }
+
+        $options = $this->options();
+        $optionNames = array_is_list($options)
+            ? $options
+            : [...array_keys($options), ...array_values($options)];
+
+        foreach (array_unique($optionNames) as $optionName) {
+            if (
+                array_key_exists($optionName, $this->values)
+                && ! $this->isScalarInput($this->values[$optionName])
+            ) {
+                $this->addInputShapeError($validator, $this->queryName().'.'.$optionName);
+            }
+        }
     }
 }
