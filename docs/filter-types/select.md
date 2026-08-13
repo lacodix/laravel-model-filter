@@ -123,6 +123,11 @@ With this mode you can filter for multiple values. All models that fit to one of
 is still comparing the model column against the given filter values. To get it working in your views, you have to 
 name the input element as an array, see select.blade.php for an example when using the multiple option.
 
+Programmatic and query-string input may also pass one scalar as a shorthand. The filter
+normalizes it to a one-element array before validation; the empty string becomes an empty array.
+Flat associative arrays and arrays with numeric gaps remain supported and are reindexed; nested
+arrays are rejected. Empty arrays retain their existing query semantics.
+
 Allowed modes are
 - FilterMode::EQUAL
 - FilterMode::CONTAINS

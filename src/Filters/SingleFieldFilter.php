@@ -44,6 +44,10 @@ abstract class SingleFieldFilter extends Filter
             ];
         }
 
+        $values[$this->queryName()] = $this->normalizeInputValue(
+            $values[$this->queryName()]
+        );
+
         if ($this->reindexesArrayInput) {
             $values = Arr::map(
                 $values,
@@ -59,6 +63,11 @@ abstract class SingleFieldFilter extends Filter
     protected function expectsListInput(): bool
     {
         return false;
+    }
+
+    protected function normalizeInputValue(mixed $value): mixed
+    {
+        return $value;
     }
 
     protected function hasFilterValue(): bool

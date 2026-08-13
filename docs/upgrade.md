@@ -15,6 +15,13 @@ Built-in filters now reject malformed query-parameter structures through their c
 `ValidationException`, including for direct `populate(...)->apply(...)` calls where PHP warnings or query errors could
 previously occur.
 
+Select-based `CONTAINS` and `NOT_CONTAINS` filters preserve the scalar shorthand supported in
+v4.7. Scalars are now normalized before the hardened validation runs (the empty string becomes
+an empty list; other scalars become a one-element list). Flat associative arrays and arrays with
+numeric gaps also retain their previous behavior and are
+reindexed; empty arrays and omitted timeframe selections keep their existing query semantics.
+Nested multi-value structures remain invalid.
+
 Existing custom filters that override `apply()` keep their previous behavior for backward compatibility and therefore
 do not receive the direct-application input guard. Move only their query logic to `applyFilter()` to opt into it; model
 scopes continue to run their normal validation either way.

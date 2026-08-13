@@ -46,11 +46,6 @@ dataset('timeframe filter malformed inputs', [
         ['mode' => 'ever', 'values' => [['1']]],
         'shape_filter.values.0',
     ],
-    'scalar multi values' => [
-        'timeframe_multi',
-        ['mode' => 'ever', 'values' => '1'],
-        'shape_filter.values',
-    ],
 ]);
 
 dataset('timeframe inputs without relation values', [
@@ -177,14 +172,38 @@ it('preserves the ever fallback for an unknown scalar mode', function (
         ->and($query->getBindings())->toBe(['1']);
 })->with('timeframe input validation modes');
 
-it('preserves associative scalar values in timeframe multiselect mode', function (
-    ValidationMode $validationMode
+it('normalizes scalar shorthand in timeframe multi-value modes', function (
+    FilterMode $mode,
+    string|int $input
 ) {
     $model = new InputContractPost;
     $filter = InputContractFilterFactory::make('timeframe_multi')
+        ->setMode($mode)
         ->setQueryName('shape_filter')
-        ->setModel($model)
-        ->setValidationMode($validationMode);
+        ->setModel($model);
+    $query = $model->newQuery();
+
+    $filter->populate([
+        'mode' => 'ever',
+        'values' => $input,
+    ])->apply($query);
+
+    expect($filter->getValue('shape_filter')['values'])->toBe([$input])
+        ->and($filter->fails())->toBeFalse()
+        ->and(strtolower($query->toSql()))->toContain('exists', ' in ')
+        ->and($query->getBindings())->toBe([$input]);
+})->with([
+    'contains string' => [FilterMode::CONTAINS, '1'],
+    'not contains string' => [FilterMode::NOT_CONTAINS, '1'],
+    'contains integer' => [FilterMode::CONTAINS, 1],
+    'not contains integer' => [FilterMode::NOT_CONTAINS, 1],
+]);
+
+it('reindexes associative timeframe multi-value arrays', function () {
+    $model = new InputContractPost;
+    $filter = InputContractFilterFactory::make('timeframe_multi')
+        ->setQueryName('shape_filter')
+        ->setModel($model);
     $query = $model->newQuery();
 
     $filter->populate([
@@ -192,9 +211,9 @@ it('preserves associative scalar values in timeframe multiselect mode', function
         'values' => ['first' => '1', 'second' => '2'],
     ])->apply($query);
 
-    expect(strtolower($query->toSql()))->toContain('exists', ' in ')
+    expect($filter->getValue('shape_filter')['values'])->toBe(['1', '2'])
         ->and($query->getBindings())->toBe(['1', '2']);
-})->with('timeframe input validation modes');
+});
 
 it('continues to ignore unknown timeframe payload keys', function (
     ValidationMode $validationMode

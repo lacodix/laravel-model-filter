@@ -72,6 +72,11 @@ or by query string
 https://.../posts?test_belongs_to_many_timeframe_filter[values]=...
 ```
 
+In `CONTAINS` and `NOT_CONTAINS` mode, `values` may be either a flat array or one
+scalar shorthand. Scalars are normalized to a one-element list (an empty string becomes an
+empty list) and arrays are reindexed before validation. Omitting `values` retains the existing relationship-existence
+semantics, including the behavior described below for `NEVER` and `NOT_CURRENT`.
+
 ## Timeframe Filter Mode
 
 Additionally to the normal filter mode, this filter has a second mode to specify how the filter
