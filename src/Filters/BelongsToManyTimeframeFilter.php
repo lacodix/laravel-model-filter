@@ -105,6 +105,27 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
         return $this->mode !== FilterMode::EQUAL;
     }
 
+    protected function normalizeInputValue(mixed $value): mixed
+    {
+        if (
+            ! $this->expectsListInput()
+            || ! is_array($value)
+            || ! array_key_exists('values', $value)
+        ) {
+            return $value;
+        }
+
+        $filterValues = $value['values'];
+
+        if (is_array($filterValues)) {
+            $value['values'] = array_values($filterValues);
+        } elseif (is_scalar($filterValues)) {
+            $value['values'] = $filterValues === '' ? [] : [$filterValues];
+        }
+
+        return $value;
+    }
+
     /**
      * @param  Builder<TModel> $query
      *

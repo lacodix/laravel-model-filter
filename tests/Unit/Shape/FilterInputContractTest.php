@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Lacodix\LaravelModelFilter\Enums\FilterMode;
 use Lacodix\LaravelModelFilter\Enums\ValidationMode;
 use Tests\Models\Shape\InputContractPost;
 use Tests\Support\InputContractFilterFactory;
@@ -32,20 +33,27 @@ dataset('list filter malformed inputs', [
         'shape_filter.0',
     ],
     'select list with nested value' => ['select_multi', [['page']], 'shape_filter.0'],
-    'select list with scalar value' => ['select_multi', 'page', 'shape_filter'],
     'enum list with nested value' => ['enum_multi', [['page']], 'shape_filter.0'],
-    'enum list with scalar value' => ['enum_multi', 'page', 'shape_filter'],
     'belongs-to list with nested value' => ['belongs_to_multi', [['page']], 'shape_filter.0'],
-    'belongs-to list with scalar value' => ['belongs_to_multi', 'page', 'shape_filter'],
     'belongs-to-many list with nested value' => [
         'belongs_to_many_multi',
         [['1']],
         'shape_filter.0',
     ],
-    'belongs-to-many list with scalar value' => [
+]);
+
+dataset('scalar multi-select shorthands', [
+    'select contains' => ['select_multi', FilterMode::CONTAINS, 'page'],
+    'select not contains' => ['select_multi', FilterMode::NOT_CONTAINS, 'page'],
+    'enum contains' => ['enum_multi', FilterMode::CONTAINS, 'page'],
+    'enum not contains' => ['enum_multi', FilterMode::NOT_CONTAINS, 'page'],
+    'belongs-to contains' => ['belongs_to_multi', FilterMode::CONTAINS, 'page'],
+    'belongs-to not contains' => ['belongs_to_multi', FilterMode::NOT_CONTAINS, 'page'],
+    'belongs-to-many contains' => ['belongs_to_many_multi', FilterMode::CONTAINS, '1'],
+    'belongs-to-many not contains' => [
         'belongs_to_many_multi',
+        FilterMode::NOT_CONTAINS,
         '1',
-        'shape_filter',
     ],
 ]);
 
@@ -81,6 +89,11 @@ dataset('valid list filter inputs', [
     'select list with named keys' => [
         'select_multi',
         ['first' => 'page', 'second' => 'post'],
+        ['page', 'post'],
+    ],
+    'select list with numeric gaps' => [
+        'select_multi',
+        [2 => 'page', 5 => 'post'],
         ['page', 'post'],
     ],
     'enum list' => ['enum_multi', ['page', 'post'], ['page', 'post']],
@@ -204,8 +217,32 @@ it('preserves valid list filter SQL and bindings', function (
     $filter->populate($input)->apply($query);
 
     expect($query->toSql())->toContain('where')
-        ->and($query->getBindings())->toBe($bindings);
+        ->and($query->getBindings())->toBe($bindings)
+        ->and($filter->getValue())->toBe($bindings);
 })->with('valid list filter inputs');
+
+it('accepts scalar multi-select shorthand and normalizes it before validation', function (
+    string $family,
+    FilterMode $mode,
+    string $input
+) {
+    $model = new InputContractPost;
+    $filter = InputContractFilterFactory::make($family)
+        ->setMode($mode)
+        ->setQueryName('shape_filter')
+        ->setModel($model);
+    $query = $model->newQuery();
+
+    $filter->populate($input);
+
+    expect($filter->getValue())->toBe([$input])
+        ->and($filter->fails())->toBeFalse();
+
+    $filter->apply($query);
+
+    expect(strtolower($query->toSql()))->toContain('where')
+        ->and($query->getBindings())->toBe([$input]);
+})->with('scalar multi-select shorthands');
 
 it('preserves the single-field envelope accepted by populate', function () {
     $model = new InputContractPost;
@@ -234,9 +271,27 @@ it('preserves the existing semantics of an empty multi-select', function (
 
     $filter->populate([])->apply($query);
 
-    expect(strtolower($query->toSql()))->toContain($sqlFragment)
+    expect($filter->getValue())->toBe([])
+        ->and(strtolower($query->toSql()))->toContain($sqlFragment)
         ->and($query->getBindings())->toBe([]);
 })->with('empty multi-select inputs')->with('input contract validation modes');
+
+it('preserves the direct null-envelope semantics of a multi-select', function (
+    ValidationMode $validationMode
+) {
+    $model = new InputContractPost;
+    $filter = InputContractFilterFactory::make('select_multi')
+        ->setQueryName('shape_filter')
+        ->setModel($model)
+        ->setValidationMode($validationMode);
+    $query = $model->newQuery();
+
+    $filter->populate(['shape_filter' => null])->apply($query);
+
+    expect($filter->getValue())->toBeNull()
+        ->and(strtolower($query->toSql()))->toContain('where', '0 = 1')
+        ->and($query->getBindings())->toBe([]);
+})->with('input contract validation modes');
 
 it('preserves the direct empty-range behavior', function (
     string $family,

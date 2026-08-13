@@ -136,6 +136,21 @@ class SelectFilter extends SingleFieldFilter
         return $this->mode === FilterMode::CONTAINS || $this->mode === FilterMode::NOT_CONTAINS;
     }
 
+    protected function normalizeInputValue(mixed $value): mixed
+    {
+        if (! $this->expectsListInput()) {
+            return $value;
+        }
+
+        if (is_array($value)) {
+            return array_values($value);
+        }
+
+        return is_scalar($value)
+            ? ($value === '' ? [] : [$value])
+            : $value;
+    }
+
     protected function nullOptionLabel(): string
     {
         return $this->nullLabel ?? trans('model-filter::filters.none');

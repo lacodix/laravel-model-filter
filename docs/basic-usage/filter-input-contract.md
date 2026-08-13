@@ -31,7 +31,7 @@ therefore validated as that value, not reinterpreted as an envelope.
 | `DateFilter` | Single-value modes | One scalar matching the configured date format |
 | `DateFilter` | Between/not-between modes | An array with exactly two scalar date boundaries |
 | `SelectFilter` | `EQUAL` | One scalar option value |
-| `SelectFilter` | `CONTAINS`, `NOT_CONTAINS` | An array of scalar option values |
+| `SelectFilter` | `CONTAINS`, `NOT_CONTAINS` | One scalar option or a flat array of scalar option values |
 | `EnumFilter` | Select modes | The same shapes as `SelectFilter`; values must be backed enum values |
 | `BelongsToFilter` | Select modes | The same shapes as `SelectFilter`; values must be available relation IDs |
 | `BelongsToManyFilter` | Select modes | The same shapes as `SelectFilter`; values must be available relation IDs |
@@ -56,9 +56,22 @@ Post::filter(['age' => [65, '']])->get();
 Range keys are ignored as before; boundaries are normalized in insertion order. Nested
 boundary values are rejected.
 
-Flat associative multiselect arrays also remain accepted; their keys do not affect the query.
-Empty multiselect lists remain valid and keep their existing query semantics (for example,
-`whereIn(..., [])`). Scalars are not converted into multiselect lists.
+For `CONTAINS` and `NOT_CONTAINS`, a scalar is supported as an unambiguous shorthand
+for one selected value. It is normalized before validation, so the
+filter internally and `getValue()` always use the canonical list:
+
+```php
+$filter->populate('published');
+$filter->getValue(); // ['published']
+```
+
+The empty string is normalized to an empty list. Model scopes already treat a top-level
+empty string as an omitted filter value.
+
+Flat associative arrays and arrays with numeric gaps remain accepted for backward compatibility;
+their keys do not affect filtering and are reindexed during normalization. Empty multiselect arrays
+remain valid and keep their existing query semantics (for example, `whereIn(..., [])`). Nested values
+are rejected through the configured validation mode.
 
 ### Option filter
 
@@ -94,8 +107,9 @@ string.
 - `mode` may be omitted, which means `ever`. Recognized values are `current`, `ever`,
   `timeframe`, `start_in_timeframe`, `end_in_timeframe`, `never`, and `not_current`.
 - In `FilterMode::EQUAL`, `values` is a scalar relation ID.
-- In `FilterMode::CONTAINS` and `FilterMode::NOT_CONTAINS`, `values` is an array of
-  scalar values.
+- In `FilterMode::CONTAINS` and `FilterMode::NOT_CONTAINS`, `values` accepts one scalar
+  relation ID as shorthand or a flat array of scalar values. Scalars are wrapped and arrays
+  are reindexed before validation.
 - `values` remains optional in every mode. Omitting it keeps the existing
   relationship-existence semantics; it does not make the filter itself required.
 - `never` and `not_current` deliberately allow `values` to be omitted, `null`, or an
@@ -132,7 +146,9 @@ comparisons.
 `Filter` itself does not prescribe a value shape because custom filters may need custom
 payloads. Existing `rules()` remain the semantic contract for custom filters.
 `SingleFieldFilter` supplies the scalar contract automatically, while its built-in range
-and select descendants specialize it to flat arrays. Custom filters with structured
+and select descendants specialize it to flat arrays. Select-based filters normalize scalar
+multi-value shorthand and reindex flat arrays through `normalizeInputValue()` before validation.
+Custom filters with structured
 payloads can extend the same validation path by overriding `validateInputShape()`. Override
 `applyFilter()` for query logic so direct application continues through the validation guard.
 Existing custom filters that override `apply()` keep their historical behavior for backward

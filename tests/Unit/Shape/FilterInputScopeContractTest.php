@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use Illuminate\Http\Request;
+use Lacodix\LaravelModelFilter\Enums\FilterMode;
 use Lacodix\LaravelModelFilter\Enums\ValidationMode;
+use Lacodix\LaravelModelFilter\Filters\SelectFilter;
 use Tests\Models\Post;
 use Tests\Models\Shape\InputContractPost;
 use Tests\Models\Shape\InputContractSoftDeletePost;
@@ -31,7 +33,6 @@ dataset('scope malformed built-in inputs', [
         'shape_filter.0',
     ],
     'select' => ['select_multi', [['page']], 'shape_filter.0'],
-    'select multi scalar' => ['select_multi', 'page', 'shape_filter'],
     'enum' => ['enum', ['page'], 'shape_filter'],
     'option' => ['option', ['published' => ['1']], 'shape_filter.published'],
     'trashed' => ['trashed', ['only_trashed'], 'shape_filter'],
@@ -105,6 +106,82 @@ it('enforces every built-in shape through scopeFilter', function (
 
     expect(InputContractTestSupport::snapshot($query))->toBe($before);
 })->with('scope malformed built-in inputs')->with('scope input validation modes');
+
+it('normalizes scalar multi-select scope values before validation and application', function () {
+    $filter = InputContractFilterFactory::make('select_multi')->setQueryName('shape_filter');
+    InputContractPost::$configuredFilters = [$filter];
+    $matching = InputContractPost::query()->create([
+        'title' => 'matching',
+        'type' => 'page',
+        'published' => true,
+        'content' => 'matching',
+        'counter' => 10,
+    ]);
+    InputContractPost::query()->create([
+        'title' => 'other',
+        'type' => 'post',
+        'published' => false,
+        'content' => 'other',
+        'counter' => 20,
+    ]);
+
+    $result = InputContractPost::filter(['shape_filter' => 'page'])->get();
+
+    expect($filter->getValue())->toBe(['page'])
+        ->and($result->pluck('id')->all())->toBe([$matching->id]);
+});
+
+it('accepts an integer scalar multi-select shorthand through scopeFilter', function () {
+    $filter = (new SelectFilter('counter'))
+        ->setOptions(['Ten' => 10, 'Twenty' => 20])
+        ->setMode(FilterMode::CONTAINS)
+        ->setQueryName('shape_filter');
+    InputContractPost::$configuredFilters = [$filter];
+    $matching = InputContractPost::query()->create([
+        'title' => 'matching',
+        'type' => 'page',
+        'published' => true,
+        'content' => 'matching',
+        'counter' => 10,
+    ]);
+    InputContractPost::query()->create([
+        'title' => 'other',
+        'type' => 'post',
+        'published' => false,
+        'content' => 'other',
+        'counter' => 20,
+    ]);
+
+    $result = InputContractPost::filter(['shape_filter' => 10])->get();
+
+    expect($filter->getValue())->toBeArray()->toHaveCount(1)
+        ->and($filter->getValue()[0])->toEqual(10)
+        ->and($result->pluck('id')->all())->toBe([$matching->id]);
+});
+
+it('reindexes gapped multi-select scope values before validation', function () {
+    $filter = InputContractFilterFactory::make('select_multi')->setQueryName('shape_filter');
+    InputContractPost::$configuredFilters = [$filter];
+    $matching = InputContractPost::query()->create([
+        'title' => 'matching',
+        'type' => 'page',
+        'published' => true,
+        'content' => 'matching',
+        'counter' => 10,
+    ]);
+    InputContractPost::query()->create([
+        'title' => 'other',
+        'type' => 'post',
+        'published' => false,
+        'content' => 'other',
+        'counter' => 20,
+    ]);
+
+    $result = InputContractPost::filter(['shape_filter' => [2 => 'page']])->get();
+
+    expect($filter->getValue())->toBe(['page'])
+        ->and($result->pluck('id')->all())->toBe([$matching->id]);
+});
 
 it('treats null and empty scalar scope values as absent even in throw mode', function (mixed $input) {
     InputContractPost::$configuredFilters = [
