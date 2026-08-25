@@ -122,6 +122,31 @@ Post::filter(['hot_filter' => 'hot'], 'frontend')->get();
 Post::filter(['created_after_filter' => '2023-01-01'], 'backend')->get();
 ```
 
+### Preparing Filters for Integrations
+
+Integrations that need to inspect applicable filters before changing a query can use the
+opt-in `FilterPreparation` service. It resolves fresh filter objects, applies the same
+selection, population, normalization, and validation rules as `filter()`, and returns only
+filters that are ready to be applied. Preparation itself never changes a query.
+
+```php
+use Lacodix\LaravelModelFilter\Support\FilterPreparation;
+
+$prepared = (new FilterPreparation)->prepare(
+    model: new Post,
+    values: $request->all(),
+    group: 'backend',
+    strictGroup: true,
+);
+
+foreach ($prepared as $filter) {
+    // Inspect the fresh, populated filter instance.
+}
+```
+
+See [Opt-in Filter Preparation](docs/advanced-usage/filter-preparation.md) for strict group
+resolution, instance configuration, and the `PreparedFilters` API.
+
 ## Testing
 
 ```bash

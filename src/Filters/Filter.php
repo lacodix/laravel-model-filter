@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 use Lacodix\LaravelModelFilter\Enums\ValidationMode;
@@ -103,6 +104,24 @@ abstract class Filter
     }
 
     /**
+     * Create an unpopulated copy for the opt-in preparation service.
+     *
+     * @internal
+     */
+    public function newPreparationInstance(): static
+    {
+        $instance = clone $this;
+        $instance->values = [];
+        unset($instance->validator);
+        $instance->populatingFromScope = false;
+        $instance->model = null;
+        $instance->relationQuery = null;
+        $instance->resolvedPresets = null;
+
+        return $instance;
+    }
+
+    /**
      * @internal Used by the model scopes when the value has already been selected
      * from the complete filter payload.
      */
@@ -168,6 +187,17 @@ abstract class Filter
         }
 
         return $this->applyFilter($query);
+    }
+
+    /**
+     * Determine whether the populated filter is ready to be applied without
+     * changing a query.
+     *
+     * @throws ValidationException When throw validation rejects the input shape.
+     */
+    public function readyToApply(): bool
+    {
+        return $this->shouldApply();
     }
 
     /**
