@@ -5,6 +5,7 @@ namespace Lacodix\LaravelModelFilter\Filters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Validator;
+use Lacodix\LaravelModelFilter\Filters\Traits\HasOptionMeta;
 
 /**
  * @template TModel of Model
@@ -13,6 +14,8 @@ use Illuminate\Validation\Validator;
  */
 class OptionFilter extends Filter
 {
+    use HasOptionMeta;
+
     protected string $component = 'option';
 
     public function __construct(?array $options = null)

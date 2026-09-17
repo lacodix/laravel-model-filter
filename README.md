@@ -147,6 +147,37 @@ foreach ($prepared as $filter) {
 See [Opt-in Filter Preparation](docs/advanced-usage/filter-preparation.md) for strict group
 resolution, instance configuration, and the `PreparedFilters` API.
 
+### Metadata
+
+Filters can carry free, serializable metadata for whoever renders them - a
+presentation hint on the filter, a picture or initials per option. The package
+stores it and never interprets it; filtering and the query string stay untouched.
+
+```php
+(new BelongsToFilter('person_id'))
+    ->setRelationModel(Person::class)
+    ->setTitleColumn('name')
+    ->meta(['presentation' => 'avatars'])
+    ->optionMeta(fn (BelongsToFilter $filter) => Person::query()
+        ->whereIn('id', $filter->options())
+        ->get()
+        ->mapWithKeys(fn (Person $person) => [$person->id => [
+            'avatar' => $person->photo_url,
+            'initials' => $person->initials,
+            'subtitle' => $person->club?->name,
+        ]])
+        ->all());
+
+$filter->getMeta();         // ['presentation' => 'avatars']
+$filter->optionMetaFor(7);  // ['avatar' => ..., 'initials' => ..., 'subtitle' => ...]
+```
+
+`meta()` is available on every filter type and merges repeated calls; `optionMeta()`
+lives on `SelectFilter` (and its descendants) and `OptionFilter`, takes a closure for
+database-backed options and resolves it once per instance. See
+[Filter Metadata](docs/advanced-usage/filter-metadata.md) for the contract and the
+avatar-filter use case.
+
 ## Testing
 
 ```bash

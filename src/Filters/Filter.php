@@ -34,6 +34,14 @@ abstract class Filter
 
     protected array $options;
 
+    /**
+     * Free, serializable metadata about the filter for whoever renders it
+     * (see meta()); the package itself never reads it.
+     *
+     * @var array<string, mixed>
+     */
+    protected array $meta = [];
+
     protected string $queryName;
     protected array $values = [];
     protected Validator $validator;
@@ -89,6 +97,30 @@ abstract class Filter
         return $this;
     }
 
+    /**
+     * Attach free metadata for consumers - a presentation hint, layout
+     * options, anything that has to travel with the filter but means nothing
+     * to filtering itself. Repeated calls merge recursively, so a class
+     * default such as `protected array \$meta = ['presentation' => 'avatars']`
+     * and a fluent `->meta(['columns' => 4])` end up side by side.
+     *
+     * @param  array<string, mixed>  $meta
+     */
+    public function meta(array $meta): static
+    {
+        $this->meta = array_replace_recursive($this->meta, $meta);
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getMeta(): array
+    {
+        return $this->meta;
+    }
+
     public function setModel(?Model $model): static
     {
         $this->model = $model;
@@ -117,6 +149,12 @@ abstract class Filter
         $instance->model = null;
         $instance->relationQuery = null;
         $instance->resolvedPresets = null;
+
+        // Option meta may have been resolved against the model or relation
+        // just reset; the trait property is unknown to the base class.
+        if (property_exists($instance, 'resolvedOptionMeta')) {
+            $instance->resolvedOptionMeta = null;
+        }
 
         return $instance;
     }
