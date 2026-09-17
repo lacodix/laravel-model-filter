@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
+use Lacodix\LaravelModelFilter\Filters\Traits\HasOptionMeta;
 
 /**
  * @template TModel of Model
@@ -14,6 +15,8 @@ use Lacodix\LaravelModelFilter\Enums\FilterMode;
  */
 class SelectFilter extends SingleFieldFilter
 {
+    use HasOptionMeta;
+
     protected string $component = 'select';
 
     protected bool $nullable = false;
