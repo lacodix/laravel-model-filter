@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 use Lacodix\LaravelModelFilter\Enums\TimeframeFilterMode;
@@ -220,10 +221,14 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
             ->where($this->qualifyPivotColumn($this->endField), '<=', $this->getTimeframeEnd());
     }
 
+    /**
+     * Rule::in() objects for the same reason as in SelectFilter: an 'in:a,b'
+     * string cannot carry option values with commas, quotes or leading spaces.
+     */
     protected function singleRules(): array
     {
         return [
-            $this->queryName() . '.values' => 'in:' . implode(',', $this->options()),
+            $this->queryName() . '.values' => Rule::in($this->options()),
         ];
     }
 
@@ -231,7 +236,7 @@ class BelongsToManyTimeframeFilter extends BelongsToManyFilter
     {
         return [
             $this->queryName() . '.values' => 'array',
-            $this->queryName() . '.values.*' => 'in:' . implode(',', $this->options()),
+            $this->queryName() . '.values.*' => Rule::in($this->options()),
         ];
     }
 

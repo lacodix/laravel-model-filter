@@ -51,7 +51,7 @@ it('does not interpret meta while filtering', function () {
     $filter = metaSelectFilter()->meta(['presentation' => 'avatars']);
 
     expect($filter->populate('page')->apply(Post::query())->count())->toEqual(3)
-        ->and($filter->rules())->toEqual(['type_meta' => 'in:page,post']);
+        ->and((string) $filter->rules()['type_meta'])->toEqual('in:"page","post"');
 });
 
 it('stores option meta per option value and returns an empty array for unknown values', function () {
