@@ -5,6 +5,7 @@ namespace Lacodix\LaravelModelFilter\Filters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\Rule;
 use Lacodix\LaravelModelFilter\Enums\FilterMode;
 use Lacodix\LaravelModelFilter\Filters\Traits\HasOptionMeta;
 
@@ -119,10 +120,17 @@ class SelectFilter extends SingleFieldFilter
         });
     }
 
+    /**
+     * Rule::in() instead of an 'in:a,b' string: Laravel parses the string
+     * form with str_getcsv(), which splits option values at commas, reads a
+     * leading quote as an enclosure and trims a leading space — free-text
+     * options ("Trompete, Flügelhorn") then fail validation silently and the
+     * filter is skipped. The rule object quotes every value.
+     */
     protected function singleRules(): array
     {
         return [
-            $this->queryName() => 'in:'.implode(',', $this->optionsWithNull()),
+            $this->queryName() => Rule::in($this->optionsWithNull()),
         ];
     }
 
@@ -130,7 +138,7 @@ class SelectFilter extends SingleFieldFilter
     {
         return [
             $this->queryName() => 'array',
-            $this->queryName().'.*' => 'in:'.implode(',', $this->optionsWithNull()),
+            $this->queryName().'.*' => Rule::in($this->optionsWithNull()),
         ];
     }
 

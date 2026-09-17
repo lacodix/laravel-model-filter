@@ -46,13 +46,23 @@ You can add your own validation rules to all filters by overwriting the rules() 
 use all possibilities of Laravels Validator.
 
 ```php
+use Illuminate\Validation\Rule;
+
     public function rules(): array
     {
         return [
-            'fieldname' => 'in:' . implode(',', $this->options()),
+            'fieldname' => Rule::in($this->options()),
         ];
     }
 ```
+
+Prefer the `Rule::in()` object over an `'in:' . implode(',', ...)` string whenever the
+values are not under your control. Laravel parses the string form with `str_getcsv()`:
+an option value with a comma (`Trompete, Flügelhorn`) is split into two, a leading quote
+is read as an enclosure that swallows the following values, and a leading space is
+trimmed away — such a value then fails validation silently and the filter is skipped.
+`Rule::in()` quotes every value, so the exact option values are matched. The shipped
+`SelectFilter` and `BelongsToManyTimeframeFilter` rules use it since 4.10.1.
 
 Depending on the ValidationMode of your filter, the filter will not be applied (default) or throw an exception.
 
