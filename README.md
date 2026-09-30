@@ -20,6 +20,10 @@ You can find the entire documentation for this package on [our documentation sit
 
 See our [Upgrade Guide](docs/upgrade.md) for information on how to upgrade from older versions.
 
+### Laravel Boost skill
+
+The package includes a `laravel-model-filter-development` skill for agents working on filters, search, sorting, and their UI and tests. In an application using Laravel Boost, enable skills and select `lacodix/laravel-model-filter` when running `php artisan boost:install`. Boost then installs the skill for the selected skills-capable agents. The package's short Boost guideline points to it when guidelines are enabled.
+
 ## Installation
 
 ```bash

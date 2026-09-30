@@ -100,7 +100,8 @@ the enum keys as translation keys, set the $useNameForTranslation property to tr
 
 ## Option sorting
 
-By default, enum options are sorted alphabetically by their translated label.
+By default, enum options are sorted by their backed value. Translated labels are
+used as option keys, but do not determine the sort order.
 
 - Property: `$sortedOptions = true`
 - Setter: `setSortedOptions(bool $sortedOptions = true): static`
@@ -124,8 +125,7 @@ protected bool $nullable = true;
 ```
 
 See [Filtering for NULL values](select.md#filtering-for-null-values) on the select filter
-for the full details. Note that when option sorting is enabled, the "none" entry is sorted
-together with the translated enum labels.
+for the full details. The "none" entry is prepended to the sorted enum options.
 
 ## Filter Modes
 
