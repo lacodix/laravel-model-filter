@@ -5,10 +5,11 @@ namespace Lacodix\LaravelModelFilter\Enums;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Grammars\PostgresGrammar;
 use Illuminate\Database\Query\Grammars\SQLiteGrammar;
+use Lacodix\LaravelModelFilter\Contracts\SearchStrategy;
 use Lacodix\LaravelModelFilter\Support\SearchInput;
 use Lacodix\LaravelModelFilter\Support\SqliteCaseFolding;
 
-enum SearchMode
+enum SearchMode implements SearchStrategy
 {
     case EQUAL;
     case LIKE;

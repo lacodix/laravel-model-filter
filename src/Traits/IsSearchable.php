@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Lacodix\LaravelModelFilter\Contracts\SearchStrategy;
 use Lacodix\LaravelModelFilter\Enums\SearchMode;
 use Lacodix\LaravelModelFilter\Exceptions\InvalidArgumentException;
 use Lacodix\LaravelModelFilter\Exceptions\SearchInputException;
@@ -60,14 +61,48 @@ trait IsSearchable
         return $this->searchable ?? [];
     }
 
+    /** @return Collection<string, SearchStrategy> */
     public function searchableFields(?array $searchable = null): Collection
     {
-        $searchable ??= $this->searchable();
-
-        return collect($searchable)
-            ->mapWithKeys(static fn ($value, $key) => is_numeric($key) ? [$value => SearchMode::LIKE] : [$key => $value])
+        $declared = $this->searchFieldEntries($this->searchable())
             ->only($this->searchableFieldNames() ?? [])
-            ->map(static fn ($mode) => is_string($mode) ? SearchMode::fromString($mode) : $mode);
+            ->map(static function ($mode) {
+                if (is_string($mode)) {
+                    return SearchMode::fromString($mode);
+                }
+
+                if (! $mode instanceof SearchStrategy) {
+                    throw new InvalidArgumentException('Search fields must declare a SearchMode, mode string or SearchStrategy instance.');
+                }
+
+                return $mode;
+            });
+
+        if ($searchable === null) {
+            return $declared;
+        }
+
+        $searchable = array_filter(
+            $searchable,
+            static fn ($value, $key) => ! is_numeric($key) || $value !== null,
+            ARRAY_FILTER_USE_BOTH
+        );
+
+        return $this->searchFieldEntries($searchable)
+            ->only($declared->keys()->all())
+            ->map(static function ($mode, $field) use ($declared) {
+                $canonical = $declared->get($field);
+
+                if ($canonical instanceof SearchStrategy && ! $canonical instanceof SearchMode) {
+                    return $canonical;
+                }
+
+                if (! is_string($mode) && ! $mode instanceof SearchMode) {
+                    throw new InvalidArgumentException('Search strategies must be declared on the model.');
+                }
+
+                return is_string($mode) ? SearchMode::fromString($mode) : $mode;
+            });
     }
 
     public function searchableFieldNames(): array
@@ -130,30 +165,55 @@ trait IsSearchable
         string|array|null $searchable,
         bool $literal
     ): Builder {
-        return $query->where(
-            fn (Builder $searchQuery) => $this->searchableFields(is_null($searchable) ? null : Arr::wrap($searchable))
-                ->each(static fn (SearchMode $mode, string $field) => Str::contains($field, '.')
-                    ? $searchQuery->orWhere(
-                        static fn (Builder $orQuery) => $orQuery->whereHas(
-                            Str::beforeLast($field, '.'),
-                            static fn ($andQuery) => $andQuery->where( // Only needed to change inner applyQuery to and from or
-                                static fn ($subquery) => $literal
-                                    ? $mode->applyLiteralQuery(
-                                        $subquery,
-                                        $subquery->qualifyColumn(Str::afterLast($field, '.')),
-                                        $search
+        return $query->where(function (Builder $searchQuery) use ($query, $search, $searchable, $literal): void {
+            $this->searchableFields(is_null($searchable) ? null : Arr::wrap($searchable))
+                ->each(static function (SearchStrategy $strategy, string $field) use ($query, $searchQuery, $search, $literal): void {
+                    $apply = static fn (Builder $predicate, string $qualifiedField) => $literal
+                        ? $strategy->applyLiteralQuery($predicate, $qualifiedField, $search)
+                        : $strategy->applyQuery($predicate, $qualifiedField, $search);
+
+                    if (Str::contains($field, '.')) {
+                        $searchQuery->orWhere(
+                            static fn (Builder $orQuery) => $orQuery->whereHas(
+                                Str::beforeLast($field, '.'),
+                                static fn (Builder $relationQuery) => $relationQuery->where(
+                                    static fn (Builder $predicate) => $apply(
+                                        $predicate,
+                                        $predicate->qualifyColumn(Str::afterLast($field, '.'))
                                     )
-                                    : $mode->applyQuery(
-                                        $subquery,
-                                        $subquery->qualifyColumn(Str::afterLast($field, '.')),
-                                        $search
-                                    )
+                                )
                             )
-                        )
-                    )
-                    : ($literal
-                        ? $mode->applyLiteralQuery($searchQuery, $query->qualifyColumn($field), $search)
-                        : $mode->applyQuery($searchQuery, $query->qualifyColumn($field), $search)))
-        );
+                        );
+
+                        return;
+                    }
+
+                    // Preserve built-in query shapes; custom AND/OR predicates get their own field group.
+                    if ($strategy instanceof SearchMode) {
+                        $apply($searchQuery, $query->qualifyColumn($field));
+
+                        return;
+                    }
+
+                    $searchQuery->orWhere(
+                        static fn (Builder $predicate) => $apply($predicate, $query->qualifyColumn($field))
+                    );
+                });
+        });
+    }
+
+    private function searchFieldEntries(array $searchable): Collection
+    {
+        return collect($searchable)->mapWithKeys(static function ($value, $key) {
+            if (! is_numeric($key)) {
+                return [$key => $value];
+            }
+
+            if (! is_string($value)) {
+                throw new InvalidArgumentException('Search field lists must contain field names; strategies require a field key.');
+            }
+
+            return [$value => SearchMode::LIKE];
+        });
     }
 }

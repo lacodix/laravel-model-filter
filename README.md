@@ -86,6 +86,10 @@ Post::searchLiteral('100%_complete')->get();
 Post::searchByQueryString()->get();
 ```
 
+For per-field query logic, declare application-owned `SearchStrategy` instances in the model's `searchable()`
+method alongside built-in modes. See [custom search strategies](docs/basic-usage/search.md#custom-search-strategies)
+for normalized-column examples and the predicate contract.
+
 ### Visualize
 
 All filters have a blade template that can visualize the filter with one or multiple input fields.
