@@ -190,7 +190,8 @@ Post::search('test', [
 ])->get();
 ```
 
-With this solution you can change the mode for the given searchable fields on calling the search.
+With this solution you can change built-in modes for the given searchable fields on calling the search.
+Model-declared custom strategies remain authoritative and cannot be replaced by these overrides.
 This flexibility is also possible via query-string
 
 ```
@@ -212,3 +213,102 @@ protected array $searchable = [
     'content',
 ];
 ```
+
+
+## Custom search strategies
+
+For application-specific predicates, implement `Lacodix\LaravelModelFilter\Contracts\SearchStrategy` and return
+instances from the model's `searchable()` method. `SearchMode` implements the same interface, so existing field
+lists, mode strings and enum declarations continue to work.
+
+This illustrative strategy searches an application-maintained normalized column with exact equality. It can be
+used for a root field or a related model's field; the package supplies the current builder and a qualified logical
+field such as `posts.title` or `comments.title`.
+
+```php
+<?php
+
+namespace App\Search;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
+use Lacodix\LaravelModelFilter\Contracts\SearchStrategy;
+
+final class NormalizedExactSearch implements SearchStrategy
+{
+    public function __construct(private readonly string $column)
+    {
+    }
+
+    public function applyQuery(Builder $query, string $field, string $search): Builder
+    {
+        // The destination column is trusted application configuration.
+        $column = Str::beforeLast($field, '.').'.'.$this->column;
+
+        return $query->where($column, mb_strtolower($search));
+    }
+
+    public function applyLiteralQuery(Builder $query, string $field, string $search): Builder
+    {
+        // Equality already treats wildcard characters literally.
+        return $this->applyQuery($query, $field, $search);
+    }
+}
+```
+
+Declare the strategy on a model that uses `IsSearchable`:
+
+```php
+use App\Search\NormalizedExactSearch;
+use Illuminate\Database\Eloquent\Model;
+use Lacodix\LaravelModelFilter\Enums\SearchMode;
+use Lacodix\LaravelModelFilter\Traits\IsSearchable;
+
+class Post extends Model
+{
+    use IsSearchable;
+
+    public function searchable(): array
+    {
+        return [
+            'title' => new NormalizedExactSearch('title_normalized'),
+            'content' => SearchMode::LIKE,
+        ];
+    }
+}
+
+Post::search('EXAMPLE', ['title'])->get();
+Post::searchLiteral('100%_complete', ['title'])->get();
+```
+
+The example requires an existing `title_normalized` column populated using the same normalization. For a relation,
+register e.g. `'comments.title' => new NormalizedExactSearch('title_normalized')` on a model with a `comments()`
+relation and a normalized column on comments. Dot-notated nested relations are supported too.
+
+### Predicate and trust contract
+
+- Both methods must append predicates to and return the supplied builder. Do not execute the query, replace the
+  builder, clear existing constraints, remove scopes, or change unrelated query state. A strategy may add AND and
+  internal OR conditions: the package wraps each custom field predicate and ORs it with the other searchable fields,
+  preserving the surrounding search group, relation constraints and caller/global scopes.
+  To represent no match, a trusted strategy must append an explicit false predicate such as `whereRaw('0 = 1')`, rather than return an unchanged builder.
+- `$field` is the qualified logical field. A strategy owns any mapping to another approved column and preparation
+  of the trimmed search value. Use query bindings for values; never interpolate input into SQL or identifiers.
+- `applyLiteralQuery()` must treat wildcard characters as ordinary input. It is selected by `searchLiteral()` or
+  `search_wildcards_as_literals`. The package does not escape or normalize input for a custom strategy. Empty input
+  and configured input limits are checked before predicate methods run. Legacy `search('0')` still skips searching;
+  `searchLiteral('0')` invokes the strategy.
+- Strategies are trusted server code, not an authorization sandbox. Declare instances on the model; the package
+  has no registry or class-name resolver. Never construct strategies or column mappings from request input. A caller
+  can narrow fields but cannot replace a model-declared strategy with a mode or another instance. Passing a strategy
+  for an ordinary field raises `InvalidArgumentException`; undeclared fields are ignored. Unknown mode strings retain
+  the legacy LIKE fallback and are never instantiated as classes. Invalid non-string declarations fail clearly;
+  strategy instances need an associative logical field key.
+- `searchableFields()` returns a collection of field names to `SearchStrategy` values. Integrations may filter this
+  collection and pass `->all()` back to `search()`: canonical model strategies are preserved even when `searchable()`
+  creates fresh instances. Enum/string mode overrides continue to work on ordinary fields.
+
+Indexing, storage, normalization rules, database portability, and any cryptographic/key lifecycle are application
+responsibilities. The package provides no encryption, blind index or confidentiality guarantee. Field narrowing is
+not authorization: keep authorization scopes on the query. As before, an empty or entirely unknown field selection
+leaves the query unchanged.
