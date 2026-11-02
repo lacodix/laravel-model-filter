@@ -52,8 +52,10 @@ jobs:
 
       - name: Install Composer dependencies
         run: |
-          if [ "${{ matrix.php }}" = "8.1" ]; then
-            composer config audit.block-insecure false
+          if [ "${{ matrix.laravel }}" = "11.*" ]; then
+            # Laravel 11 CI compatibility only; keep audit reporting and remove when patched or support ends.
+            composer config minimum-stability stable
+            composer config --json policy.advisories.ignore-id '{"PKSA-b41t-wbzk-9q51":{"on-audit":false,"reason":"Laravel 11 CI compatibility only; remove when patched or support ends."},"PKSA-d5tc-s1qs-h781":{"on-audit":false,"reason":"Laravel 11 CI compatibility only; remove when patched or support ends."},"PKSA-3r5d-mb8f-1qw9":{"on-audit":false,"reason":"Laravel 11 CI compatibility only; remove when patched or support ends."},"PKSA-m5cs-t1y6-qpcs":{"on-audit":false,"reason":"Laravel 11 CI compatibility only; remove when patched or support ends."},"PKSA-mdq4-51ck-6kdq":{"on-audit":false,"reason":"Laravel 11 CI compatibility only; remove when patched or support ends."}}'
           fi
           composer require --dev "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
           composer require "illuminate/contracts:${{ matrix.laravel }}" --no-interaction --no-update
